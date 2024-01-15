@@ -6,9 +6,6 @@ type Repository interface {
 	UserAuditRepository
 	UserRepository
 	UserTokenRepository
-	ArticleRepository
-	ClassifyRepository
-	SetMealRepository
 	UserCollectRepository
 }
 
@@ -32,16 +29,4 @@ type UserCollectRepository interface {
 
 type UserTokenRepository interface {
 	GetUserTokenByUserId(ctx context.Context, userId uint64) (*UserToken, error)
-}
-
-type ArticleRepository interface {
-	GetArticleByTitle(ctx context.Context, title string) (*Article, error)
-}
-
-type ClassifyRepository interface {
-	GetClassify(ctx context.Context, types uint8) ([]*Classify, error)
-}
-
-type SetMealRepository interface {
-	GetSetMeal(ctx context.Context, types uint8) ([]*SetMeal, error)
 }

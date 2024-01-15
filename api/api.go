@@ -37,16 +37,10 @@ func (api *Api) Run() error {
 		AllowOrigins: []string{"*"},
 		AllowMethods: []string{echo.GET, echo.PUT, echo.POST},
 	}))
-	engine.Group("/uploads").Use(middleware.Static("public/uploads"))
 
 	v1 := engine.Group("/v1")
 
 	_ = v1.Group("/user", api.Authenticate)
-	{
-
-	}
-
-	_ = v1.Group("/admin", api.Authenticate)
 	{
 
 	}
