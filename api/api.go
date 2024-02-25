@@ -40,6 +40,8 @@ func (api *Api) Run() error {
 
 	v1 := engine.Group("/v1")
 
+	_ = v1.GET("/test", api.Test)
+
 	_ = v1.Group("/user", api.Authenticate)
 	{
 

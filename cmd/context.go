@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"net/url"
 	"os"
@@ -13,10 +12,7 @@ import (
 	"github.com/lw396/WeComCopilot/pkg/redis"
 	"github.com/lw396/WeComCopilot/pkg/snowflake"
 	"github.com/lw396/WeComCopilot/pkg/valuer"
-	"github.com/lw396/WeComCopilot/pkg/wechat"
 
-	"github.com/silenceper/wechat/v2/cache"
-	offConfig "github.com/silenceper/wechat/v2/officialaccount/config"
 	"github.com/urfave/cli/v2"
 	"gopkg.in/ini.v1"
 	"gorm.io/gorm"
@@ -183,52 +179,4 @@ func (c *Context) buildRedis() (redis.RedisClient, error) {
 		redis.WithAuth("", password),
 		redis.WithDB(db),
 	)
-}
-
-func (c *Context) buildWechat() (wechat.WechatClient, error) {
-	host := valuer.Value("127.0.0.1").Try(
-		os.Getenv("REDIS_HOST"),
-		c.Section("redis").Key("host").String(),
-	).String()
-	password := valuer.Value("secret").Try(
-		os.Getenv("REDIS_AUTH"),
-		c.Section("redis").Key("auth").String(),
-	).String()
-	db := valuer.Value(0).Try(
-		os.Getenv("REDIS_DB"),
-		c.Section("redis").Key("db").MustInt(),
-	).Int()
-
-	appId := valuer.Value("").Try(
-		os.Getenv("WECHAT_APP_ID"),
-		c.Section("wechat").Key("app-id").String(),
-	).String()
-	appSecret := valuer.Value("").Try(
-		os.Getenv("WECHAT_APP_SECRET"),
-		c.Section("wechat").Key("app-secret").String(),
-	).String()
-	token := valuer.Value("").Try(
-		os.Getenv("WECHAT_TOKEN"),
-		c.Section("wechat").Key("token").String(),
-	).String()
-	encodingAesKey := valuer.Value("").Try(
-		os.Getenv("WECHAT_ENCODING_AES_KEY"),
-		c.Section("wechat").Key("encoding-aes-key").String(),
-	).String()
-
-	redis := cache.RedisOpts{
-		Host:        host,
-		Password:    password,
-		Database:    db,
-		MaxIdle:     100,
-		MaxActive:   10,
-		IdleTimeout: 20,
-	}
-	return wechat.NewOfficialAccount(offConfig.Config{
-		AppID:          appId,
-		AppSecret:      appSecret,
-		Token:          token,
-		EncodingAESKey: encodingAesKey,
-		Cache:          cache.NewRedis(context.Background(), &redis),
-	})
 }

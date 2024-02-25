@@ -24,7 +24,7 @@ type options struct {
 	tracer trace.Tracer
 	token  *TokenConfig
 	redis  redis.RedisClient
-	wx     wechat.WechatClient
+	wechat wechat.WeChatClient
 }
 
 type Option func(*options)
@@ -59,9 +59,9 @@ func WithRedis(rc redis.RedisClient) Option {
 	}
 }
 
-func WithWechat(wx wechat.WechatClient) Option {
+func WithWeChat(wc wechat.WeChatClient) Option {
 	return func(o *options) {
-		o.wx = wx
+		o.wechat = wc
 	}
 }
 

@@ -6,6 +6,7 @@ import (
 	"github.com/lw396/WeComCopilot/api"
 	"github.com/lw396/WeComCopilot/internal/repository/gorm"
 	"github.com/lw396/WeComCopilot/pkg/valuer"
+	"github.com/lw396/WeComCopilot/pkg/wechat"
 	"github.com/lw396/WeComCopilot/service"
 
 	"github.com/urfave/cli/v2"
@@ -40,11 +41,6 @@ var apiCmd = &cli.Command{
 			return err
 		}
 
-		wechat, err := ctx.buildWechat()
-		if err != nil {
-			return err
-		}
-
 		rep := gorm.New(db)
 
 		tokenKey := valuer.Value("key").Try(
@@ -55,10 +51,21 @@ var apiCmd = &cli.Command{
 			ctx.Section("token").Key("expire").Int(),
 		).Int()
 
+		key := valuer.Value("").Try(
+			os.Getenv("WECHAT)KEY"),
+			ctx.Section("wechat").Key("key").String(),
+		).String()
+		path := valuer.Value("").Try(
+			os.Getenv("WECHAT_PATH"),
+			ctx.Section("wechat").Key("path").String(),
+		).String()
+
+		wc := wechat.NewWeChatClient(key, path)
+
 		service := service.New(
 			service.WithRepository(rep),
 			service.WithRedis(redis),
-			service.WithWechat(wechat),
+			service.WithWeChat(wc),
 			service.WithJWT(&service.TokenConfig{
 				Secret:     tokenKey,
 				ExpireSecs: tokenExpire,

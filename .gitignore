@@ -1,0 +1,4 @@
+test/msg/* 
+
+.vscode
+.DS_Store

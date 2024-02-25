@@ -1,5 +1,8 @@
 package service
 
-func (a *Service) GetOpenId(code string) (openid string, err error) {
+import "context"
+
+func (a *Service) GetConfig(ctx context.Context) (err error) {
+	err = a.wechat.GetWechatConfig(ctx)
 	return
 }
