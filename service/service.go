@@ -2,9 +2,9 @@ package service
 
 import (
 	"github.com/lw396/WeComCopilot/internal/repository"
+	"github.com/lw396/WeComCopilot/internal/repository/sqlite"
 	"github.com/lw396/WeComCopilot/pkg/log"
 	"github.com/lw396/WeComCopilot/pkg/redis"
-	"github.com/lw396/WeComCopilot/pkg/wechat"
 
 	"go.opentelemetry.io/otel/trace"
 )
@@ -24,7 +24,7 @@ type options struct {
 	tracer trace.Tracer
 	token  *TokenConfig
 	redis  redis.RedisClient
-	wechat wechat.WeChatClient
+	sqlite sqlite.SQLiteClient
 }
 
 type Option func(*options)
@@ -59,9 +59,9 @@ func WithRedis(rc redis.RedisClient) Option {
 	}
 }
 
-func WithWeChat(wc wechat.WeChatClient) Option {
+func WithSQLite(s sqlite.SQLiteClient) Option {
 	return func(o *options) {
-		o.wechat = wc
+		o.sqlite = s
 	}
 }
 

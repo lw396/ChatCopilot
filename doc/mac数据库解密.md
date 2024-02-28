@@ -32,3 +32,4 @@ print(key)
 通过运行上面的程序可以得到一串微信数据库密钥如下：
 
 `0xc2f913bedae845829394sbbf6186d9zfabd30ef039cf4cba993a01052fz52dcd`
+`0x5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8`

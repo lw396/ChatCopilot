@@ -5,8 +5,8 @@ import (
 
 	"github.com/lw396/WeComCopilot/api"
 	"github.com/lw396/WeComCopilot/internal/repository/gorm"
+	"github.com/lw396/WeComCopilot/internal/repository/sqlite"
 	"github.com/lw396/WeComCopilot/pkg/valuer"
-	"github.com/lw396/WeComCopilot/pkg/wechat"
 	"github.com/lw396/WeComCopilot/service"
 
 	"github.com/urfave/cli/v2"
@@ -60,12 +60,10 @@ var apiCmd = &cli.Command{
 			ctx.Section("wechat").Key("path").String(),
 		).String()
 
-		wc := wechat.NewWeChatClient(key, path)
-
 		service := service.New(
 			service.WithRepository(rep),
 			service.WithRedis(redis),
-			service.WithWeChat(wc),
+			service.WithSQLite(sqlite.NewSQLiteClient(key, path)),
 			service.WithJWT(&service.TokenConfig{
 				Secret:     tokenKey,
 				ExpireSecs: tokenExpire,
