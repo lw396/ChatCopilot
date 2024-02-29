@@ -18,6 +18,11 @@ type TokenConfig struct {
 	ExpireSecs int
 }
 
+type SQLiteConfig struct {
+	Key  string
+	Path string
+}
+
 type options struct {
 	rep    repository.Repository
 	logger log.Logger

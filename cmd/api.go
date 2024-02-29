@@ -51,23 +51,25 @@ var apiCmd = &cli.Command{
 			ctx.Section("token").Key("expire").Int(),
 		).Int()
 
-		key := valuer.Value("").Try(
-			os.Getenv("WECHAT)KEY"),
+		wcKey := valuer.Value("").Try(
+			os.Getenv("WECHAT_KEY"),
 			ctx.Section("wechat").Key("key").String(),
 		).String()
-		path := valuer.Value("").Try(
+		wcPath := valuer.Value("").Try(
 			os.Getenv("WECHAT_PATH"),
 			ctx.Section("wechat").Key("path").String(),
 		).String()
 
+		sql := sqlite.NewSQLiteClient(wcKey, wcPath)
+
 		service := service.New(
 			service.WithRepository(rep),
 			service.WithRedis(redis),
-			service.WithSQLite(sqlite.NewSQLiteClient(key, path)),
 			service.WithJWT(&service.TokenConfig{
 				Secret:     tokenKey,
 				ExpireSecs: tokenExpire,
 			}),
+			service.WithSQLite(sql),
 		)
 
 		port := c.Int("port")

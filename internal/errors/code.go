@@ -18,15 +18,15 @@ const (
 	// 账号已经存在
 	CodeAuthAccountExist = 20003
 	// 账号不存在
-	AccountNotExist = 20004
+	CodeAccountNotExist = 20004
 	// 账号已经认证
-	AccountAuthenticationExist = 20005
+	CodeAccountAuthenticationExist = 20005
 	// 账号未认证
-	AccountUnAuthenticationExist = 20006
+	CodeAccountUnAuthenticationExist = 20006
 	// 账号未登录
-	AccountNotLogin = 20007
+	CodeAccountNotLogin = 20007
 	// 账号类型错误
-	AccountWrongType = 20008
+	CodeAccountWrongType = 20008
 	// 认证token相关
 	CodeAuthToken = 21000
 	// 未找到token
@@ -41,6 +41,10 @@ const (
 	CodeAuthApplicationNotFound = 22001
 	// 应用已禁用
 	CodeAuthApplicationInactive = 22002
-	//未找到code
+	// 未找到code
 	CodeAuthCodeNotFound = 23002
+	// 消息已存在
+	CodeAuthMessageFound = 24001
+	// 消息不存在
+	CodeAuthMessageNotFound = 24002
 )
