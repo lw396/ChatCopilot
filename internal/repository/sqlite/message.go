@@ -2,31 +2,11 @@ package sqlite
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/lw396/WeComCopilot/internal/errors"
 	"github.com/lw396/WeComCopilot/internal/repository"
-	"github.com/lw396/WeComCopilot/pkg/sqlcipher"
 	"gorm.io/gorm"
 )
-
-type SQLiteClient interface {
-	OpenDB(ctx context.Context, dbName string) (tx *gorm.DB, err error)
-	FindMessage(ctx context.Context, tx *gorm.DB, msgName string) (sequence *repository.SQLiteSequence, err error)
-	BindMessage(ctx context.Context, tx *gorm.DB, dbName string, msgName string) (err error)
-	UnbindMessage(ctx context.Context, dbName string, msgName string) (err error)
-}
-
-func (s *SQLite) OpenDB(ctx context.Context, dbName string) (tx *gorm.DB, err error) {
-	dsn := fmt.Sprintf("%s/%s?_pragma_key=x'%s'", s.path, dbName, s.key)
-
-	tx, err = gorm.Open(sqlcipher.Open(dsn), &gorm.Config{})
-	if err != nil {
-		return
-	}
-
-	return
-}
 
 func (s *SQLite) FindMessage(ctx context.Context, tx *gorm.DB, tableName string) (
 	sequence *repository.SQLiteSequence, err error,
@@ -39,7 +19,7 @@ func (s *SQLite) FindMessage(ctx context.Context, tx *gorm.DB, tableName string)
 	return
 }
 
-func (s *SQLite) BindMessage(ctx context.Context, tx *gorm.DB, dbName string, msgName string) (err error) {
+func (s *SQLite) BindMessage(ctx context.Context, tx *gorm.DB, dbName, msgName string) (err error) {
 	if s.db[dbName] == nil {
 		s.db[dbName] = &DB{tx: tx, msgName: []string{msgName}}
 		return
@@ -55,7 +35,7 @@ func (s *SQLite) BindMessage(ctx context.Context, tx *gorm.DB, dbName string, ms
 	return
 }
 
-func (s *SQLite) UnbindMessage(ctx context.Context, dbName string, msgName string) (err error) {
+func (s *SQLite) UnbindMessage(ctx context.Context, dbName, msgName string) (err error) {
 	db := s.db[dbName]
 	if len(db.msgName) == 1 {
 		if db.msgName[0] != msgName {

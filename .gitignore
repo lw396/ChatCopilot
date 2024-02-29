@@ -1,4 +1,4 @@
-test/msg/* 
+test/* 
 
 .vscode
 .DS_Store
