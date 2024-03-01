@@ -3,10 +3,9 @@ package api
 import (
 	"fmt"
 
-	"github.com/lw396/WeComCopilot/service"
-
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"github.com/lw396/WeComCopilot/service"
 )
 
 type Api struct {
@@ -41,7 +40,8 @@ func (api *Api) Run() error {
 	v1 := engine.Group("/v1")
 
 	v1.GET("/group_contact", api.getGroupContact)
-	v1.GET("/group_message", api.getGroupMessage)
+	v1.GET("/message_info", api.getMessageInfo)
+	v1.POST("/message_content", api.saveMessageContent)
 
 	_ = v1.Group("/user", api.Authenticate)
 	{

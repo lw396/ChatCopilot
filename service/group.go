@@ -14,7 +14,7 @@ type GroupContact struct {
 }
 
 func (a *Service) GetGroupContact(ctx context.Context, nickname string) (result []*GroupContact, err error) {
-	if err = a.ConnectGroup(ctx); err != nil {
+	if err = a.ConnectDB(ctx, sqlite.GroupDB); err != nil {
 		return
 	}
 	contact, err := a.sqlite.GetGroupContactByNickname(ctx, nickname)
@@ -32,14 +32,13 @@ func (a *Service) GetGroupContact(ctx context.Context, nickname string) (result 
 	return
 }
 
-func (a *Service) ConnectGroup(ctx context.Context) (err error) {
-	tx, err := a.sqlite.OpenDB(ctx, sqlite.GroupDB)
+func (a *Service) ConnectDB(ctx context.Context, dbName string) (err error) {
+	tx, err := a.sqlite.OpenDB(ctx, dbName)
 	if err != nil {
 		return
 	}
-
 	if tx != nil {
-		a.sqlite.BindDB(ctx, tx, sqlite.GroupDB)
+		a.sqlite.BindDB(ctx, tx, dbName)
 	}
 	return
 }

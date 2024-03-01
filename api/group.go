@@ -16,15 +16,3 @@ func (a *Api) getGroupContact(c echo.Context) (err error) {
 	}
 	return OK(c, result)
 }
-
-func (a *Api) getGroupMessage(c echo.Context) (err error) {
-	userName := c.QueryParam("user_name")
-	if userName == "" {
-		return errors.New(errors.CodeInvalidParam, "请输入用户名称")
-	}
-	result, err := a.service.ScanMessage(c.Request().Context(), userName)
-	if err != nil {
-		return
-	}
-	return OK(c, result)
-}

@@ -9,11 +9,6 @@ import (
 	"gorm.io/gorm"
 )
 
-func (s *SQLite) CheckMessageExistDB(ctx context.Context, tx *gorm.DB, userName string) (
-	*repository.SQLiteSequence, error) {
-	return db.NewHelper[repository.SQLiteSequence](tx).Where("name = ?", userName).First(ctx)
-}
-
 func (s *SQLite) BindMessage(ctx context.Context, tx *gorm.DB, dbName, msgName string) (err error) {
 	if s.db[dbName] == nil {
 		s.db[dbName] = &DB{tx: tx, msgName: []string{msgName}}
@@ -25,7 +20,6 @@ func (s *SQLite) BindMessage(ctx context.Context, tx *gorm.DB, dbName, msgName s
 			return
 		}
 	}
-
 	s.db[dbName].msgName = append(s.db[dbName].msgName, msgName)
 	return
 }
@@ -37,7 +31,6 @@ func (s *SQLite) UnbindMessage(ctx context.Context, dbName, msgName string) (err
 			err = errors.New(errors.CodeAuthMessageFound, "message not bind")
 			return
 		}
-
 		delete(s.db, dbName)
 		return
 	}
@@ -51,10 +44,21 @@ func (s *SQLite) UnbindMessage(ctx context.Context, dbName, msgName string) (err
 		isBind = true
 		break
 	}
-
 	if !isBind {
 		err = errors.New(errors.CodeAuthMessageNotFound, "message not bind")
 		return
 	}
 	return
+}
+
+func (s *SQLite) CheckMessageExistDB(ctx context.Context, tx *gorm.DB, userName string) (
+	*repository.SQLiteSequence, error) {
+	return db.NewHelper[repository.SQLiteSequence](tx).Where("name = ?", userName).First(ctx)
+}
+
+func (s *SQLite) GetMessageContent(ctx context.Context, dbName, msgName string) (
+	result []*repository.MessageContent, err error) {
+	// data := repository.MessageContent{}
+	// data.TableName(msgName)
+	return db.NewHelper[repository.MessageContent](s.db[dbName].tx).Find(ctx)
 }

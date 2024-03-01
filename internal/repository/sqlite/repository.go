@@ -14,8 +14,9 @@ type SQLiteClient interface {
 	BindDB(ctx context.Context, tx *gorm.DB, dbName string)
 	// Message
 	CheckMessageExistDB(ctx context.Context, tx *gorm.DB, dbName string) (sequence *repository.SQLiteSequence, err error)
-	BindMessage(ctx context.Context, tx *gorm.DB, dbName, msgName string) (err error)
+	BindMessageDB(ctx context.Context, tx *gorm.DB, dbName, msgName string) (err error)
 	UnbindMessage(ctx context.Context, dbName, msgName string) (err error)
+	GetMessageContent(ctx context.Context, dbName, msgName string) (result []*repository.MessageContent, err error)
 	// Group
 	GetGroupContactByNickname(ctx context.Context, nickname string) (result []*repository.GroupContact, err error)
 }
@@ -29,6 +30,11 @@ type SQLite struct {
 	key  string
 	path string
 	db   map[string]*DB
+}
+
+// BindMessageDB implements SQLiteClient.
+func (s *SQLite) BindMessageDB(ctx context.Context, tx *gorm.DB, dbName string, msgName string) (err error) {
+	panic("unimplemented")
 }
 
 type DB struct {
