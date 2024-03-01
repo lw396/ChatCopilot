@@ -13,7 +13,7 @@ type SQLiteClient interface {
 	OpenDB(ctx context.Context, dbName string) (tx *gorm.DB, err error)
 	BindDB(ctx context.Context, tx *gorm.DB, dbName string)
 	// Message
-	FindMessage(ctx context.Context, tx *gorm.DB, dbName string) (sequence *repository.SQLiteSequence, err error)
+	CheckMessageExistDB(ctx context.Context, tx *gorm.DB, dbName string) (sequence *repository.SQLiteSequence, err error)
 	BindMessage(ctx context.Context, tx *gorm.DB, dbName, msgName string) (err error)
 	UnbindMessage(ctx context.Context, dbName, msgName string) (err error)
 	// Group
@@ -48,14 +48,8 @@ func (s *SQLite) OpenDB(ctx context.Context, dbName string) (tx *gorm.DB, err er
 	if s.db[dbName] != nil {
 		return
 	}
-
 	dsn := fmt.Sprintf("%s/%s?_pragma_key=x'%s'", s.path, dbName, s.key)
-	tx, err = gorm.Open(sqlcipher.Open(dsn), &gorm.Config{})
-	if err != nil {
-		return
-	}
-
-	return
+	return gorm.Open(sqlcipher.Open(dsn), &gorm.Config{})
 }
 
 func (s *SQLite) BindDB(ctx context.Context, tx *gorm.DB, dbName string) {

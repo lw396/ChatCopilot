@@ -41,6 +41,7 @@ func (api *Api) Run() error {
 	v1 := engine.Group("/v1")
 
 	v1.GET("/group_contact", api.getGroupContact)
+	v1.GET("/group_message", api.getGroupMessage)
 
 	_ = v1.Group("/user", api.Authenticate)
 	{

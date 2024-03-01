@@ -1,10 +1,5 @@
 package repository
 
-type SQLiteSequence struct {
-	Name string
-	Seq  uint64
-}
-
 type GroupContact struct {
 	UsrName           string `gorm:"column:m_nsUsrName"`
 	Nickname          string `gorm:"column:nickname"`

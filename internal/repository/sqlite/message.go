@@ -5,18 +5,13 @@ import (
 
 	"github.com/lw396/WeComCopilot/internal/errors"
 	"github.com/lw396/WeComCopilot/internal/repository"
+	"github.com/lw396/WeComCopilot/pkg/db"
 	"gorm.io/gorm"
 )
 
-func (s *SQLite) FindMessage(ctx context.Context, tx *gorm.DB, tableName string) (
-	sequence *repository.SQLiteSequence, err error,
-) {
-	sequence = &repository.SQLiteSequence{}
-	if err = tx.First(&sequence, "name = ?", tableName).Error; err != nil {
-		return
-	}
-
-	return
+func (s *SQLite) CheckMessageExistDB(ctx context.Context, tx *gorm.DB, userName string) (
+	*repository.SQLiteSequence, error) {
+	return db.NewHelper[repository.SQLiteSequence](tx).Where("name = ?", userName).First(ctx)
 }
 
 func (s *SQLite) BindMessage(ctx context.Context, tx *gorm.DB, dbName, msgName string) (err error) {

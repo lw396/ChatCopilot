@@ -12,6 +12,6 @@ func (s *SQLite) groupContactHelper() *db.Helper[repository.GroupContact] {
 }
 
 func (s *SQLite) GetGroupContactByNickname(ctx context.Context, nickname string) (
-	result []*repository.GroupContact, err error) {
+	[]*repository.GroupContact, error) {
 	return s.groupContactHelper().Where("nickname LIKE ?", "%"+nickname+"%").Find(ctx)
 }
