@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/lw396/WeComCopilot/internal/errors"
-	"github.com/lw396/WeComCopilot/internal/repository"
 	"github.com/lw396/WeComCopilot/pkg/db"
 	"gorm.io/gorm"
 )
@@ -52,13 +51,12 @@ func (s *SQLite) UnbindMessage(ctx context.Context, dbName, msgName string) (err
 }
 
 func (s *SQLite) CheckMessageExistDB(ctx context.Context, tx *gorm.DB, userName string) (
-	*repository.SQLiteSequence, error) {
-	return db.NewHelper[repository.SQLiteSequence](tx).Where("name = ?", userName).First(ctx)
+	*SQLiteSequence, error) {
+	return db.NewHelper[SQLiteSequence](tx).Where("name = ?", userName).First(ctx)
 }
 
 func (s *SQLite) GetMessageContent(ctx context.Context, dbName, msgName string) (
-	result []*repository.MessageContent, err error) {
-	// data := repository.MessageContent{}
-	// data.TableName(msgName)
-	return db.NewHelper[repository.MessageContent](s.db[dbName].tx).Find(ctx)
+	result []*MessageContent, err error) {
+	err = s.db[dbName].tx.WithContext(ctx).Table(msgName).Order("mesLocalID").Find(&result).Error
+	return
 }

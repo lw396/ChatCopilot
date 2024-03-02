@@ -4,22 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/lw396/WeComCopilot/internal/repository"
 	"github.com/lw396/WeComCopilot/pkg/sqlcipher"
 	"gorm.io/gorm"
 )
-
-type SQLiteClient interface {
-	OpenDB(ctx context.Context, dbName string) (tx *gorm.DB, err error)
-	BindDB(ctx context.Context, tx *gorm.DB, dbName string)
-	// Message
-	CheckMessageExistDB(ctx context.Context, tx *gorm.DB, dbName string) (sequence *repository.SQLiteSequence, err error)
-	BindMessageDB(ctx context.Context, tx *gorm.DB, dbName, msgName string) (err error)
-	UnbindMessage(ctx context.Context, dbName, msgName string) (err error)
-	GetMessageContent(ctx context.Context, dbName, msgName string) (result []*repository.MessageContent, err error)
-	// Group
-	GetGroupContactByNickname(ctx context.Context, nickname string) (result []*repository.GroupContact, err error)
-}
 
 const (
 	MessageDB = "Message/msg_%d.db"  // 消息库
@@ -30,11 +17,6 @@ type SQLite struct {
 	key  string
 	path string
 	db   map[string]*DB
-}
-
-// BindMessageDB implements SQLiteClient.
-func (s *SQLite) BindMessageDB(ctx context.Context, tx *gorm.DB, dbName string, msgName string) (err error) {
-	panic("unimplemented")
 }
 
 type DB struct {

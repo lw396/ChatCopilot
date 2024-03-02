@@ -11,6 +11,7 @@ type GroupContact struct {
 	Nickname        string `json:"nickname"`
 	HeadImgUrl      string `json:"head_img_url"`
 	ChatRoomMemList string `json:"member_list"`
+	DBName          string `json:"db_name"`
 }
 
 func (a *Service) GetGroupContact(ctx context.Context, nickname string) (result []*GroupContact, err error) {

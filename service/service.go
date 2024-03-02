@@ -2,7 +2,6 @@ package service
 
 import (
 	"github.com/lw396/WeComCopilot/internal/repository"
-	"github.com/lw396/WeComCopilot/internal/repository/sqlite"
 	"github.com/lw396/WeComCopilot/pkg/log"
 	"github.com/lw396/WeComCopilot/pkg/redis"
 
@@ -29,7 +28,7 @@ type options struct {
 	tracer trace.Tracer
 	token  *TokenConfig
 	redis  redis.RedisClient
-	sqlite sqlite.SQLiteClient
+	sqlite repository.SQLiteClient
 }
 
 type Option func(*options)
@@ -64,7 +63,7 @@ func WithRedis(rc redis.RedisClient) Option {
 	}
 }
 
-func WithSQLite(s sqlite.SQLiteClient) Option {
+func WithSQLite(s repository.SQLiteClient) Option {
 	return func(o *options) {
 		o.sqlite = s
 	}

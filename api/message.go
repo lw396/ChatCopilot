@@ -3,6 +3,7 @@ package api
 import (
 	"github.com/labstack/echo/v4"
 	"github.com/lw396/WeComCopilot/internal/errors"
+	"github.com/lw396/WeComCopilot/service"
 )
 
 func (a *Api) getMessageInfo(c echo.Context) (err error) {
@@ -18,8 +19,11 @@ func (a *Api) getMessageInfo(c echo.Context) (err error) {
 }
 
 type ReqSaveMessage struct {
-	DBName   string `json:"db_name" validate:"required"`
-	UserName string `json:"user_name" validate:"required"`
+	DBName          string `json:"db_name" validate:"required"`
+	UserName        string `json:"user_name" validate:"required"`
+	Nickname        string `json:"nickname"`
+	HeadImgUrl      string `json:"head_img_url"`
+	ChatRoomMemList string `json:"member_list"`
 }
 
 func (a *Api) saveMessageContent(c echo.Context) (err error) {
@@ -30,7 +34,13 @@ func (a *Api) saveMessageContent(c echo.Context) (err error) {
 	if err = c.Validate(&req); err != nil {
 		return
 	}
-	err = a.service.SaveMessageContent(c.Request().Context(), req.DBName, req.UserName)
+	err = a.service.SaveMessageContent(c.Request().Context(), &service.GroupContact{
+		DBName:          req.DBName,
+		UsrName:         req.UserName,
+		Nickname:        req.Nickname,
+		HeadImgUrl:      req.HeadImgUrl,
+		ChatRoomMemList: req.ChatRoomMemList,
+	})
 	if err != nil {
 		return
 	}

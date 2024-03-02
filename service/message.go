@@ -6,7 +6,7 @@ import (
 	"fmt"
 
 	"github.com/lw396/WeComCopilot/internal/errors"
-	"github.com/lw396/WeComCopilot/internal/repository"
+	mysql "github.com/lw396/WeComCopilot/internal/repository/gorm"
 	"github.com/lw396/WeComCopilot/internal/repository/sqlite"
 	"github.com/lw396/WeComCopilot/pkg/db"
 	"github.com/lw396/WeComCopilot/pkg/util"
@@ -21,7 +21,7 @@ type MessageInfo struct {
 
 func (a *Service) ScanMessage(ctx context.Context, userName string) (result *MessageInfo, err error) {
 	var dbName string
-	var seq *repository.SQLiteSequence
+	var seq *sqlite.SQLiteSequence
 	var name string = "Chat_" + hex.EncodeToString(util.Md5([]byte(userName)))
 	for i := 0; i < 10; i++ {
 		dbName = fmt.Sprintf(sqlite.MessageDB, i)
@@ -49,21 +49,31 @@ func (a *Service) ScanMessage(ctx context.Context, userName string) (result *Mes
 	return
 }
 
-func (a *Service) SaveMessageContent(ctx context.Context, dbName, userName string) (err error) {
-	tx, err := a.sqlite.OpenDB(ctx, dbName)
+func (a *Service) SaveMessageContent(ctx context.Context, data *GroupContact) (err error) {
+	tx, err := a.sqlite.OpenDB(ctx, data.DBName)
 	if err != nil {
 		return
 	}
-	msgName := "Chat_" + hex.EncodeToString(util.Md5([]byte(userName)))
-	err = a.sqlite.BindMessageDB(ctx, tx, dbName, msgName)
+	msgName := "Chat_" + hex.EncodeToString(util.Md5([]byte(data.UsrName)))
+	err = a.sqlite.BindMessage(ctx, tx, data.DBName, msgName)
+	if err != nil {
+		return
+	}
+	message, err := a.sqlite.GetMessageContent(ctx, data.DBName, msgName)
 	if err != nil {
 		return
 	}
 
-	data, err = a.sqlite.GetMessageContent(ctx, dbName, msgName)
-	if err != nil {
+	if err = a.rep.SaveGroupContact(ctx, &mysql.GroupContact{
+		UsrName:         data.UsrName,
+		Nickname:        data.Nickname,
+		HeadImgUrl:      data.HeadImgUrl,
+		ChatRoomMemList: data.ChatRoomMemList,
+		DBName:          data.DBName,
+	}); err != nil {
 		return
 	}
 
+	fmt.Println(message[0])
 	return
 }
