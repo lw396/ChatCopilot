@@ -55,15 +55,20 @@ func (a *Service) SaveMessageContent(ctx context.Context, data *GroupContact) (e
 		return
 	}
 	msgName := "Chat_" + hex.EncodeToString(util.Md5([]byte(data.UsrName)))
-	err = a.sqlite.BindMessage(ctx, tx, data.DBName, msgName)
-	if err != nil {
+	if err = a.sqlite.BindMessage(ctx, tx, data.DBName, msgName); err != nil {
 		return
 	}
-	message, err := a.sqlite.GetMessageContent(ctx, data.DBName, msgName)
+	messages, err := a.sqlite.GetMessageContent(ctx, data.DBName, msgName)
 	if err != nil {
 		return
 	}
 
+	if _, err = a.rep.GetGroupContact(ctx, data.UsrName); err != gorm.ErrRecordNotFound {
+		if err == nil {
+			err = errors.New(errors.CodeAuthMessageFound, "group already exist")
+		}
+		return
+	}
 	if err = a.rep.SaveGroupContact(ctx, &mysql.GroupContact{
 		UsrName:         data.UsrName,
 		Nickname:        data.Nickname,
@@ -74,6 +79,28 @@ func (a *Service) SaveMessageContent(ctx context.Context, data *GroupContact) (e
 		return
 	}
 
-	fmt.Println(message[0])
+	if err = a.rep.CreateMessageContentTable(ctx, msgName); err != nil {
+		return
+	}
+	content := make([]*mysql.MessageContent, 0)
+	for _, message := range messages {
+		content = append(content, &mysql.MessageContent{
+			LocalID:     message.MesLocalID,
+			SvrID:       message.MesSvrID,
+			CreateTime:  message.MsgCreateTime,
+			Content:     message.MsgContent,
+			Status:      message.MsgStatus,
+			ImgStatus:   message.MsgImgStatus,
+			MessageType: message.MessageType,
+			Des:         message.MesDes,
+			Source:      message.MsgSource,
+			VoiceText:   message.MsgVoiceText,
+			Seq:         message.MsgSeq,
+		})
+	}
+	if err = a.rep.SaveMessageContent(ctx, msgName, content); err != nil {
+		fmt.Println(err)
+		return
+	}
 	return
 }

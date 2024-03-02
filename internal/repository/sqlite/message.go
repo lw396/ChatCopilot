@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/lw396/WeComCopilot/internal/errors"
-	"github.com/lw396/WeComCopilot/pkg/db"
 	"gorm.io/gorm"
 )
 
@@ -15,7 +14,6 @@ func (s *SQLite) BindMessage(ctx context.Context, tx *gorm.DB, dbName, msgName s
 	}
 	for _, t := range s.db[dbName].msgName {
 		if t == msgName {
-			err = errors.New(errors.CodeAuthMessageFound, "message already bind")
 			return
 		}
 	}
@@ -51,12 +49,19 @@ func (s *SQLite) UnbindMessage(ctx context.Context, dbName, msgName string) (err
 }
 
 func (s *SQLite) CheckMessageExistDB(ctx context.Context, tx *gorm.DB, userName string) (
-	*SQLiteSequence, error) {
-	return db.NewHelper[SQLiteSequence](tx).Where("name = ?", userName).First(ctx)
+	result *SQLiteSequence, err error) {
+	err = tx.WithContext(ctx).Where("name = ?", userName).First(&result).Error
+	if err != nil {
+		return
+	}
+	return
 }
 
 func (s *SQLite) GetMessageContent(ctx context.Context, dbName, msgName string) (
 	result []*MessageContent, err error) {
 	err = s.db[dbName].tx.WithContext(ctx).Table(msgName).Order("mesLocalID").Find(&result).Error
+	if err != nil {
+		return
+	}
 	return
 }

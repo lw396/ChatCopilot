@@ -23,6 +23,8 @@ type SQLiteClient interface {
 type Repository interface {
 	// Group
 	SaveGroupContact(ctx context.Context, contact *db.GroupContact) error
+	GetGroupContact(ctx context.Context, usrName string) (*db.GroupContact, error)
 	// Message
+	CreateMessageContentTable(ctx context.Context, msgName string) error
 	SaveMessageContent(ctx context.Context, msgName string, content []*db.MessageContent) error
 }

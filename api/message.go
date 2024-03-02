@@ -44,5 +44,5 @@ func (a *Api) saveMessageContent(c echo.Context) (err error) {
 	if err != nil {
 		return
 	}
-	return NoContent(c)
+	return Created(c, "")
 }
