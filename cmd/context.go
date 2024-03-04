@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/lw396/WeComCopilot/internal/repository/sqlite"
 	"github.com/lw396/WeComCopilot/pkg/db"
 	"github.com/lw396/WeComCopilot/pkg/log"
 	"github.com/lw396/WeComCopilot/pkg/redis"
@@ -179,4 +180,17 @@ func (c *Context) buildRedis() (redis.RedisClient, error) {
 		redis.WithAuth("", password),
 		redis.WithDB(db),
 	)
+}
+
+func (c *Context) buildSQLite() *sqlite.SQLite {
+	key := valuer.Value("").Try(
+		os.Getenv("WECHAT_KEY"),
+		ctx.Section("wechat").Key("key").String(),
+	).String()
+	path := valuer.Value("").Try(
+		os.Getenv("WECHAT_PATH"),
+		ctx.Section("wechat").Key("path").String(),
+	).String()
+
+	return sqlite.NewSQLite(key, path)
 }

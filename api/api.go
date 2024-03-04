@@ -38,15 +38,9 @@ func (api *Api) Run() error {
 	}))
 
 	v1 := engine.Group("/v1")
-
 	v1.GET("/group_contact", api.getGroupContact)
 	v1.GET("/message_info", api.getMessageInfo)
 	v1.POST("/message_content", api.saveMessageContent)
-
-	_ = v1.Group("/user", api.Authenticate)
-	{
-
-	}
 
 	return engine.Start(fmt.Sprintf(":%d", api.port))
 }

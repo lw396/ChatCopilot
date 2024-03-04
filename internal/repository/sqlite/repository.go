@@ -24,7 +24,7 @@ type DB struct {
 	msgName []string
 }
 
-func NewSQLiteClient(key, path string) *SQLite {
+func NewSQLite(key, path string) *SQLite {
 	return &SQLite{
 		key:  key,
 		path: path,

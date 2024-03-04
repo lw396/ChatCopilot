@@ -99,8 +99,11 @@ func (a *Service) SaveMessageContent(ctx context.Context, data *GroupContact) (e
 		})
 	}
 	if err = a.rep.SaveMessageContent(ctx, msgName, content); err != nil {
-		fmt.Println(err)
 		return
 	}
+	return
+}
+
+func (a *Service) SyncMessage(ctx context.Context) (err error) {
 	return
 }

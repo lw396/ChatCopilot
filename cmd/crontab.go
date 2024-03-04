@@ -2,23 +2,23 @@ package main
 
 import (
 	"os"
+	"os/signal"
+	"syscall"
 
-	"github.com/lw396/WeComCopilot/api"
+	"github.com/lw396/WeComCopilot/crontab"
 	"github.com/lw396/WeComCopilot/internal/repository/gorm"
-	"github.com/lw396/WeComCopilot/pkg/valuer"
 	"github.com/lw396/WeComCopilot/service"
-
 	"github.com/urfave/cli/v2"
 )
 
-var apiCmd = &cli.Command{
-	Name:  "api",
-	Usage: "启动API服务",
+var scheduleCmd = &cli.Command{
+	Name:  "crontab",
+	Usage: "启动定时服务",
 	Flags: []cli.Flag{
 		&cli.UintFlag{
 			Name:    "port",
 			Aliases: []string{"p"},
-			Value:   6978,
+			Value:   6977,
 			Usage:   "端口号",
 		},
 	},
@@ -30,7 +30,6 @@ var apiCmd = &cli.Command{
 		return nil
 	},
 	Action: func(c *cli.Context) error {
-
 		db, err := ctx.buildDB()
 		if err != nil {
 			return err
@@ -41,33 +40,28 @@ var apiCmd = &cli.Command{
 			return err
 		}
 
-		tokenKey := valuer.Value("key").Try(
-			os.Getenv("TOKEN_KEY"),
-			ctx.Section("token").Key("key").String(),
-		).String()
-		tokenExpire := valuer.Value(3600).Try(
-			ctx.Section("token").Key("expire").Int(),
-		).Int()
-
 		sqlite := ctx.buildSQLite()
 
 		service := service.New(
 			service.WithRepository(gorm.New(db)),
 			service.WithRedis(redis),
-			service.WithLogger(ctx.buildLogger("API")),
-			service.WithJWT(&service.TokenConfig{
-				Secret:     tokenKey,
-				ExpireSecs: tokenExpire,
-			}),
+			service.WithLogger(ctx.buildLogger("CRONTAB")),
 			service.WithSQLite(sqlite),
 		)
 
-		port := c.Int("port")
-		api := api.New(api.Config{
-			App:  service,
-			Port: port,
-		})
+		s := crontab.NewServer(service)
 
-		return api.Run()
+		sig := make(chan os.Signal, 1)
+		signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
+		go func() {
+			<-sig
+			s.Stop()
+			os.Exit(0)
+		}()
+
+		defer func() {
+			s.Stop()
+		}()
+		return s.Start(c.Context)
 	},
 }

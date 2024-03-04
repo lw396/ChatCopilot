@@ -34,7 +34,7 @@ var app = cli.App{
 			Usage: "输出配置文件信息",
 		},
 	},
-	Commands: []*cli.Command{apiCmd},
+	Commands: []*cli.Command{apiCmd, scheduleCmd},
 }
 
 func main() {
