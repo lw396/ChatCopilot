@@ -130,7 +130,7 @@ func (c *Context) buildDB() (*gorm.DB, error) {
 
 	loc := url.QueryEscape(timezone)
 	dsn := fmt.Sprintf(
-		"%s:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=true&loc=%s",
+		"%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=true&loc=%s",
 		user,
 		password,
 		host,
