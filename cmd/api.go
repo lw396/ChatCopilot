@@ -49,8 +49,6 @@ var apiCmd = &cli.Command{
 			ctx.Section("token").Key("expire").Int(),
 		).Int()
 
-		sqlite := ctx.buildSQLite()
-
 		service := service.New(
 			service.WithRepository(gorm.New(db)),
 			service.WithRedis(redis),
@@ -59,7 +57,7 @@ var apiCmd = &cli.Command{
 				Secret:     tokenKey,
 				ExpireSecs: tokenExpire,
 			}),
-			service.WithSQLite(sqlite),
+			service.WithSQLite(ctx.buildSQLite()),
 		)
 
 		port := c.Int("port")

@@ -51,14 +51,10 @@ func (a *Service) ScanMessage(ctx context.Context, userName string) (result *Mes
 }
 
 func (a *Service) SaveMessageContent(ctx context.Context, data *GroupContact) (err error) {
-	tx, err := a.sqlite.OpenDB(ctx, data.DBName)
-	if err != nil {
+	if err = a.ConnectMessageDB(ctx, data.DBName); err != nil {
 		return
 	}
 	msgName := "Chat_" + hex.EncodeToString(util.Md5([]byte(data.UsrName)))
-	if err = a.sqlite.BindMessage(ctx, tx, data.DBName, msgName); err != nil {
-		return
-	}
 	messages, err := a.sqlite.GetMessageContent(ctx, data.DBName, msgName)
 	if err != nil {
 		return
@@ -115,7 +111,7 @@ func (a *Service) InitSyncTask(ctx context.Context) (err error) {
 		if err != nil {
 			return
 		}
-		if err = a.ConnectDB(ctx, v.DBName); err != nil {
+		if err = a.ConnectMessageDB(ctx, v.DBName); err != nil {
 			return
 		}
 		param = append(param, SyncMessageTaskParam{
@@ -155,6 +151,18 @@ func (a *Service) SyncMessage(ctx context.Context) (err error) {
 			}
 			params[i].NewId = content[len(content)-1].LocalID
 		}(ctx, param, i)
+	}
+	return
+}
+
+func (a *Service) ConnectMessageDB(ctx context.Context, dbName string) (err error) {
+	tx, err := a.sqlite.OpenDB(ctx, dbName)
+	if err != nil {
+		return
+	}
+
+	if err = a.sqlite.BindMessageDB(ctx, tx, dbName); err != nil {
+		return
 	}
 	return
 }

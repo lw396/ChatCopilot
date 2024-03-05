@@ -3,49 +3,19 @@ package sqlite
 import (
 	"context"
 
-	"github.com/lw396/WeComCopilot/internal/errors"
 	"gorm.io/gorm"
 )
 
-func (s *SQLite) BindMessage(ctx context.Context, tx *gorm.DB, dbName, msgName string) (err error) {
-	if s.db[dbName] == nil {
-		s.db[dbName] = &DB{tx: tx, msgName: []string{msgName}}
+func (s *SQLite) BindMessageDB(ctx context.Context, tx *gorm.DB, dbName string) (err error) {
+	if s.db[dbName] != nil {
 		return
 	}
-	for _, t := range s.db[dbName].msgName {
-		if t == msgName {
-			return
-		}
-	}
-	s.db[dbName].msgName = append(s.db[dbName].msgName, msgName)
+	s.db[dbName] = tx
 	return
 }
 
-func (s *SQLite) UnbindMessage(ctx context.Context, dbName, msgName string) (err error) {
-	db := s.db[dbName]
-	if len(db.msgName) == 1 {
-		if db.msgName[0] != msgName {
-			err = errors.New(errors.CodeAuthMessageFound, "message not bind")
-			return
-		}
-		delete(s.db, dbName)
-		return
-	}
-
-	var isBind bool
-	for i, name := range s.db[dbName].msgName {
-		if name != msgName {
-			continue
-		}
-		s.db[dbName].msgName = append(db.msgName[:i], db.msgName[i+1:]...)
-		isBind = true
-		break
-	}
-	if !isBind {
-		err = errors.New(errors.CodeAuthMessageNotFound, "message not bind")
-		return
-	}
-	return
+func (s *SQLite) UnbindMessageDB(ctx context.Context, dbName string) {
+	delete(s.db, dbName)
 }
 
 func (s *SQLite) CheckMessageExistDB(ctx context.Context, tx *gorm.DB, userName string) (
@@ -59,7 +29,7 @@ func (s *SQLite) CheckMessageExistDB(ctx context.Context, tx *gorm.DB, userName 
 
 func (s *SQLite) GetMessageContent(ctx context.Context, dbName, msgName string) (
 	result []*MessageContent, err error) {
-	err = s.db[dbName].tx.WithContext(ctx).Table(msgName).Order("mesLocalID").Find(&result).Error
+	err = s.db[dbName].WithContext(ctx).Table(msgName).Order("mesLocalID").Find(&result).Error
 	if err != nil {
 		return
 	}
@@ -68,7 +38,7 @@ func (s *SQLite) GetMessageContent(ctx context.Context, dbName, msgName string) 
 
 func (s *SQLite) GetUnsyncMessageContent(ctx context.Context, dbName, msgName string, newId int64) (
 	result []*MessageContent, err error) {
-	err = s.db[dbName].tx.WithContext(ctx).Table(msgName).Order("mesLocalID").
+	err = s.db[dbName].WithContext(ctx).Table(msgName).Order("mesLocalID").
 		Where("mesLocalID < ?", newId).Find(&result).Error
 	if err != nil {
 		return

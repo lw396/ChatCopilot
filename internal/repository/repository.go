@@ -16,11 +16,11 @@ type SQLiteClient interface {
 	GetGroupContactByNickname(ctx context.Context, nickname string) ([]*sqlite.GroupContact, error)
 
 	// Message
+	BindMessageDB(ctx context.Context, tx *gorm.DB, dbName string) error
+	UnbindMessageDB(ctx context.Context, dbName string)
 	CheckMessageExistDB(ctx context.Context, tx *gorm.DB, dbName string) (*sqlite.SQLiteSequence, error)
 	GetMessageContent(ctx context.Context, dbName, msgName string) ([]*sqlite.MessageContent, error)
 	GetUnsyncMessageContent(ctx context.Context, dbName, msgName string, newId int64) ([]*sqlite.MessageContent, error)
-	BindMessage(ctx context.Context, tx *gorm.DB, dbName, msgName string) error
-	UnbindMessage(ctx context.Context, dbName, msgName string) error
 }
 
 type Repository interface {

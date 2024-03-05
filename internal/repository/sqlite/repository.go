@@ -17,25 +17,20 @@ const (
 type SQLite struct {
 	key  string
 	path string
-	db   map[string]*DB
-}
-
-type DB struct {
-	tx      *gorm.DB
-	msgName []string
+	db   map[string]*gorm.DB
 }
 
 func NewSQLite(key, path string) *SQLite {
 	return &SQLite{
 		key:  key,
 		path: path,
-		db:   make(map[string]*DB),
+		db:   make(map[string]*gorm.DB),
 	}
 }
 
 func (s *SQLite) OpenDB(ctx context.Context, dbName string) (tx *gorm.DB, err error) {
 	if s.db[dbName] != nil {
-		return s.db[dbName].tx, err
+		return s.db[dbName], err
 	}
 	dsn := fmt.Sprintf("%s/%s?_pragma_key=x'%s'", s.path, dbName, s.key)
 	return gorm.Open(sqlcipher.Open(dsn), &gorm.Config{
@@ -45,6 +40,6 @@ func (s *SQLite) OpenDB(ctx context.Context, dbName string) (tx *gorm.DB, err er
 
 func (s *SQLite) BindDB(ctx context.Context, tx *gorm.DB, dbName string) {
 	if s.db[dbName] == nil {
-		s.db[dbName] = &DB{tx: tx, msgName: []string{}}
+		s.db[dbName] = tx
 	}
 }
