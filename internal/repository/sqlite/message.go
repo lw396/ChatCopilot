@@ -65,3 +65,13 @@ func (s *SQLite) GetMessageContent(ctx context.Context, dbName, msgName string) 
 	}
 	return
 }
+
+func (s *SQLite) GetUnsyncMessageContent(ctx context.Context, dbName, msgName string, newId int64) (
+	result []*MessageContent, err error) {
+	err = s.db[dbName].tx.WithContext(ctx).Table(msgName).Order("mesLocalID").
+		Where("mesLocalID < ?", newId).Find(&result).Error
+	if err != nil {
+		return
+	}
+	return
+}

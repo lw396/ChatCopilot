@@ -18,6 +18,7 @@ type SQLiteClient interface {
 	// Message
 	CheckMessageExistDB(ctx context.Context, tx *gorm.DB, dbName string) (*sqlite.SQLiteSequence, error)
 	GetMessageContent(ctx context.Context, dbName, msgName string) ([]*sqlite.MessageContent, error)
+	GetUnsyncMessageContent(ctx context.Context, dbName, msgName string, newId int64) ([]*sqlite.MessageContent, error)
 	BindMessage(ctx context.Context, tx *gorm.DB, dbName, msgName string) error
 	UnbindMessage(ctx context.Context, dbName, msgName string) error
 }

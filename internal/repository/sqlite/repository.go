@@ -6,6 +6,7 @@ import (
 
 	"github.com/lw396/WeComCopilot/pkg/sqlcipher"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 const (
@@ -34,12 +35,16 @@ func NewSQLite(key, path string) *SQLite {
 
 func (s *SQLite) OpenDB(ctx context.Context, dbName string) (tx *gorm.DB, err error) {
 	if s.db[dbName] != nil {
-		return
+		return s.db[dbName].tx, err
 	}
 	dsn := fmt.Sprintf("%s/%s?_pragma_key=x'%s'", s.path, dbName, s.key)
-	return gorm.Open(sqlcipher.Open(dsn), &gorm.Config{})
+	return gorm.Open(sqlcipher.Open(dsn), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Silent),
+	})
 }
 
 func (s *SQLite) BindDB(ctx context.Context, tx *gorm.DB, dbName string) {
-	s.db[dbName] = &DB{tx: tx, msgName: []string{}}
+	if s.db[dbName] == nil {
+		s.db[dbName] = &DB{tx: tx, msgName: []string{}}
+	}
 }

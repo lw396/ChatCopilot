@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/hex"
 	"fmt"
+	"time"
 
 	"github.com/lw396/WeComCopilot/internal/errors"
 	mysql "github.com/lw396/WeComCopilot/internal/repository/gorm"
@@ -82,22 +83,8 @@ func (a *Service) SaveMessageContent(ctx context.Context, data *GroupContact) (e
 	if err = a.rep.CreateMessageContentTable(ctx, msgName); err != nil {
 		return
 	}
-	content := make([]*mysql.MessageContent, 0)
-	for _, message := range messages {
-		content = append(content, &mysql.MessageContent{
-			LocalID:     message.MesLocalID,
-			SvrID:       message.MesSvrID,
-			CreateTime:  message.MsgCreateTime,
-			Content:     message.MsgContent,
-			Status:      message.MsgStatus,
-			ImgStatus:   message.MsgImgStatus,
-			MessageType: message.MessageType,
-			Des:         message.MesDes,
-			Source:      message.MsgSource,
-			VoiceText:   message.MsgVoiceText,
-			Seq:         message.MsgSeq,
-		})
-	}
+
+	content := a.convertMessageContent(messages)
 	if err = a.rep.SaveMessageContent(ctx, msgName, content); err != nil {
 		return
 	}
@@ -107,36 +94,87 @@ func (a *Service) SaveMessageContent(ctx context.Context, data *GroupContact) (e
 type SyncMessageTaskParam struct {
 	DBName  string
 	MsgName string
-	NewtId  int64
+	NewId   int64
 }
 
-func (a *Service) InitSyncTask(ctx context.Context) {
+const (
+	SyncTaskCacheKey = "SYNC_TASK_CACHE_PARAM"
+)
+
+func (a *Service) InitSyncTask(ctx context.Context) (err error) {
 	group, err := a.rep.GetGroupContacts(ctx)
 	if err != nil {
 		return
 	}
 
-	param := make([]*SyncMessageTaskParam, 0)
+	param := make([]SyncMessageTaskParam, 0)
 	for _, v := range group {
 		msgName := "Chat_" + hex.EncodeToString(util.Md5([]byte(v.UsrName)))
-		data, err := a.rep.GetNewMessageContent(ctx, msgName)
+		var data *mysql.MessageContent
+		data, err = a.rep.GetNewMessageContent(ctx, msgName)
 		if err != nil {
 			return
 		}
-
-		param = append(param, &SyncMessageTaskParam{
+		if err = a.ConnectDB(ctx, v.DBName); err != nil {
+			return
+		}
+		param = append(param, SyncMessageTaskParam{
 			DBName:  v.DBName,
 			MsgName: msgName,
-			NewtId:  data.LocalID,
+			NewId:   data.LocalID,
 		})
 	}
+	err = a.cache.Set(context.Background(), SyncTaskCacheKey, param, 24*time.Hour)
+	if err != nil {
+		return
+	}
+
+	return
 }
 
 func (a *Service) SyncMessage(ctx context.Context) (err error) {
+	var params []SyncMessageTaskParam
+	_, err = a.cache.Get(ctx, SyncTaskCacheKey, &params)
+	if err != nil {
+		return
+	}
 
-	go func() {
+	for i, param := range params {
+		go func(ctx context.Context, param SyncMessageTaskParam, i int) {
+			data, err := a.sqlite.GetUnsyncMessageContent(ctx, param.DBName, param.MsgName, param.NewId)
+			if err != nil {
+				if db.IsRecordNotFound(err) {
+					err = nil
+					return
+				}
+				return
+			}
+			content := a.convertMessageContent(data)
+			if err = a.rep.SaveMessageContent(ctx, param.MsgName, content); err != nil {
+				return
+			}
+			params[i].NewId = content[len(content)-1].LocalID
+		}(ctx, param, i)
+	}
+	return
+}
 
-	}()
-
+func (a *Service) convertMessageContent(msg []*sqlite.MessageContent) (result []*mysql.MessageContent) {
+	result = make([]*mysql.MessageContent, 0)
+	for _, v := range msg {
+		result = append(result, &mysql.MessageContent{
+			LocalID:     v.MesLocalID,
+			SvrID:       v.MesSvrID,
+			CreateTime:  v.MsgCreateTime,
+			Content:     v.MsgContent,
+			Status:      v.MsgStatus,
+			ImgStatus:   v.MsgImgStatus,
+			MessageType: v.MessageType,
+			Des:         v.MesDes,
+			Source:      v.MsgSource,
+			VoiceText:   v.MsgVoiceText,
+			Seq:         v.MsgSeq,
+		})
+	}
 	return
 }

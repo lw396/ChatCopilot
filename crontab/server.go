@@ -24,12 +24,15 @@ func NewServer(s *service.Service) *crontabServer {
 }
 
 func (s *crontabServer) Start(ctx context.Context) error {
-	_, err := s.cron.AddFunc("* * * * * *", func() {
+	if err := s.InitSyncTask(ctx); err != nil {
+		return err
+	}
+
+	if _, err := s.cron.AddFunc("10 * * * * *", func() {
 		if err := s.SyncMessage(context.Background()); err != nil {
 			return
 		}
-	})
-	if err != nil {
+	}); err != nil {
 		return err
 	}
 

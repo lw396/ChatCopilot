@@ -4,10 +4,10 @@ import (
 	"context"
 )
 
+func (s *crontabServer) InitSyncTask(ctx context.Context) (err error) {
+	return s.service.InitSyncTask(ctx)
+}
+
 func (s *crontabServer) SyncMessage(ctx context.Context) (err error) {
-	err = s.service.SyncMessage(ctx)
-	if err != nil {
-		return
-	}
-	return
+	return s.service.SyncMessage(ctx)
 }

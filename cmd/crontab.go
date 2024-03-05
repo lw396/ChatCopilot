@@ -7,6 +7,7 @@ import (
 
 	"github.com/lw396/WeComCopilot/crontab"
 	"github.com/lw396/WeComCopilot/internal/repository/gorm"
+	"github.com/lw396/WeComCopilot/pkg/cache"
 	"github.com/lw396/WeComCopilot/service"
 	"github.com/urfave/cli/v2"
 )
@@ -45,7 +46,7 @@ var scheduleCmd = &cli.Command{
 			service.WithRedis(redis),
 			service.WithLogger(ctx.buildLogger("CRONTAB")),
 			service.WithSQLite(ctx.buildSQLite()),
-			service.WithCache(ctx.buildCache()),
+			service.WithCache(cache.DefaultStore()),
 		)
 
 		s := crontab.NewServer(service)

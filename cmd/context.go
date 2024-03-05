@@ -6,10 +6,8 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-	"time"
 
 	"github.com/lw396/WeComCopilot/internal/repository/sqlite"
-	"github.com/lw396/WeComCopilot/pkg/cache"
 	"github.com/lw396/WeComCopilot/pkg/db"
 	"github.com/lw396/WeComCopilot/pkg/log"
 	"github.com/lw396/WeComCopilot/pkg/redis"
@@ -195,8 +193,4 @@ func (c *Context) buildSQLite() *sqlite.SQLite {
 	).String()
 
 	return sqlite.NewSQLite(key, path)
-}
-
-func (c *Context) buildCache() *cache.Cacher {
-	return cache.WithCache(cache.DefaultStore(), c.appName, 10*time.Minute)
 }
