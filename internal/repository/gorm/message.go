@@ -19,3 +19,12 @@ func (r *gormRepository) SaveMessageContent(ctx context.Context, msgName string,
 	}
 	return
 }
+
+func (r *gormRepository) GetNewMessageContent(ctx context.Context, msgName string) (result *MessageContent, err error) {
+	result = &MessageContent{}
+	err = r.db.WithContext(ctx).Table(msgName).Order("local_id desc").First(result).Error
+	if err != nil {
+		return
+	}
+	return
+}

@@ -11,8 +11,10 @@ import (
 type SQLiteClient interface {
 	OpenDB(ctx context.Context, dbName string) (*gorm.DB, error)
 	BindDB(ctx context.Context, tx *gorm.DB, dbName string)
+
 	// Group
 	GetGroupContactByNickname(ctx context.Context, nickname string) ([]*sqlite.GroupContact, error)
+
 	// Message
 	CheckMessageExistDB(ctx context.Context, tx *gorm.DB, dbName string) (*sqlite.SQLiteSequence, error)
 	GetMessageContent(ctx context.Context, dbName, msgName string) ([]*sqlite.MessageContent, error)
@@ -23,8 +25,10 @@ type SQLiteClient interface {
 type Repository interface {
 	// Group
 	SaveGroupContact(ctx context.Context, contact *db.GroupContact) error
-	GetGroupContact(ctx context.Context, usrName string) (*db.GroupContact, error)
+	GetGroupContacts(ctx context.Context) ([]*db.GroupContact, error)
+	GetGroupContactByUsrName(ctx context.Context, usrName string) (*db.GroupContact, error)
 	// Message
 	CreateMessageContentTable(ctx context.Context, msgName string) error
 	SaveMessageContent(ctx context.Context, msgName string, content []*db.MessageContent) error
+	GetNewMessageContent(ctx context.Context, msgName string) (*db.MessageContent, error)
 }

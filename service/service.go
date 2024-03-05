@@ -2,6 +2,7 @@ package service
 
 import (
 	"github.com/lw396/WeComCopilot/internal/repository"
+	"github.com/lw396/WeComCopilot/pkg/cache"
 	"github.com/lw396/WeComCopilot/pkg/log"
 	"github.com/lw396/WeComCopilot/pkg/redis"
 
@@ -29,6 +30,7 @@ type options struct {
 	token  *TokenConfig
 	redis  redis.RedisClient
 	sqlite repository.SQLiteClient
+	cache  cache.CacheStore
 }
 
 type Option func(*options)
@@ -66,6 +68,12 @@ func WithRedis(rc redis.RedisClient) Option {
 func WithSQLite(s repository.SQLiteClient) Option {
 	return func(o *options) {
 		o.sqlite = s
+	}
+}
+
+func WithCache(s cache.CacheStore) Option {
+	return func(o *options) {
+		o.cache = s
 	}
 }
 

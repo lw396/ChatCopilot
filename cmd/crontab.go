@@ -40,13 +40,12 @@ var scheduleCmd = &cli.Command{
 			return err
 		}
 
-		sqlite := ctx.buildSQLite()
-
 		service := service.New(
 			service.WithRepository(gorm.New(db)),
 			service.WithRedis(redis),
 			service.WithLogger(ctx.buildLogger("CRONTAB")),
-			service.WithSQLite(sqlite),
+			service.WithSQLite(ctx.buildSQLite()),
+			service.WithCache(ctx.buildCache()),
 		)
 
 		s := crontab.NewServer(service)

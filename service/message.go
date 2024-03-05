@@ -63,7 +63,7 @@ func (a *Service) SaveMessageContent(ctx context.Context, data *GroupContact) (e
 		return
 	}
 
-	if _, err = a.rep.GetGroupContact(ctx, data.UsrName); err != gorm.ErrRecordNotFound {
+	if _, err = a.rep.GetGroupContactByUsrName(ctx, data.UsrName); err != gorm.ErrRecordNotFound {
 		if err == nil {
 			err = errors.New(errors.CodeAuthMessageFound, "group already exist")
 		}
@@ -104,6 +104,39 @@ func (a *Service) SaveMessageContent(ctx context.Context, data *GroupContact) (e
 	return
 }
 
+type SyncMessageTaskParam struct {
+	DBName  string
+	MsgName string
+	NewtId  int64
+}
+
+func (a *Service) InitSyncTask(ctx context.Context) {
+	group, err := a.rep.GetGroupContacts(ctx)
+	if err != nil {
+		return
+	}
+
+	param := make([]*SyncMessageTaskParam, 0)
+	for _, v := range group {
+		msgName := "Chat_" + hex.EncodeToString(util.Md5([]byte(v.UsrName)))
+		data, err := a.rep.GetNewMessageContent(ctx, msgName)
+		if err != nil {
+			return
+		}
+
+		param = append(param, &SyncMessageTaskParam{
+			DBName:  v.DBName,
+			MsgName: msgName,
+			NewtId:  data.LocalID,
+		})
+	}
+}
+
 func (a *Service) SyncMessage(ctx context.Context) (err error) {
+
+	go func() {
+
+	}()
+
 	return
 }
