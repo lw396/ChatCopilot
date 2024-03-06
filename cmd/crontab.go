@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"os"
 	"os/signal"
 	"syscall"
@@ -9,7 +10,7 @@ import (
 	"github.com/lw396/WeComCopilot/internal/repository/gorm"
 	"github.com/lw396/WeComCopilot/pkg/cache"
 	"github.com/lw396/WeComCopilot/service"
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v3"
 )
 
 var scheduleCmd = &cli.Command{
@@ -23,27 +24,21 @@ var scheduleCmd = &cli.Command{
 			Usage:   "端口号",
 		},
 	},
-	Before: func(c *cli.Context) (err error) {
-		ctx, err = buildContext(c, "app")
+	Before: func(c context.Context, cmd *cli.Command) (err error) {
+		ctx, err = buildContext(cmd, "app")
 		if err != nil {
 			return err
 		}
 		return nil
 	},
-	Action: func(c *cli.Context) error {
+	Action: func(c context.Context, cmd *cli.Command) error {
 		db, err := ctx.buildDB()
-		if err != nil {
-			return err
-		}
-
-		redis, err := ctx.buildRedis()
 		if err != nil {
 			return err
 		}
 
 		service := service.New(
 			service.WithRepository(gorm.New(db)),
-			service.WithRedis(redis),
 			service.WithLogger(ctx.buildLogger("CRONTAB")),
 			service.WithSQLite(ctx.buildSQLite()),
 			service.WithCache(cache.DefaultStore()),
@@ -62,6 +57,6 @@ var scheduleCmd = &cli.Command{
 		defer func() {
 			s.Stop()
 		}()
-		return s.Start(c.Context)
+		return s.Start(c)
 	},
 }

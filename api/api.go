@@ -9,13 +9,13 @@ import (
 )
 
 type Api struct {
-	port    int
+	port    int64
 	service *service.Service
 }
 
 type Config struct {
 	App  *service.Service
-	Port int
+	Port int64
 }
 
 func New(c Config) *Api {

@@ -10,28 +10,27 @@ import (
 	"github.com/lw396/WeComCopilot/internal/repository/sqlite"
 	"github.com/lw396/WeComCopilot/pkg/db"
 	"github.com/lw396/WeComCopilot/pkg/log"
-	"github.com/lw396/WeComCopilot/pkg/redis"
 	"github.com/lw396/WeComCopilot/pkg/snowflake"
 	"github.com/lw396/WeComCopilot/pkg/valuer"
 
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v3"
 	"gopkg.in/ini.v1"
 	"gorm.io/gorm"
 )
 
 type Context struct {
-	*cli.Context
+	*cli.Command
 	cfg         *ini.File
 	appName     string
 	environment string
-	podId       uint
+	podId       uint64
 }
 
 func (c *Context) Section(name string) *ini.Section {
 	return c.cfg.Section(name)
 }
 
-func buildContext(c *cli.Context, appName string) (*Context, error) {
+func buildContext(c *cli.Command, appName string) (*Context, error) {
 	environment := getEnv()
 	name := strings.ToLower(appName)
 	configDir := c.String("config-dir")
@@ -70,7 +69,7 @@ func buildContext(c *cli.Context, appName string) (*Context, error) {
 	}
 
 	return &Context{
-		Context:     c,
+		Command:     c,
 		cfg:         cfg,
 		appName:     name,
 		environment: environment,
@@ -154,31 +153,6 @@ func (c *Context) buildDB() (*gorm.DB, error) {
 		db.WithDSN(dsn),
 		db.WithIDGenerator(idGen),
 		db.WithLogger(c.buildLogger("DB")),
-	)
-}
-
-func (c *Context) buildRedis() (redis.RedisClient, error) {
-	host := valuer.Value("127.0.0.1").Try(
-		os.Getenv("REDIS_HOST"),
-		c.Section("redis").Key("host").String(),
-	).String()
-	port := valuer.Value(6379).Try(
-		os.Getenv("REDIS_PORT"),
-		c.Section("redis").Key("port").MustInt(),
-	).Int()
-	password := valuer.Value("secret").Try(
-		os.Getenv("REDIS_AUTH"),
-		c.Section("redis").Key("auth").String(),
-	).String()
-	db := valuer.Value(0).Try(
-		os.Getenv("REDIS_DB"),
-		c.Section("redis").Key("db").MustInt(),
-	).Int()
-
-	return redis.NewClient(
-		redis.WithAddress(host, port),
-		redis.WithAuth("", password),
-		redis.WithDB(db),
 	)
 }
 

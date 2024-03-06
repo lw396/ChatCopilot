@@ -1,16 +1,18 @@
 package main
 
 import (
+	"context"
 	"log"
 	"os"
 
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v3"
 )
 
 var ctx *Context
 
-var app = cli.App{
-	Name: "github.com/lw396/WeComCopilot",
+var app = cli.Command{
+	Name:  "github.com/lw396/WeComCopilot",
+	Usage: "微信机器人消息转发服务",
 	Flags: []cli.Flag{
 		&cli.StringFlag{
 			Name:    "config-dir",
@@ -38,7 +40,7 @@ var app = cli.App{
 }
 
 func main() {
-	if err := app.Run(os.Args); err != nil {
+	if err := app.Run(context.Background(), os.Args); err != nil {
 		log.Fatal(err)
 	}
 }

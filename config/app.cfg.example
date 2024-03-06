@@ -8,12 +8,6 @@ password=secret
 db=peiwan
 timezone=Asia/Shanghai
 
-[redis]
-host=127.0.0.1
-port=6379
-auth=secret
-db=0
-
 [log]
 dir=logs
 max-age=7
@@ -22,8 +16,6 @@ max-age=7
 secret=sdfsgsxcwetxxxx
 expire-secs=3600
 
-[officialAccountConfig]
-appID="wx27e944e6a5607ee4"
-appSecret="4791d3c42ccb38a40267faeba7884ff4"
-token="TAiIy1gW189"
-encodingAESKey="Kgtvper3DNZnXnUazK3N18Iq5grydrPg48hctbzNou2"
+[wechat]
+key=
+path=./test

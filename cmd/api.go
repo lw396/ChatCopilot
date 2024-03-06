@@ -1,13 +1,14 @@
 package main
 
 import (
+	"context"
 	"os"
 
 	"github.com/lw396/WeComCopilot/api"
 	"github.com/lw396/WeComCopilot/internal/repository/gorm"
 	"github.com/lw396/WeComCopilot/pkg/valuer"
 	"github.com/lw396/WeComCopilot/service"
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v3"
 )
 
 var apiCmd = &cli.Command{
@@ -21,21 +22,16 @@ var apiCmd = &cli.Command{
 			Usage:   "端口号",
 		},
 	},
-	Before: func(c *cli.Context) (err error) {
-		ctx, err = buildContext(c, "app")
+	Before: func(c context.Context, cmd *cli.Command) (err error) {
+		ctx, err = buildContext(cmd, "app")
 		if err != nil {
 			return err
 		}
 		return nil
 	},
-	Action: func(c *cli.Context) error {
+	Action: func(c context.Context, cmd *cli.Command) error {
 
 		db, err := ctx.buildDB()
-		if err != nil {
-			return err
-		}
-
-		redis, err := ctx.buildRedis()
 		if err != nil {
 			return err
 		}
@@ -50,7 +46,6 @@ var apiCmd = &cli.Command{
 
 		service := service.New(
 			service.WithRepository(gorm.New(db)),
-			service.WithRedis(redis),
 			service.WithLogger(ctx.buildLogger("API")),
 			service.WithJWT(&service.TokenConfig{
 				Secret:     tokenKey,
@@ -59,7 +54,7 @@ var apiCmd = &cli.Command{
 			service.WithSQLite(ctx.buildSQLite()),
 		)
 
-		port := c.Int("port")
+		port := cmd.Int("port")
 		api := api.New(api.Config{
 			App:  service,
 			Port: port,
