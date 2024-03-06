@@ -39,7 +39,7 @@ func (s *SQLite) GetMessageContent(ctx context.Context, dbName, msgName string) 
 func (s *SQLite) GetUnsyncMessageContent(ctx context.Context, dbName, msgName string, newId int64) (
 	result []*MessageContent, err error) {
 	err = s.db[dbName].WithContext(ctx).Table(msgName).Order("mesLocalID").
-		Where("mesLocalID < ?", newId).Find(&result).Error
+		Where("mesLocalID > ?", newId).Find(&result).Error
 	if err != nil {
 		return
 	}

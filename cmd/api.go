@@ -7,7 +7,6 @@ import (
 	"github.com/lw396/WeComCopilot/internal/repository/gorm"
 	"github.com/lw396/WeComCopilot/pkg/valuer"
 	"github.com/lw396/WeComCopilot/service"
-
 	"github.com/urfave/cli/v2"
 )
 

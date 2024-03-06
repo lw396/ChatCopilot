@@ -28,6 +28,7 @@ type Repository interface {
 	SaveGroupContact(ctx context.Context, contact *db.GroupContact) error
 	GetGroupContacts(ctx context.Context) ([]*db.GroupContact, error)
 	GetGroupContactByUsrName(ctx context.Context, usrName string) (*db.GroupContact, error)
+
 	// Message
 	CreateMessageContentTable(ctx context.Context, msgName string) error
 	SaveMessageContent(ctx context.Context, msgName string, content []*db.MessageContent) error
