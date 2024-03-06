@@ -2,8 +2,8 @@ package service
 
 import (
 	"github.com/lw396/WeComCopilot/internal/repository"
-	"github.com/lw396/WeComCopilot/pkg/cache"
 	"github.com/lw396/WeComCopilot/pkg/log"
+	"github.com/lw396/WeComCopilot/pkg/redis"
 
 	"go.opentelemetry.io/otel/trace"
 )
@@ -27,8 +27,8 @@ type options struct {
 	logger log.Logger
 	tracer trace.Tracer
 	token  *TokenConfig
+	redis  redis.RedisClient
 	sqlite repository.SQLiteClient
-	cache  cache.CacheStore
 }
 
 type Option func(*options)
@@ -63,9 +63,9 @@ func WithSQLite(s repository.SQLiteClient) Option {
 	}
 }
 
-func WithCache(s cache.CacheStore) Option {
+func WithRedis(rc redis.RedisClient) Option {
 	return func(o *options) {
-		o.cache = s
+		o.redis = rc
 	}
 }
 

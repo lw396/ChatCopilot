@@ -8,6 +8,12 @@ password=secret
 db=peiwan
 timezone=Asia/Shanghai
 
+[redis]
+host=127.0.0.1
+port=6379
+auth=secret
+db=0
+
 [log]
 dir=logs
 max-age=7

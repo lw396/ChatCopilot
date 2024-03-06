@@ -10,8 +10,10 @@ import (
 	"github.com/lw396/WeComCopilot/internal/repository/sqlite"
 	"github.com/lw396/WeComCopilot/pkg/db"
 	"github.com/lw396/WeComCopilot/pkg/log"
+	"github.com/lw396/WeComCopilot/pkg/redis"
 	"github.com/lw396/WeComCopilot/pkg/snowflake"
 	"github.com/lw396/WeComCopilot/pkg/valuer"
+	"github.com/lw396/WeComCopilot/service"
 
 	"github.com/urfave/cli/v3"
 	"gopkg.in/ini.v1"
@@ -154,6 +156,46 @@ func (c *Context) buildDB() (*gorm.DB, error) {
 		db.WithIDGenerator(idGen),
 		db.WithLogger(c.buildLogger("DB")),
 	)
+}
+
+func (c *Context) buildRedis() (redis.RedisClient, error) {
+	host := valuer.Value("127.0.0.1").Try(
+		os.Getenv("REDIS_HOST"),
+		c.Section("redis").Key("host").String(),
+	).String()
+	port := valuer.Value(6379).Try(
+		os.Getenv("REDIS_PORT"),
+		c.Section("redis").Key("port").MustInt(),
+	).Int()
+	password := valuer.Value("secret").Try(
+		os.Getenv("REDIS_AUTH"),
+		c.Section("redis").Key("auth").String(),
+	).String()
+	db := valuer.Value(0).Try(
+		os.Getenv("REDIS_DB"),
+		c.Section("redis").Key("db").MustInt(),
+	).Int()
+
+	return redis.NewClient(
+		redis.WithAddress(host, port),
+		redis.WithAuth("", password),
+		redis.WithDB(db),
+	)
+}
+
+func (c *Context) buildJWT() *service.TokenConfig {
+	tokenKey := valuer.Value("key").Try(
+		os.Getenv("TOKEN_KEY"),
+		ctx.Section("token").Key("key").String(),
+	).String()
+	tokenExpire := valuer.Value(3600).Try(
+		ctx.Section("token").Key("expire").Int(),
+	).Int()
+
+	return &service.TokenConfig{
+		Secret:     tokenKey,
+		ExpireSecs: tokenExpire,
+	}
 }
 
 func (c *Context) buildSQLite() *sqlite.SQLite {

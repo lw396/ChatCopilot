@@ -2,11 +2,9 @@ package main
 
 import (
 	"context"
-	"os"
 
 	"github.com/lw396/WeComCopilot/api"
 	"github.com/lw396/WeComCopilot/internal/repository/gorm"
-	"github.com/lw396/WeComCopilot/pkg/valuer"
 	"github.com/lw396/WeComCopilot/service"
 	"github.com/urfave/cli/v3"
 )
@@ -36,21 +34,10 @@ var apiCmd = &cli.Command{
 			return err
 		}
 
-		tokenKey := valuer.Value("key").Try(
-			os.Getenv("TOKEN_KEY"),
-			ctx.Section("token").Key("key").String(),
-		).String()
-		tokenExpire := valuer.Value(3600).Try(
-			ctx.Section("token").Key("expire").Int(),
-		).Int()
-
 		service := service.New(
 			service.WithRepository(gorm.New(db)),
 			service.WithLogger(ctx.buildLogger("API")),
-			service.WithJWT(&service.TokenConfig{
-				Secret:     tokenKey,
-				ExpireSecs: tokenExpire,
-			}),
+			service.WithJWT(ctx.buildJWT()),
 			service.WithSQLite(ctx.buildSQLite()),
 		)
 

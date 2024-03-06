@@ -120,7 +120,7 @@ func (a *Service) InitSyncTask(ctx context.Context) (err error) {
 			NewId:   data.LocalID,
 		})
 	}
-	err = a.cache.Set(context.Background(), SyncTaskCacheKey, param, 24*time.Hour)
+	err = a.redis.Set(ctx, SyncTaskCacheKey, param, 24*time.Hour)
 	if err != nil {
 		return
 	}
@@ -130,7 +130,7 @@ func (a *Service) InitSyncTask(ctx context.Context) (err error) {
 
 func (a *Service) SyncMessage(ctx context.Context) (err error) {
 	var params []SyncMessageTaskParam
-	_, err = a.cache.Get(ctx, SyncTaskCacheKey, &params)
+	_, err = a.redis.Get(ctx, SyncTaskCacheKey, &params)
 	if err != nil {
 		return
 	}
