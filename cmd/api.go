@@ -13,7 +13,7 @@ var apiCmd = &cli.Command{
 	Name:  "api",
 	Usage: "启动API服务",
 	Flags: []cli.Flag{
-		&cli.UintFlag{
+		&cli.IntFlag{
 			Name:    "port",
 			Aliases: []string{"p"},
 			Value:   6978,

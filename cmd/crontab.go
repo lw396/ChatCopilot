@@ -15,14 +15,6 @@ import (
 var scheduleCmd = &cli.Command{
 	Name:  "crontab",
 	Usage: "启动定时服务",
-	Flags: []cli.Flag{
-		&cli.UintFlag{
-			Name:    "port",
-			Aliases: []string{"p"},
-			Value:   6977,
-			Usage:   "端口号",
-		},
-	},
 	Before: func(c context.Context, cmd *cli.Command) (err error) {
 		ctx, err = buildContext(cmd, "app")
 		if err != nil {

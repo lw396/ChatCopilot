@@ -5,6 +5,13 @@ import (
 	"github.com/lw396/WeComCopilot/internal/errors"
 )
 
+// getGroupContact	godoc
+//
+//	@Summary		获取群聊成员列表
+//	@Description	获取群聊成员列表通过输入群聊名称列表
+//	@Tags			group
+//	@Accept			json
+//	@Produce		json
 func (a *Api) getGroupContact(c echo.Context) (err error) {
 	nickname := c.QueryParam("nickname")
 	if nickname == "" {

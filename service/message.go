@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/hex"
 	"fmt"
-	"time"
 
 	"github.com/lw396/WeComCopilot/internal/errors"
 	mysql "github.com/lw396/WeComCopilot/internal/repository/gorm"
@@ -84,6 +83,14 @@ func (a *Service) SaveMessageContent(ctx context.Context, data *GroupContact) (e
 	if err = a.rep.SaveMessageContent(ctx, msgName, content); err != nil {
 		return
 	}
+
+	// Update sync task
+	go func(ctx context.Context) {
+		if err := a.InitSyncTask(ctx); err != nil {
+			a.logger.Errorf("update sync task failed, err: %v", err)
+		}
+	}(ctx)
+
 	return
 }
 
@@ -120,7 +127,7 @@ func (a *Service) InitSyncTask(ctx context.Context) (err error) {
 			NewId:   data.LocalID,
 		})
 	}
-	err = a.redis.Set(ctx, SyncTaskCacheKey, param, 24*time.Hour)
+	err = a.redis.Set(ctx, SyncTaskCacheKey, param, 0)
 	if err != nil {
 		return
 	}
