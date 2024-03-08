@@ -1,15 +1,4 @@
-basePath: /v2
-host: petstore.swagger.io
 info:
-  contact:
-    email: support@swagger.io
-    name: API Support
-    url: http://www.swagger.io/support
-  license:
-    name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
-  termsOfService: http://swagger.io/terms/
-  title: Chat Copilot API
-  version: v1
+  contact: {}
 paths: {}
 swagger: "2.0"
