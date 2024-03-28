@@ -28,6 +28,7 @@ func (s *crontabServer) Start(ctx context.Context) error {
 		return err
 	}
 
+	// 执行定时任务
 	if _, err := s.cron.AddFunc("*/30 * * * * *", func() {
 		if err := s.SyncMessage(context.Background()); err != nil {
 			return

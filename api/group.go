@@ -7,8 +7,8 @@ import (
 
 // getGroupContact	godoc
 //
-//	@Summary		获取群聊成员列表
-//	@Description	获取群聊成员列表通过输入群聊名称列表
+//	@Summary		获取群聊名称列表
+//	@Description	获取群聊名称列表通过输入群聊名称列表
 //	@Tags			group
 //	@Accept			json
 //	@Produce		json
