@@ -1,12 +1,12 @@
 name: Release
 
 on:
+  release:
+    types: [published]
   push:
-    branches:
-      - main
+    branches: [main]
   pull_request:
-    branches:
-      - main
+    branches: [main]
 
 permissions:
   contents: write
@@ -26,7 +26,28 @@ jobs:
           go-version: 1.21.x
 
       - name: Build
-        run: go build -v ./...
-      
-      - name: Test
-        run: go test ./...
+        run: go build -o chat-copilot-server ./cmd/*.go
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.event.release.tag_name }}
+          release_name: Release ${{ github.event.release.tag_name }}
+          body: |
+            Release ${{ github.event.release.tag_name }}
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./release
+          asset_name: ${{ github.event.release.tag_name }}
+          asset_content_type: application/octet-stream
