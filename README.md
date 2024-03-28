@@ -49,18 +49,40 @@ key=
 path=./test
 ```
 
-`wechat.key` 为微信数据库密钥，获取方式见[这里](https://github.com/lw396/ChatCopilot/blob/main/doc/mac%E6%95%B0%E6%8D%AE%E5%BA%93%E8%A7%A3%E5%AF%86.md)。
+`wechat.key` 为微信数据库密钥，获取方式见[这里](doc/mac数据库解密.md)。
 
 `wechat.path` 为 mac 微信聊天记录的目录，具体需要看你电脑存放位置的实际情况，例：`/Users/james/Library/Containers/com.tencent.xinWeChat/Data/Library/Application\ Support/com.tencent.xinWeChat/2.0b4.0.9/5a22781f14219edfffa333cb38aa92cf/Message`
+
+### 创建数据库表
+
+执行 `migration` 文件夹中的 sql 语句创建对应的数据库表.
 
 ### 执行可执行文件
 
 在 Releases 中选择对应的系统下载可执行文件，解压后直接执行。
 
+#### 运行 api 服务
+
+```sh
+./ChatCopilot api
+
+```
+
+[对应的 api 文档地址](doc/api)
+
+#### 运行定时服务
+
+```sh
+./ChatCopilot crontab
+
+```
+
+每 30 秒同步一次新的群聊记录。
+
 #### 命令行执行
 
 ```sh
-./ChatCopilot 
+./ChatCopilot
 ```
 
 ## 常见问题
