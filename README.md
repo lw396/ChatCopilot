@@ -2,7 +2,7 @@
 
 ## 项目介绍
 
-ChatCopilot 是一款用 `golang` 实现的获取微信聊天记录并存储到数据库的脚本工具，目前只在 MacOS 上可运行（因为我没有 windows 电脑）。
+`ChatCopilot` 是一款用 `golang` 实现的获取微信聊天记录并存储到数据库的脚本工具，目前只在 `MacOS` 上可运行（因为我没有 windows 电脑）。
 
 ### 当前实现功能
 
@@ -51,24 +51,24 @@ path=./test
 
 `wechat.key` 为微信数据库密钥，获取方式见[这里](doc/mac数据库解密.md)。
 
-`wechat.path` 为 mac 微信聊天记录的目录，具体需要看你电脑存放位置的实际情况，例：`/Users/james/Library/Containers/com.tencent.xinWeChat/Data/Library/Application\ Support/com.tencent.xinWeChat/2.0b4.0.9/5a22781f14219edfffa333cb38aa92cf/Message`
+`wechat.path` 为 `mac` 微信聊天记录的目录，具体需要看你电脑存放位置的实际情况，例：`/Users/james/Library/Containers/com.tencent.xinWeChat/Data/Library/Application\ Support/com.tencent.xinWeChat/2.0b4.0.9/5a22781f14219edfffa333cb38aa92cf/Message`
 
 ### 创建数据库表
 
-执行 `migration` 文件夹中的 sql 语句创建对应的数据库表.
+执行 `migration` 文件夹中的 `sql` 语句创建对应的数据库表.
 
 ### 执行可执行文件
 
-在 Releases 中选择对应的系统下载可执行文件，解压后直接执行。
+在 `Releases` 中选择对应的系统下载可执行文件，解压后直接执行。
 
-#### 运行 api 服务
+#### 运行 `api` 服务
 
 ```sh
 ./ChatCopilot api
 
 ```
 
-[对应的 api 文档地址](doc/api)
+对应的 `api` 文档[地址](doc/api.md)
 
 #### 运行定时服务
 
@@ -79,15 +79,9 @@ path=./test
 
 每 30 秒同步一次新的群聊记录。
 
-#### 命令行执行
-
-```sh
-./ChatCopilot
-```
-
 ## 常见问题
 
-### 未找到选项'-L/usr/local/opt/openssl/lib 的目录
+### 未找到选项 `-L/usr/local/opt/openssl/lib` 的目录
 
 ```sh
 
