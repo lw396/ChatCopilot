@@ -18,10 +18,6 @@ db=0
 dir=logs
 max-age=7
 
-[jwt]
-secret=sdfsgsxcwetxxxx
-expire-secs=3600
-
 [wechat]
 key=
 path=./test

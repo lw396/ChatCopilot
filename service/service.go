@@ -12,11 +12,6 @@ type Service struct {
 	*options
 }
 
-type TokenConfig struct {
-	Secret     string
-	ExpireSecs int
-}
-
 type SQLiteConfig struct {
 	Key  string
 	Path string
@@ -26,7 +21,6 @@ type options struct {
 	rep    repository.Repository
 	logger log.Logger
 	tracer trace.Tracer
-	token  *TokenConfig
 	redis  redis.RedisClient
 	sqlite repository.SQLiteClient
 }
@@ -48,12 +42,6 @@ func WithLogger(logger log.Logger) Option {
 func WithTracer(tracer trace.Tracer) Option {
 	return func(o *options) {
 		o.tracer = tracer
-	}
-}
-
-func WithJWT(jc *TokenConfig) Option {
-	return func(o *options) {
-		o.token = jc
 	}
 }
 

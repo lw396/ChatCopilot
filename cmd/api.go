@@ -37,7 +37,6 @@ var apiCmd = &cli.Command{
 		service := service.New(
 			service.WithRepository(gorm.New(db)),
 			service.WithLogger(ctx.buildLogger("API")),
-			service.WithJWT(ctx.buildJWT()),
 			service.WithSQLite(ctx.buildSQLite()),
 		)
 

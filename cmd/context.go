@@ -13,7 +13,6 @@ import (
 	"github.com/lw396/WeComCopilot/pkg/redis"
 	"github.com/lw396/WeComCopilot/pkg/snowflake"
 	"github.com/lw396/WeComCopilot/pkg/valuer"
-	"github.com/lw396/WeComCopilot/service"
 
 	"github.com/urfave/cli/v3"
 	"gopkg.in/ini.v1"
@@ -181,21 +180,6 @@ func (c *Context) buildRedis() (redis.RedisClient, error) {
 		redis.WithAuth("", password),
 		redis.WithDB(db),
 	)
-}
-
-func (c *Context) buildJWT() *service.TokenConfig {
-	tokenKey := valuer.Value("key").Try(
-		os.Getenv("TOKEN_KEY"),
-		ctx.Section("token").Key("key").String(),
-	).String()
-	tokenExpire := valuer.Value(3600).Try(
-		ctx.Section("token").Key("expire").Int(),
-	).Int()
-
-	return &service.TokenConfig{
-		Secret:     tokenKey,
-		ExpireSecs: tokenExpire,
-	}
 }
 
 func (c *Context) buildSQLite() *sqlite.SQLite {
