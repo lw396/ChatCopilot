@@ -2,30 +2,31 @@ name: Release
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
   pull_request:
-    branches: [ "main" ]
+    branches:
+      - main
 
 permissions:
   contents: write
   packages: write
 
 jobs:
-   goreleaser:
-    runs-on: ubuntu-latest
+  build:
+    runs-on: macos-latest
+
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Go
+        uses: actions/setup-go@v2
         with:
-          fetch-depth: 0
-      - run: git fetch --force --tags
-      - uses: actions/setup-go@v3
-        with:
-          go-version: '1.21.x'
-          cache: true
-      - uses: goreleaser/goreleaser-action@v4
-        with:
-          distribution: goreleaser
-          version: latest
-          args: release --clean
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          go-version: 1.21.x
+
+      - name: Build
+        run: go build -v ./...
+      
+      - name: Test
+        run: go test ./...
