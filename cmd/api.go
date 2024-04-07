@@ -38,6 +38,8 @@ var apiCmd = &cli.Command{
 			service.WithRepository(gorm.New(db)),
 			service.WithLogger(ctx.buildLogger("API")),
 			service.WithSQLite(ctx.buildSQLite()),
+			service.WithJWT(ctx.buildJWT()),
+			service.WithAdmin(ctx.buildAdmin()),
 		)
 
 		port := cmd.Int("port")

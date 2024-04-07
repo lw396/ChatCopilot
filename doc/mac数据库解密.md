@@ -9,7 +9,7 @@
 7. 输入:
 
 - Intel CPU 构架命令：`memory read --size 1 --format x --count 32 $rsi`
-- M1 CPU 构架命令：`memory read --size 1 --format x --count 32 $rdi` ，回车
+- M1 CPU 构架命令：`memory read --size 1 --format x --count 32 $x1` ，回车
 
 8. 将返回的原始 key 粘贴到下面的字符串中，用这段 Python 代码获得密钥
    (也可使用 go 代码实现，参考：https://github.com/lw396/ChatCopilot/blob/main/doc/main.go)

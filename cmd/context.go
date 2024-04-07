@@ -13,6 +13,7 @@ import (
 	"github.com/lw396/WeComCopilot/pkg/redis"
 	"github.com/lw396/WeComCopilot/pkg/snowflake"
 	"github.com/lw396/WeComCopilot/pkg/valuer"
+	"github.com/lw396/WeComCopilot/service"
 
 	"github.com/urfave/cli/v3"
 	"gopkg.in/ini.v1"
@@ -193,4 +194,35 @@ func (c *Context) buildSQLite() *sqlite.SQLite {
 	).String()
 
 	return sqlite.NewSQLite(key, path)
+}
+
+func (c *Context) buildJWT() *service.JWTConfig {
+	jwtSecret := valuer.Value("secret").Try(
+		os.Getenv("JWT_SECRET"),
+		ctx.Section("jwt").Key("secret").String(),
+	).String()
+	jwtExpireSecs := valuer.Value(3600).Try(
+		ctx.Section("jwt").Key("expire-secs").Int(),
+	).Int()
+
+	return &service.JWTConfig{
+		Secret:     jwtSecret,
+		ExpireSecs: jwtExpireSecs,
+	}
+}
+
+func (c *Context) buildAdmin() *service.AdminConfig {
+	username := valuer.Value("secret").Try(
+		os.Getenv("ADMIN_USERNAME"),
+		ctx.Section("admin").Key("secret").String(),
+	).String()
+	password := valuer.Value("secret").Try(
+		os.Getenv("ADMIN_PASSWORD"),
+		ctx.Section("admin").Key("password").String(),
+	).String()
+
+	return &service.AdminConfig{
+		Username: username,
+		Password: password,
+	}
 }

@@ -16,6 +16,16 @@ type SQLiteConfig struct {
 	Key  string
 	Path string
 }
+type JWTConfig struct {
+	Secret          string
+	ExpireSecs      int
+	DefaultPassword string
+}
+
+type AdminConfig struct {
+	Username string
+	Password string
+}
 
 type options struct {
 	rep    repository.Repository
@@ -23,6 +33,8 @@ type options struct {
 	tracer trace.Tracer
 	redis  redis.RedisClient
 	sqlite repository.SQLiteClient
+	jwt    *JWTConfig
+	admin  *AdminConfig
 }
 
 type Option func(*options)
@@ -54,6 +66,18 @@ func WithSQLite(s repository.SQLiteClient) Option {
 func WithRedis(rc redis.RedisClient) Option {
 	return func(o *options) {
 		o.redis = rc
+	}
+}
+
+func WithJWT(jwt *JWTConfig) Option {
+	return func(o *options) {
+		o.jwt = jwt
+	}
+}
+
+func WithAdmin(admin *AdminConfig) Option {
+	return func(o *options) {
+		o.admin = admin
 	}
 }
 
