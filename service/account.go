@@ -11,6 +11,7 @@ import (
 )
 
 func (s *Service) ParseToken(ctx context.Context, tokenString string) (result *jwt.StandardClaims, err error) {
+	result = &jwt.StandardClaims{}
 	token, err := jwt.ParseWithClaims(tokenString, result, func(t *jwt.Token) (interface{}, error) {
 		return []byte(s.jwt.Secret), nil
 	})
@@ -30,8 +31,9 @@ func (s *Service) AuthenticateAccount(username, password string) (err error) {
 		return errors.New(errors.CodeAccountNotExist, "username is wrong")
 	}
 	if password == "" {
-		return errors.New(errors.CodeAuthWrongPassword, "username is empty")
+		return errors.New(errors.CodeAuthWrongPassword, "password is empty")
 	}
+
 	if err := bcrypt.CompareHashAndPassword([]byte(s.admin.Password), []byte(password)); err != nil {
 		return errors.New(errors.CodeAuthWrongPassword, "password is wrong")
 	}

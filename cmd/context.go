@@ -212,11 +212,11 @@ func (c *Context) buildJWT() *service.JWTConfig {
 }
 
 func (c *Context) buildAdmin() *service.AdminConfig {
-	username := valuer.Value("secret").Try(
+	username := valuer.Value("").Try(
 		os.Getenv("ADMIN_USERNAME"),
-		ctx.Section("admin").Key("secret").String(),
+		ctx.Section("admin").Key("username").String(),
 	).String()
-	password := valuer.Value("secret").Try(
+	password := valuer.Value("").Try(
 		os.Getenv("ADMIN_PASSWORD"),
 		ctx.Section("admin").Key("password").String(),
 	).String()
