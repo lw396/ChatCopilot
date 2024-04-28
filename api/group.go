@@ -10,7 +10,7 @@ func (a *Api) getGroupContact(c echo.Context) (err error) {
 	if nickname == "" {
 		return errors.New(errors.CodeInvalidParam, "请输入群聊名称")
 	}
-	result, err := a.service.GetGroupContact(c.Request().Context(), nickname)
+	result, err := a.service.GetGroupContactByNickname(c.Request().Context(), nickname)
 	if err != nil {
 		return
 	}

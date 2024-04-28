@@ -14,7 +14,7 @@ type GroupContact struct {
 	DBName          string `json:"db_name"`
 }
 
-func (a *Service) GetGroupContact(ctx context.Context, nickname string) (result []*GroupContact, err error) {
+func (a *Service) GetGroupContactByNickname(ctx context.Context, nickname string) (result []*GroupContact, err error) {
 	if err = a.ConnectDB(ctx, sqlite.GroupDB); err != nil {
 		return
 	}
@@ -30,6 +30,10 @@ func (a *Service) GetGroupContact(ctx context.Context, nickname string) (result 
 			ChatRoomMemList: row.ChatRoomMemList,
 		})
 	}
+	return
+}
+
+func (a *Service) GetGroupContactByUsrname(ctx context.Context, usrname string) (result *GroupContact, err error) {
 	return
 }
 

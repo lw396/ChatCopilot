@@ -23,7 +23,7 @@ type GroupContact struct {
 }
 
 type MessageContent struct {
-	LocalID     int64  `gorm:"primaryKey,column:local_id"`
+	LocalID     int64  `gorm:"primaryKey;column:local_id"`
 	SvrID       int64  `gorm:"column:svr_id"`
 	CreateTime  int64  `gorm:"column:create_time"`
 	Content     string `gorm:"column:content"`

@@ -14,6 +14,7 @@ type SQLiteClient interface {
 
 	// Group
 	GetGroupContactByNickname(ctx context.Context, nickname string) ([]*sqlite.GroupContact, error)
+	GetGroupContactByUsrname(ctx context.Context, usrname string) (*sqlite.GroupContact, error)
 
 	// Message
 	BindMessageDB(ctx context.Context, tx *gorm.DB, dbName string) error
@@ -33,4 +34,5 @@ type Repository interface {
 	CreateMessageContentTable(ctx context.Context, msgName string) error
 	SaveMessageContent(ctx context.Context, msgName string, content []*db.MessageContent) error
 	GetNewMessageContent(ctx context.Context, msgName string) (*db.MessageContent, error)
+	GetMessageContentList(ctx context.Context, msgName string, offset int) ([]*db.MessageContent, error)
 }

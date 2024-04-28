@@ -28,8 +28,12 @@ var apiCmd = &cli.Command{
 		return nil
 	},
 	Action: func(c context.Context, cmd *cli.Command) error {
-
 		db, err := ctx.buildDB()
+		if err != nil {
+			return err
+		}
+
+		redis, err := ctx.buildRedis()
 		if err != nil {
 			return err
 		}
@@ -38,6 +42,7 @@ var apiCmd = &cli.Command{
 			service.WithRepository(gorm.New(db)),
 			service.WithLogger(ctx.buildLogger("API")),
 			service.WithSQLite(ctx.buildSQLite()),
+			service.WithRedis(redis),
 			service.WithJWT(ctx.buildJWT()),
 			service.WithAdmin(ctx.buildAdmin()),
 		)

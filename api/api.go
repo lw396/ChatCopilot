@@ -34,20 +34,26 @@ func (api *Api) Run() error {
 	engine.Use(middleware.CORS())
 	engine.Use(middleware.Recover())
 	engine.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowHeaders: []string{echo.HeaderAuthorization},
 		AllowOrigins: []string{"*"},
 		AllowMethods: []string{echo.GET, echo.PUT, echo.POST},
 	}))
 
-	engine.POST("/auth/login", api.Login)
+	engine.POST("/auth/login", api.login)
 
-	v1 := engine.Group("/v1", api.Authenticate)
+	v1 := engine.Group("/v1", api.authenticate)
 	{
+		v1.GET("/user", api.getUser)
 		// 获取群聊名称列表
 		v1.GET("/group_contact", api.getGroupContact)
 		// 获取群聊基本信息
 		v1.GET("/message_info", api.getMessageInfo)
 		// 保存群聊聊天记录
 		v1.POST("/message_content", api.saveMessageContent)
+		// 查看同步群聊列表
+		// 
+		// 查看群聊记录列表
+		v1.GET("/message_content", api.getMessageContent)
 	}
 
 	return engine.Start(fmt.Sprintf(":%d", api.port))

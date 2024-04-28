@@ -42,8 +42,9 @@ func (s *Service) AuthenticateAccount(username, password string) (err error) {
 }
 
 type Authentication struct {
-	Token     string
-	ExpiredAt int64
+	Token     string `json:"token"`
+	User      string `json:"user"`
+	ExpiredAt int64  `json:"expired_at"`
 }
 
 func (s *Service) CreateToken(ctx context.Context, username string) (result *Authentication, err error) {
@@ -64,6 +65,7 @@ func (s *Service) CreateToken(ctx context.Context, username string) (result *Aut
 
 	return &Authentication{
 		Token:     t,
+		User:      username,
 		ExpiredAt: expiredAt.Unix(),
 	}, nil
 }

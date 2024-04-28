@@ -7,7 +7,7 @@ import (
 	"github.com/lw396/WeComCopilot/internal/errors"
 )
 
-func (api *Api) Authenticate(next echo.HandlerFunc) echo.HandlerFunc {
+func (api *Api) authenticate(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) (err error) {
 		request := c.Request()
 		ctx := request.Context()
@@ -32,7 +32,7 @@ type ReqLogin struct {
 	Password string `json:"password"`
 }
 
-func (api *Api) Login(c echo.Context) (err error) {
+func (api *Api) login(c echo.Context) (err error) {
 	var req ReqLogin
 	if err = c.Bind(&req); err != nil {
 		return
@@ -52,4 +52,13 @@ func (api *Api) Login(c echo.Context) (err error) {
 	}
 
 	return Created(c, token)
+}
+
+func (api *Api) getUser(c echo.Context) (err error) {
+	var user struct {
+		Username string `json:"username"`
+	}
+	user.Username = "admin"
+
+	return OK(c, user)
 }

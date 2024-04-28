@@ -5,7 +5,7 @@ import (
 )
 
 func (r *gormRepository) CreateMessageContentTable(ctx context.Context, msgName string) (err error) {
-	err = r.db.Table(msgName).AutoMigrate(&MessageContent{})
+	err = r.db.Table(msgName).Migrator().CreateTable(&MessageContent{})
 	if err != nil {
 		return
 	}
@@ -23,6 +23,16 @@ func (r *gormRepository) SaveMessageContent(ctx context.Context, msgName string,
 func (r *gormRepository) GetNewMessageContent(ctx context.Context, msgName string) (result *MessageContent, err error) {
 	result = &MessageContent{}
 	err = r.db.WithContext(ctx).Table(msgName).Order("local_id desc").First(result).Error
+	if err != nil {
+		return
+	}
+	return
+}
+
+func (r *gormRepository) GetMessageContentList(ctx context.Context, msgName string, offset int) (result []*MessageContent, err error) {
+	result = make([]*MessageContent, 0)
+	err = r.db.WithContext(ctx).Table(msgName).Order("local_id desc").Limit(30).Offset(offset).
+		Find(&result).Error
 	if err != nil {
 		return
 	}
