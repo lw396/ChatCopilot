@@ -5,7 +5,6 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/lw396/WeComCopilot/internal/errors"
-	"github.com/lw396/WeComCopilot/service"
 )
 
 func (a *Api) getMessageInfo(c echo.Context) (err error) {
@@ -36,20 +35,22 @@ func (a *Api) saveMessageContent(c echo.Context) (err error) {
 	if err = c.Validate(&req); err != nil {
 		return
 	}
-	err = a.service.SaveMessageContent(c.Request().Context(), &service.GroupContact{
-		DBName:          req.DBName,
-		UsrName:         req.UserName,
-		Nickname:        req.Nickname,
-		HeadImgUrl:      req.HeadImgUrl,
-		ChatRoomMemList: req.ChatRoomMemList,
-	})
+
+	group, err := a.service.GetGroupContactByUsrname(c.Request().Context(), req.UserName)
+	if err != nil {
+		return
+	}
+
+	group.DBName = req.DBName
+	group.UsrName = req.UserName
+	err = a.service.SaveMessageContent(c.Request().Context(), group)
 	if err != nil {
 		return
 	}
 	return Created(c, "")
 }
 
-func (a *Api) getMessageContent(c echo.Context) (err error) {
+func (a *Api) getMessageContentList(c echo.Context) (err error) {
 	usrName := c.QueryParam("user_name")
 	if usrName == "" {
 		return errors.New(errors.CodeInvalidParam, "user_name为空")

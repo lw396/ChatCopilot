@@ -51,9 +51,9 @@ func (api *Api) Run() error {
 		// 保存群聊聊天记录
 		v1.POST("/message_content", api.saveMessageContent)
 		// 查看同步群聊列表
-		// 
+		v1.GET("/group_contact_list", api.getGroupContactList)
 		// 查看群聊记录列表
-		v1.GET("/message_content", api.getMessageContent)
+		v1.GET("/message_content_list", api.getMessageContentList)
 	}
 
 	return engine.Start(fmt.Sprintf(":%d", api.port))

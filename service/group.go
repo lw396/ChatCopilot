@@ -34,6 +34,40 @@ func (a *Service) GetGroupContactByNickname(ctx context.Context, nickname string
 }
 
 func (a *Service) GetGroupContactByUsrname(ctx context.Context, usrname string) (result *GroupContact, err error) {
+	if err = a.ConnectDB(ctx, sqlite.GroupDB); err != nil {
+		return
+	}
+
+	var group *sqlite.GroupContact
+	group, err = a.sqlite.GetGroupContactByUsrname(ctx, usrname)
+	if err != nil {
+		return
+	}
+
+	result = &GroupContact{
+		UsrName:         group.UsrName,
+		Nickname:        group.Nickname,
+		HeadImgUrl:      group.HeadImgUrl,
+		ChatRoomMemList: group.ChatRoomMemList,
+		DBName:          group.DBName,
+	}
+	return
+}
+
+func (a *Service) GetGroupContactList(ctx context.Context, offset int, nickname string) (result []*GroupContact, err error) {
+	group, err := a.rep.GetGroupContacts(ctx)
+	if err != nil {
+		return
+	}
+	for _, v := range group {
+		result = append(result, &GroupContact{
+			UsrName:         v.UsrName,
+			Nickname:        v.Nickname,
+			HeadImgUrl:      v.HeadImgUrl,
+			ChatRoomMemList: v.ChatRoomMemList,
+			DBName:          v.DBName,
+		})
+	}
 	return
 }
 
