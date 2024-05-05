@@ -20,6 +20,7 @@ type GroupContact struct {
 	HeadImgUrl      string `gorm:"column:head_img"`
 	ChatRoomMemList string `gorm:"column:group_member"`
 	DBName          string `gorm:"column:db_name"`
+	Status          uint8  `gorm:"column:status"`
 }
 
 type MessageContent struct {

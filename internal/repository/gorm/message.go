@@ -38,3 +38,7 @@ func (r *gormRepository) GetMessageContentList(ctx context.Context, msgName stri
 	}
 	return
 }
+
+func (r *gormRepository) DelMessageContentTable(ctx context.Context, msgName string) (err error) {
+	return r.db.Exec("DROP TABLE " + msgName).Error
+}

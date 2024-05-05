@@ -74,6 +74,9 @@ func (a *Service) InitSyncTask(ctx context.Context) (err error) {
 		if err = a.ConnectMessageDB(ctx, v.DBName); err != nil {
 			return
 		}
+		if v.Status != 1 {
+			continue
+		}
 		param = append(param, SyncMessageTaskParam{
 			DBName:  v.DBName,
 			MsgName: msgName,

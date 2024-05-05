@@ -28,11 +28,13 @@ type Repository interface {
 	// Group
 	SaveGroupContact(ctx context.Context, contact *db.GroupContact) error
 	GetGroupContacts(ctx context.Context) ([]*db.GroupContact, error)
+	DelGroupContactByUsrName(ctx context.Context, usrName string) error
 	GetGroupContactByUsrName(ctx context.Context, usrName string) (*db.GroupContact, error)
 
 	// Message
 	CreateMessageContentTable(ctx context.Context, msgName string) error
 	SaveMessageContent(ctx context.Context, msgName string, content []*db.MessageContent) error
 	GetNewMessageContent(ctx context.Context, msgName string) (*db.MessageContent, error)
+	DelMessageContentTable(ctx context.Context, msgName string) error
 	GetMessageContentList(ctx context.Context, msgName string, offset int) ([]*db.MessageContent, error)
 }

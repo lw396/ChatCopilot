@@ -29,3 +29,7 @@ func (r *gormRepository) GetGroupContacts(ctx context.Context) (content []*Group
 	}
 	return
 }
+
+func (r *gormRepository) DelGroupContactByUsrName(ctx context.Context, usrName string) (err error) {
+	return r.db.WithContext(ctx).Where("usr_name = ?", usrName).Unscoped().Delete(&GroupContact{}).Error
+}

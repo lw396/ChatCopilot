@@ -2,16 +2,22 @@ package service
 
 import (
 	"context"
+	"encoding/hex"
+	"time"
 
 	"github.com/lw396/WeComCopilot/internal/repository/sqlite"
+	"github.com/lw396/WeComCopilot/pkg/util"
 )
 
 type GroupContact struct {
-	UsrName         string `json:"usr_name"`
-	Nickname        string `json:"nickname"`
-	HeadImgUrl      string `json:"head_img_url"`
-	ChatRoomMemList string `json:"member_list"`
-	DBName          string `json:"db_name"`
+	Id              uint64    `json:"id"`
+	UsrName         string    `json:"usr_name"`
+	Nickname        string    `json:"nickname"`
+	HeadImgUrl      string    `json:"head_img_url"`
+	ChatRoomMemList string    `json:"member_list"`
+	DBName          string    `json:"db_name,omitempty"`
+	Status          uint8     `json:"status"`
+	CreatedAt       time.Time `json:"created_at"`
 }
 
 func (a *Service) GetGroupContactByNickname(ctx context.Context, nickname string) (result []*GroupContact, err error) {
@@ -61,12 +67,28 @@ func (a *Service) GetGroupContactList(ctx context.Context, offset int, nickname 
 	}
 	for _, v := range group {
 		result = append(result, &GroupContact{
+			Id:              v.ID,
 			UsrName:         v.UsrName,
 			Nickname:        v.Nickname,
 			HeadImgUrl:      v.HeadImgUrl,
 			ChatRoomMemList: v.ChatRoomMemList,
-			DBName:          v.DBName,
+			Status:          v.Status,
+			CreatedAt:       v.CreatedAt,
 		})
+	}
+	return
+}
+
+func (a *Service) DelGroupContact(ctx context.Context, usrName string) (err error) {
+	msgName := "Chat_" + hex.EncodeToString(util.Md5([]byte(usrName)))
+	err = a.rep.DelMessageContentTable(ctx, msgName)
+	if err != nil {
+		return
+	}
+
+	err = a.rep.DelGroupContactByUsrName(ctx, usrName)
+	if err != nil {
+		return
 	}
 	return
 }

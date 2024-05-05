@@ -33,3 +33,26 @@ func (a *Api) getGroupContactList(c echo.Context) (err error) {
 
 	return OK(c, result)
 }
+
+type ReqDelGroup struct {
+	Usrname string `json:"user_name" validate:"required"`
+}
+
+func (a *Api) delGroupContact(c echo.Context) (err error) {
+	var req ReqDelGroup
+	err = c.Bind(&req)
+	if err != nil {
+		return
+	}
+	err = c.Validate(&req)
+	if err != nil {
+		return
+	}
+
+	err = a.service.DelGroupContact(c.Request().Context(), req.Usrname)
+	if err != nil {
+		return
+	}
+
+	return OK(c, "")
+}

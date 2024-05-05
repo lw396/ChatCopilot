@@ -6,6 +6,7 @@ CREATE TABLE if NOT EXISTS `group_contact` (
     `head_img` VARCHAR(600) NOT NULL COMMENT '头像',
     `group_member` TEXT NOT NULL COMMENT '群成员',
     `db_name` VARCHAR(255) NOT NULL COMMENT '数据库名称',
+    `status` TINYINT(1) NOT NULL DEFAULT (1) COMMENT '数据库名称',
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     `deleted_at` TIMESTAMP DEFAULT NULL,

@@ -64,5 +64,5 @@ func (a *Api) getMessageContentList(c echo.Context) (err error) {
 	if err != nil {
 		return
 	}
-	return Created(c, result)
+	return OK(c, result)
 }

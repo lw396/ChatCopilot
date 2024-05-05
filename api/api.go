@@ -52,6 +52,8 @@ func (api *Api) Run() error {
 		v1.POST("/message_content", api.saveMessageContent)
 		// 查看同步群聊列表
 		v1.GET("/group_contact_list", api.getGroupContactList)
+		// 删除群聊信息及记录
+		v1.DELETE("/group_contact", api.delGroupContact)
 		// 查看群聊记录列表
 		v1.GET("/message_content_list", api.getMessageContentList)
 	}
