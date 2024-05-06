@@ -46,8 +46,6 @@ func (api *Api) Run() error {
 		v1.GET("/user", api.getUser)
 		// 获取群聊名称列表
 		v1.GET("/group_contact", api.getGroupContact)
-		// 获取群聊基本信息
-		v1.GET("/message_info", api.getMessageInfo)
 		// 保存群聊聊天记录
 		v1.POST("/message_content", api.saveMessageContent)
 		// 查看同步群聊列表

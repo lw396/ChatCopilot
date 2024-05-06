@@ -7,24 +7,8 @@ import (
 	"github.com/lw396/WeComCopilot/internal/errors"
 )
 
-func (a *Api) getMessageInfo(c echo.Context) (err error) {
-	userName := c.QueryParam("user_name")
-	if userName == "" {
-		return errors.New(errors.CodeInvalidParam, "请输入用户名称")
-	}
-	result, err := a.service.ScanMessage(c.Request().Context(), userName)
-	if err != nil {
-		return
-	}
-	return OK(c, result)
-}
-
 type ReqSaveMessage struct {
-	DBName          string `json:"db_name" validate:"required"`
-	UserName        string `json:"user_name" validate:"required"`
-	Nickname        string `json:"nickname"`
-	HeadImgUrl      string `json:"head_img_url"`
-	ChatRoomMemList string `json:"member_list"`
+	UserName string `json:"user_name" validate:"required"`
 }
 
 func (a *Api) saveMessageContent(c echo.Context) (err error) {
@@ -36,13 +20,17 @@ func (a *Api) saveMessageContent(c echo.Context) (err error) {
 		return
 	}
 
+	message, err := a.service.ScanMessage(c.Request().Context(), req.UserName)
+	if err != nil {
+		return
+	}
+
 	group, err := a.service.GetGroupContactByUsrname(c.Request().Context(), req.UserName)
 	if err != nil {
 		return
 	}
 
-	group.DBName = req.DBName
-	group.UsrName = req.UserName
+	group.DBName = message.DBName
 	err = a.service.SaveMessageContent(c.Request().Context(), group)
 	if err != nil {
 		return

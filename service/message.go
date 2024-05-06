@@ -71,6 +71,7 @@ func (a *Service) SaveMessageContent(ctx context.Context, data *GroupContact) (e
 		HeadImgUrl:      data.HeadImgUrl,
 		ChatRoomMemList: data.ChatRoomMemList,
 		DBName:          data.DBName,
+		Status:          1,
 	}); err != nil {
 		return
 	}
