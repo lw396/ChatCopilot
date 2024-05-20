@@ -8,7 +8,7 @@ import (
 )
 
 type ReqSaveMessage struct {
-	UserName string `json:"user_name" validate:"required"`
+	Usrname string `json:"user_name" validate:"required"`
 }
 
 func (a *Api) saveMessageContent(c echo.Context) (err error) {
@@ -20,12 +20,12 @@ func (a *Api) saveMessageContent(c echo.Context) (err error) {
 		return
 	}
 
-	message, err := a.service.ScanMessage(c.Request().Context(), req.UserName)
+	message, err := a.service.ScanMessage(c.Request().Context(), req.Usrname)
 	if err != nil {
 		return
 	}
 
-	group, err := a.service.GetGroupContactByUsrname(c.Request().Context(), req.UserName)
+	group, err := a.service.GetGroupContactByUsrname(c.Request().Context(), req.Usrname)
 	if err != nil {
 		return
 	}

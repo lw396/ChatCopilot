@@ -13,7 +13,6 @@
 ```sh
 
 brew install sqlite
-brew install sqlcipher
 
 ```
 

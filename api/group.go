@@ -40,12 +40,10 @@ type ReqDelGroup struct {
 
 func (a *Api) delGroupContact(c echo.Context) (err error) {
 	var req ReqDelGroup
-	err = c.Bind(&req)
-	if err != nil {
+	if err = c.Bind(&req); err != nil {
 		return
 	}
-	err = c.Validate(&req)
-	if err != nil {
+	if err = c.Validate(&req); err != nil {
 		return
 	}
 
