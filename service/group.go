@@ -55,7 +55,6 @@ func (a *Service) GetGroupContactByUsrname(ctx context.Context, usrname string) 
 		Nickname:        group.Nickname,
 		HeadImgUrl:      group.HeadImgUrl,
 		ChatRoomMemList: group.ChatRoomMemList,
-		DBName:          group.DBName,
 	}
 	return
 }

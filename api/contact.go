@@ -17,3 +17,31 @@ func (a *Api) getContactPerson(c echo.Context) (err error) {
 	}
 	return OK(c, result)
 }
+
+func (a *Api) saveContactPerson(c echo.Context) (err error) {
+	var req ReqSaveMessage
+	if err = c.Bind(&req); err != nil {
+		return
+	}
+	if err = c.Validate(&req); err != nil {
+		return
+	}
+
+	message, err := a.service.ScanMessage(c.Request().Context(), req.Usrname)
+	if err != nil {
+		return
+	}
+
+	contact, err := a.service.GetContactPersonByUsrname(c.Request().Context(), req.Usrname)
+	if err != nil {
+		return
+	}
+
+	contact.DBName = message.DBName
+	err = a.service.SaveContactPerson(c.Request().Context(), contact)
+	if err != nil {
+		return
+	}
+
+	return Created(c, "")
+}

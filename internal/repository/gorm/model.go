@@ -23,6 +23,18 @@ type GroupContact struct {
 	Status          uint8  `gorm:"column:status"`
 }
 
+type ContactPerson struct {
+	Model
+	UsrName    string `gorm:"column:usr_name"`
+	Nickname   string `gorm:"column:nickname"`
+	Remark     string `gorm:"column:remark"`
+	HeadImgUrl string `gorm:"column:head_img"`
+	Sex        int64  `gorm:"column:sex"`
+	Type       int64  `gorm:"column:type"`
+	DBName     string `gorm:"column:db_name"`
+	Status     uint8  `gorm:"column:status"`
+}
+
 type MessageContent struct {
 	LocalID     int64  `gorm:"primaryKey;column:local_id"`
 	SvrID       int64  `gorm:"column:svr_id"`
