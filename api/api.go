@@ -44,21 +44,25 @@ func (api *Api) Run() error {
 	v1 := engine.Group("/v1", api.authenticate)
 	{
 		v1.GET("/user", api.getUser)
-		// 群聊
+		// 群
 		// 获取群聊名称列表
 		v1.GET("/group_contact", api.getGroupContact)
 		// 保存群聊聊天记录
-		v1.POST("/message_content", api.saveMessageContent)
-		// 查看同步群聊列表
-		v1.GET("/group_contact_list", api.getGroupContactList)
+		v1.POST("/group_contact", api.saveGroupContact)
 		// 删除群聊信息及记录
 		v1.DELETE("/group_contact", api.delGroupContact)
-		// 查看群聊记录列表
-		v1.GET("/message_content_list", api.getMessageContentList)
+		// 查看群聊列表
+		v1.GET("/group_contact_list", api.getGroupContactList)
 
-		// 私聊
+		// 联系人
 		// 获取联系人列表
 		v1.GET("/contact_person", api.getContactPerson)
+		// 保存联系人聊天记录
+		v1.POST("/contact_person_message", api.saveGroupContact)
+
+		// 聊天记录
+		// 查看聊天记录列表
+		v1.GET("/message_content_list", api.getMessageContentList)
 	}
 
 	return engine.Start(fmt.Sprintf(":%d", api.port))

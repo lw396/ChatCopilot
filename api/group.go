@@ -37,6 +37,37 @@ func (a *Api) getGroupContactList(c echo.Context) (err error) {
 	})
 }
 
+type ReqSaveMessage struct {
+	Usrname string `json:"user_name" validate:"required"`
+}
+
+func (a *Api) saveGroupContact(c echo.Context) (err error) {
+	var req ReqSaveMessage
+	if err = c.Bind(&req); err != nil {
+		return
+	}
+	if err = c.Validate(&req); err != nil {
+		return
+	}
+
+	message, err := a.service.ScanMessage(c.Request().Context(), req.Usrname)
+	if err != nil {
+		return
+	}
+
+	group, err := a.service.GetGroupContactByUsrname(c.Request().Context(), req.Usrname)
+	if err != nil {
+		return
+	}
+
+	group.DBName = message.DBName
+	err = a.service.SaveGroupContact(c.Request().Context(), group)
+	if err != nil {
+		return
+	}
+	return Created(c, "")
+}
+
 type ReqDelGroup struct {
 	Usrname string `json:"user_name" validate:"required"`
 }

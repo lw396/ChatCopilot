@@ -7,7 +7,7 @@ import (
 )
 
 type ContactPerson struct {
-	UsrName    string `json:"usr_ame"`
+	UsrName    string `json:"usr_name"`
 	Nickname   string `json:"nickname"`
 	Remark     string `json:"remark"`
 	HeadImgUrl string `json:"head_img_url"`

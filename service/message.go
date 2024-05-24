@@ -49,7 +49,7 @@ func (a *Service) ScanMessage(ctx context.Context, userName string) (result *Mes
 	return
 }
 
-func (a *Service) SaveMessageContent(ctx context.Context, data *GroupContact) (err error) {
+func (a *Service) SaveGroupContact(ctx context.Context, data *GroupContact) (err error) {
 	if err = a.ConnectMessageDB(ctx, data.DBName); err != nil {
 		return
 	}
