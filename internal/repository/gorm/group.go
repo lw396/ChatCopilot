@@ -21,9 +21,14 @@ func (r *gormRepository) GetGroupContactByUsrName(ctx context.Context, usrName s
 	return
 }
 
-func (r *gormRepository) GetGroupContacts(ctx context.Context) (content []*GroupContact, err error) {
+func (r *gormRepository) GetGroupContacts(ctx context.Context, offset int) (content []*GroupContact, total int64, err error) {
 	content = []*GroupContact{}
-	err = r.db.WithContext(ctx).Find(&content).Error
+	tx := r.db.WithContext(ctx).Model(&GroupContact{}).Count(&total)
+	if offset > 0 {
+		tx = tx.Limit(10).Offset(offset)
+	}
+
+	err = tx.Find(&content).Error
 	if err != nil {
 		return
 	}

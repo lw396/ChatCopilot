@@ -26,12 +26,15 @@ func (a *Api) getGroupContactList(c echo.Context) (err error) {
 	}
 	nickname := c.QueryParam("nickname")
 
-	result, err := a.service.GetGroupContactList(c.Request().Context(), offset, nickname)
+	result, totle, err := a.service.GetGroupContactList(c.Request().Context(), offset, nickname)
 	if err != nil {
 		return
 	}
 
-	return OK(c, result)
+	return OK(c, map[string]interface{}{
+		"list":  result,
+		"total": totle,
+	})
 }
 
 type ReqDelGroup struct {
