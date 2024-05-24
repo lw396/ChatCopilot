@@ -44,6 +44,7 @@ func (api *Api) Run() error {
 	v1 := engine.Group("/v1", api.authenticate)
 	{
 		v1.GET("/user", api.getUser)
+		// 群聊
 		// 获取群聊名称列表
 		v1.GET("/group_contact", api.getGroupContact)
 		// 保存群聊聊天记录
@@ -54,6 +55,10 @@ func (api *Api) Run() error {
 		v1.DELETE("/group_contact", api.delGroupContact)
 		// 查看群聊记录列表
 		v1.GET("/message_content_list", api.getMessageContentList)
+
+		// 私聊
+		// 获取联系人列表
+		v1.GET("/contact_person", api.getContactPerson)
 	}
 
 	return engine.Start(fmt.Sprintf(":%d", api.port))

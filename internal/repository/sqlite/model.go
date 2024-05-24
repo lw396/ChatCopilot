@@ -19,6 +19,31 @@ func (GroupContact) TableName() string {
 	return "GroupContact"
 }
 
+type ContactPerson struct {
+	UsrName            string `gorm:"column:m_nsUsrName"`
+	ConType            int64  `gorm:"column:m_uiConType"`
+	Nickname           string `gorm:"column:nickname"`
+	FullPingyin        string `gorm:"column:m_nsFullPY"`
+	ShortPingyin       string `gorm:"column:m_nsShortPY"`
+	Remark             string `gorm:"column:m_nsRemark"`
+	RemarkFullPingyin  string `gorm:"column:m_nsRemarkPYFull"`
+	RemarkShortPingyin string `gorm:"column:m_nsRemarkPYShort"`
+	CertificationFlag  int64  `gorm:"column:m_uiCertificationFlag"`
+	Sex                int64  `gorm:"column:m_uiSex"`
+	Type               int64  `gorm:"column:m_uiType"`
+	ImgStatus          string `gorm:"column:m_nsImgStatus"`
+	ImgKey             int64  `gorm:"column:m_uiImgKey"`
+	HeadImgUrl         string `gorm:"column:m_nsHeadImgUrl"`
+	HeadHDImgUrl       string `gorm:"column:m_nsHeadHDImgUrl"`
+	BrandIconUrl       string `gorm:"column:m_nsBrandIconUrl"`
+	AliasName          string `gorm:"column:m_nsAliasName"`
+	EncodeUserName     string `gorm:"column:m_nsEncodeUserName"`
+}
+
+func (ContactPerson) TableName() string {
+	return "WCContact"
+}
+
 // Message
 type SQLiteSequence struct {
 	Name string

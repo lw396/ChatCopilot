@@ -10,8 +10,9 @@ import (
 )
 
 const (
-	MessageDB = "Message/msg_%d.db"  // 消息库
-	GroupDB   = "Group/group_new.db" // 群联系
+	MessageDB = "Message/msg_%d.db"         // 消息库
+	GroupDB   = "Group/group_new.db"        // 群联系
+	ContactDB = "Contact/wccontact_new2.db" // 联系人
 )
 
 type SQLite struct {

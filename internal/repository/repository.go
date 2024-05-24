@@ -16,6 +16,9 @@ type SQLiteClient interface {
 	GetGroupContactByNickname(ctx context.Context, nickname string) ([]*sqlite.GroupContact, error)
 	GetGroupContactByUsrname(ctx context.Context, usrname string) (*sqlite.GroupContact, error)
 
+	// Contact
+	GetContactPersonByNickname(ctx context.Context, nickname string) ([]*sqlite.ContactPerson, error)
+
 	// Message
 	BindMessageDB(ctx context.Context, tx *gorm.DB, dbName string) error
 	UnbindMessageDB(ctx context.Context, dbName string)
