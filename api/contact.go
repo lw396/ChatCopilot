@@ -18,8 +18,12 @@ func (a *Api) getContactPerson(c echo.Context) (err error) {
 	return OK(c, result)
 }
 
+type ReqSaveContact struct {
+	Usrname string `json:"user_name" validate:"required"`
+}
+
 func (a *Api) saveContactPerson(c echo.Context) (err error) {
-	var req ReqSaveMessage
+	var req ReqSaveContact
 	if err = c.Bind(&req); err != nil {
 		return
 	}
@@ -44,4 +48,25 @@ func (a *Api) saveContactPerson(c echo.Context) (err error) {
 	}
 
 	return Created(c, "")
+}
+
+type ReqDelContact struct {
+	Usrname string `json:"user_name" validate:"required"`
+}
+
+func (a *Api) delContactPerson(c echo.Context) (err error) {
+	var req ReqDelContact
+	if err = c.Bind(&req); err != nil {
+		return
+	}
+	if err = c.Validate(&req); err != nil {
+		return
+	}
+
+	err = a.service.DelContactPerson(c.Request().Context(), req.Usrname)
+	if err != nil {
+		return
+	}
+
+	return OK(c, "")
 }

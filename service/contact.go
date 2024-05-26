@@ -108,3 +108,21 @@ func (a *Service) SaveContactPerson(ctx context.Context, data *ContactPerson) (e
 
 	return
 }
+
+func (a *Service) DelContactPerson(ctx context.Context, usrName string) (err error) {
+	msgName := "Chat_" + hex.EncodeToString(util.Md5([]byte(usrName)))
+	err = a.rep.DelMessageContentTable(ctx, msgName)
+	if err != nil {
+		return
+	}
+
+	if err = a.rep.DelContactPersonByUsrName(ctx, usrName); err != nil {
+		return
+	}
+
+	if err = a.DelSyncTask(ctx, usrName); err != nil {
+		return
+	}
+
+	return
+}
