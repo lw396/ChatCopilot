@@ -102,12 +102,9 @@ func (a *Service) SaveContactPerson(ctx context.Context, data *ContactPerson) (e
 		return
 	}
 
-	go func(string, string) {
-		ctx := context.Background()
-		if err := a.AddSyncTask(ctx, msgName, data.DBName); err != nil {
-			a.logger.Errorf("update sync task failed, err: %v", err)
-		}
-	}(msgName, data.DBName)
+	if err := a.AddSyncTask(ctx, msgName, data.DBName); err != nil {
+		return err
+	}
 
 	return
 }

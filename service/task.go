@@ -124,3 +124,25 @@ func (a *Service) AddSyncTask(ctx context.Context, msgName, dbName string) (err 
 
 	return
 }
+
+func (a *Service) DelSyncTask(ctx context.Context, usrName string) (err error) {
+	_param := make([]SyncMessageTaskParam, 0)
+	_, err = a.redis.Get(ctx, SyncTaskCacheKey, &_param)
+	if err != nil {
+		return
+	}
+
+	msgName := "Chat_" + hex.EncodeToString(util.Md5([]byte(usrName)))
+	param := make([]SyncMessageTaskParam, 0)
+	for _, p := range _param {
+		if p.MsgName == msgName {
+			continue
+		}
+		param = append(param, p)
+	}
+	err = a.redis.Set(ctx, SyncTaskCacheKey, param, 0)
+	if err != nil {
+		return
+	}
+	return
+}
