@@ -5,8 +5,11 @@ import (
 	"encoding/hex"
 	"time"
 
+	"github.com/lw396/WeComCopilot/internal/errors"
+	mysql "github.com/lw396/WeComCopilot/internal/repository/gorm"
 	"github.com/lw396/WeComCopilot/internal/repository/sqlite"
 	"github.com/lw396/WeComCopilot/pkg/util"
+	"gorm.io/gorm"
 )
 
 type GroupContact struct {
@@ -75,6 +78,52 @@ func (a *Service) GetGroupContactList(ctx context.Context, offset int, nickname 
 			CreatedAt:       v.CreatedAt,
 		})
 	}
+	return
+}
+
+func (a *Service) SaveGroupContact(ctx context.Context, data *GroupContact) (err error) {
+	if err = a.ConnectMessageDB(ctx, data.DBName); err != nil {
+		return
+	}
+	msgName := "Chat_" + hex.EncodeToString(util.Md5([]byte(data.UsrName)))
+	messages, err := a.sqlite.GetMessageContent(ctx, data.DBName, msgName)
+	if err != nil {
+		return
+	}
+
+	if _, err = a.rep.GetGroupContactByUsrName(ctx, data.UsrName); err != gorm.ErrRecordNotFound {
+		if err == nil {
+			err = errors.New(errors.CodeAuthMessageFound, "group already exist")
+		}
+		return
+	}
+	if err = a.rep.SaveGroupContact(ctx, &mysql.GroupContact{
+		UsrName:         data.UsrName,
+		Nickname:        data.Nickname,
+		HeadImgUrl:      data.HeadImgUrl,
+		ChatRoomMemList: data.ChatRoomMemList,
+		DBName:          data.DBName,
+		Status:          1,
+	}); err != nil {
+		return
+	}
+
+	if err = a.rep.CreateMessageContentTable(ctx, msgName); err != nil {
+		return
+	}
+
+	content := a.convertMessageContent(messages)
+	if err = a.rep.SaveMessageContent(ctx, msgName, content); err != nil {
+		return
+	}
+
+	go func(string, string) {
+		ctx := context.Background()
+		if err := a.AddSyncTask(ctx, msgName, data.DBName); err != nil {
+			a.logger.Errorf("update sync task failed, err: %v", err)
+		}
+	}(msgName, data.DBName)
+
 	return
 }
 

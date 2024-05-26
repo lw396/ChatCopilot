@@ -45,7 +45,7 @@ func (a *Service) GetContactPersonByNickname(ctx context.Context, nickname strin
 }
 
 func (a *Service) GetContactPersonByUsrname(ctx context.Context, usrname string) (result *ContactPerson, err error) {
-	if err = a.ConnectDB(ctx, sqlite.GroupDB); err != nil {
+	if err = a.ConnectDB(ctx, sqlite.ContactDB); err != nil {
 		return
 	}
 
@@ -65,10 +65,9 @@ func (a *Service) GetContactPersonByUsrname(ctx context.Context, usrname string)
 }
 
 func (a *Service) SaveContactPerson(ctx context.Context, data *ContactPerson) (err error) {
-	if err = a.ConnectDB(ctx, sqlite.GroupDB); err != nil {
+	if err = a.ConnectMessageDB(ctx, data.DBName); err != nil {
 		return
 	}
-
 	msgName := "Chat_" + hex.EncodeToString(util.Md5([]byte(data.UsrName)))
 	messages, err := a.sqlite.GetMessageContent(ctx, data.DBName, msgName)
 	if err != nil {
@@ -103,12 +102,12 @@ func (a *Service) SaveContactPerson(ctx context.Context, data *ContactPerson) (e
 		return
 	}
 
-	go func() {
+	go func(string, string) {
 		ctx := context.Background()
-		if err := a.InitSyncTask(ctx); err != nil {
+		if err := a.AddSyncTask(ctx, msgName, data.DBName); err != nil {
 			a.logger.Errorf("update sync task failed, err: %v", err)
 		}
-	}()
+	}(msgName, data.DBName)
 
 	return
 }

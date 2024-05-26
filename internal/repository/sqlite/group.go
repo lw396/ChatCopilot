@@ -4,8 +4,7 @@ import (
 	"context"
 )
 
-func (s *SQLite) GetGroupContactByNickname(ctx context.Context, nickname string) (
-	result []*GroupContact, err error) {
+func (s *SQLite) GetGroupContactByNickname(ctx context.Context, nickname string) (result []*GroupContact, err error) {
 	err = s.db[GroupDB].Where("nickname LIKE ?", "%"+nickname+"%").Find(&result).Error
 	if err != nil {
 		return nil, err
@@ -14,7 +13,8 @@ func (s *SQLite) GetGroupContactByNickname(ctx context.Context, nickname string)
 }
 
 func (s *SQLite) GetGroupContactByUsrname(ctx context.Context, usrname string) (result *GroupContact, err error) {
-	err = s.db[GroupDB].Where("m_nsUsrName = ?", usrname).First(&result).Error
+	result = &GroupContact{}
+	err = s.db[GroupDB].Where("m_nsUsrName = ?", usrname).First(result).Error
 	if err != nil {
 		return nil, err
 	}

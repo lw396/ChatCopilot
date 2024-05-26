@@ -28,7 +28,7 @@ type ContactPerson struct {
 	UsrName    string `gorm:"column:usr_name"`
 	Nickname   string `gorm:"column:nickname"`
 	Remark     string `gorm:"column:remark"`
-	HeadImgUrl string `gorm:"column:head_img"`
+	HeadImgUrl string `gorm:"column:head_img_url"`
 	Sex        int64  `gorm:"column:sex"`
 	Type       int64  `gorm:"column:type"`
 	DBName     string `gorm:"column:db_name"`
