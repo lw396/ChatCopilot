@@ -57,6 +57,7 @@ func (a *Service) ConnectMessageDB(ctx context.Context, dbName string) (err erro
 	}
 	return
 }
+
 func (a *Service) InitSyncTask(ctx context.Context) (err error) {
 	group, _, err := a.rep.GetGroupContacts(ctx, 0)
 	if err != nil {
@@ -69,6 +70,9 @@ func (a *Service) InitSyncTask(ctx context.Context) (err error) {
 		var data *mysql.MessageContent
 		data, err = a.rep.GetNewMessageContent(ctx, msgName)
 		if err != nil {
+			if db.IsRecordNotFound(err) {
+				continue
+			}
 			return
 		}
 		if err = a.ConnectMessageDB(ctx, v.DBName); err != nil {
@@ -83,6 +87,36 @@ func (a *Service) InitSyncTask(ctx context.Context) (err error) {
 			NewId:   data.LocalID,
 		})
 	}
+
+	err = a.redis.Set(ctx, SyncTaskCacheKey, param, 0)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+func (a *Service) AddSyncTask(ctx context.Context, msgName, dbName string) (err error) {
+	var data *mysql.MessageContent
+	data, err = a.rep.GetNewMessageContent(ctx, msgName)
+	if err != nil {
+		return
+	}
+	if err = a.ConnectMessageDB(ctx, dbName); err != nil {
+		return
+	}
+
+	param := make([]SyncMessageTaskParam, 0)
+	_, err = a.redis.Get(ctx, SyncTaskCacheKey, &param)
+	if err != nil {
+		return
+	}
+
+	param = append(param, SyncMessageTaskParam{
+		DBName:  dbName,
+		MsgName: msgName,
+		NewId:   data.LocalID,
+	})
 	err = a.redis.Set(ctx, SyncTaskCacheKey, param, 0)
 	if err != nil {
 		return

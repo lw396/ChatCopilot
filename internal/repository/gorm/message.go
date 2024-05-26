@@ -30,7 +30,6 @@ func (r *gormRepository) GetNewMessageContent(ctx context.Context, msgName strin
 }
 
 func (r *gormRepository) GetMessageContentList(ctx context.Context, msgName string, offset int) (result []*MessageContent, err error) {
-	result = make([]*MessageContent, 0)
 	err = r.db.WithContext(ctx).Table(msgName).Order("local_id desc").Limit(30).Offset(offset).
 		Find(&result).Error
 	if err != nil {

@@ -58,7 +58,7 @@ func (api *Api) Run() error {
 		// 获取联系人列表
 		v1.GET("/contact_person", api.getContactPerson)
 		// 保存联系人聊天记录
-		v1.POST("/contact_person_message", api.saveGroupContact)
+		v1.POST("/contact_person", api.saveContactPerson)
 
 		// 聊天记录
 		// 查看聊天记录列表
