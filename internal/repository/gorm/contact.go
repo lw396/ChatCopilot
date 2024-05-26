@@ -23,14 +23,16 @@ func (r *gormRepository) GetContactPersonByUsrName(ctx context.Context, usrName 
 
 func (r *gormRepository) GetContactPersons(ctx context.Context, nickname string, offset int) (result []*ContactPerson, total int64, err error) {
 	result = []*ContactPerson{}
-	tx := r.db.WithContext(ctx).Model(&ContactPerson{}).Count(&total)
+	tx := r.db.WithContext(ctx).Model(&ContactPerson{})
 	if offset > 0 {
 		tx = tx.Limit(10).Offset(offset)
 	}
+	tx = tx.Count(&total)
+
 	if nickname != "" {
 		tx = tx.Where("nickname LIKE ?", "%"+nickname+"%")
 	}
-	err = tx.Find(&result).Error
+	err = tx.Count(&total).Find(&result).Error
 	if err != nil {
 		return
 	}
