@@ -21,13 +21,15 @@ func (r *gormRepository) GetGroupContactByUsrName(ctx context.Context, usrName s
 	return
 }
 
-func (r *gormRepository) GetGroupContacts(ctx context.Context, offset int) (content []*GroupContact, total int64, err error) {
+func (r *gormRepository) GetGroupContacts(ctx context.Context, nickname string, offset int) (content []*GroupContact, total int64, err error) {
 	content = []*GroupContact{}
 	tx := r.db.WithContext(ctx).Model(&GroupContact{}).Count(&total)
 	if offset > 0 {
 		tx = tx.Limit(10).Offset(offset)
 	}
-
+	if nickname != "" {
+		tx = tx.Where("nickname LIKE ?", "%"+nickname+"%")
+	}
 	err = tx.Find(&content).Error
 	if err != nil {
 		return

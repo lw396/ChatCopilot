@@ -59,7 +59,7 @@ func (a *Service) ConnectMessageDB(ctx context.Context, dbName string) (err erro
 }
 
 func (a *Service) InitSyncTask(ctx context.Context) (err error) {
-	group, _, err := a.rep.GetGroupContacts(ctx, 0)
+	group, _, err := a.rep.GetGroupContacts(ctx, "", 0)
 	if err != nil {
 		return
 	}

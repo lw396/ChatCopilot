@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"encoding/hex"
+	"time"
 
 	"github.com/lw396/WeComCopilot/internal/errors"
 	mysql "github.com/lw396/WeComCopilot/internal/repository/gorm"
@@ -12,15 +13,16 @@ import (
 )
 
 type ContactPerson struct {
-	UsrName    string `json:"usr_name"`
-	Nickname   string `json:"nickname"`
-	Remark     string `json:"remark"`
-	HeadImgUrl string `json:"head_img_url"`
-	Sex        int64  `json:"sex"`
-	Type       int64  `json:"type"`
-	DBName     string `json:"db_name,omitempty"`
-	Status     uint8  `json:"status,omitempty"`
-	CreatedAt  string `json:"created_at,omitempty"`
+	Id         uint64    `json:"id"`
+	UsrName    string    `json:"usr_name"`
+	Nickname   string    `json:"nickname"`
+	Remark     string    `json:"remark"`
+	HeadImgUrl string    `json:"head_img_url"`
+	Sex        int64     `json:"sex"`
+	Type       int64     `json:"type"`
+	DBName     string    `json:"db_name,omitempty"`
+	Status     uint8     `json:"status,omitempty"`
+	CreatedAt  time.Time `json:"created_at,omitempty"`
 }
 
 func (a *Service) GetContactPersonByNickname(ctx context.Context, nickname string) (result []*ContactPerson, err error) {
@@ -60,6 +62,27 @@ func (a *Service) GetContactPersonByUsrname(ctx context.Context, usrname string)
 		Nickname:   contact.Nickname,
 		Remark:     contact.Remark,
 		HeadImgUrl: contact.HeadImgUrl,
+	}
+	return
+}
+
+func (a *Service) GetContactPersonList(ctx context.Context, offset int, nickname string) (result []*ContactPerson, totle int64, err error) {
+	contact, totle, err := a.rep.GetContactPersons(ctx, nickname, offset)
+	if err != nil {
+		return
+	}
+	for _, v := range contact {
+		result = append(result, &ContactPerson{
+			Id:         v.ID,
+			UsrName:    v.UsrName,
+			Nickname:   v.Nickname,
+			HeadImgUrl: v.HeadImgUrl,
+			Sex:        v.Sex,
+			Type:       v.Type,
+			Remark:     v.Remark,
+			Status:     v.Status,
+			CreatedAt:  v.CreatedAt,
+		})
 	}
 	return
 }
