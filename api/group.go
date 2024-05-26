@@ -37,12 +37,12 @@ func (a *Api) getGroupContactList(c echo.Context) (err error) {
 	})
 }
 
-type ReqSaveMessage struct {
+type ReqSaveGroup struct {
 	Usrname string `json:"user_name" validate:"required"`
 }
 
 func (a *Api) saveGroupContact(c echo.Context) (err error) {
-	var req ReqSaveMessage
+	var req ReqSaveGroup
 	if err = c.Bind(&req); err != nil {
 		return
 	}

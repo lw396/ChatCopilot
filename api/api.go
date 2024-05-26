@@ -59,6 +59,8 @@ func (api *Api) Run() error {
 		v1.GET("/contact_person", api.getContactPerson)
 		// 保存联系人聊天记录
 		v1.POST("/contact_person", api.saveContactPerson)
+		// 删除联系人信息及记录
+		v1.DELETE("/contact_person", api.delContactPerson)
 
 		// 聊天记录
 		// 查看聊天记录列表

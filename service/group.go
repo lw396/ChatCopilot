@@ -117,12 +117,9 @@ func (a *Service) SaveGroupContact(ctx context.Context, data *GroupContact) (err
 		return
 	}
 
-	go func(string, string) {
-		ctx := context.Background()
-		if err := a.AddSyncTask(ctx, msgName, data.DBName); err != nil {
-			a.logger.Errorf("update sync task failed, err: %v", err)
-		}
-	}(msgName, data.DBName)
+	if err = a.AddSyncTask(ctx, msgName, data.DBName); err != nil {
+		return
+	}
 
 	return
 }
@@ -134,10 +131,14 @@ func (a *Service) DelGroupContact(ctx context.Context, usrName string) (err erro
 		return
 	}
 
-	err = a.rep.DelGroupContactByUsrName(ctx, usrName)
-	if err != nil {
+	if err = a.rep.DelGroupContactByUsrName(ctx, usrName); err != nil {
 		return
 	}
+
+	if err = a.DelSyncTask(ctx, usrName); err != nil {
+		return
+	}
+
 	return
 }
 
