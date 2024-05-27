@@ -13,6 +13,7 @@ const (
 	MessageDB = "Message/msg_%d.db"         // 消息库
 	GroupDB   = "Group/group_new.db"        // 群联系
 	ContactDB = "Contact/wccontact_new2.db" // 联系人
+	HlinkDB   = "Hardlink/hldata.db"        // 文件路径
 )
 
 type SQLite struct {

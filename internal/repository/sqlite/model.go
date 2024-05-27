@@ -67,3 +67,18 @@ type MessageContent struct {
 	MsgVoiceText  string `gorm:"column:msgVoiceText"`
 	MsgSeq        int64  `gorm:"column:msgSeq"`
 }
+
+type HlinkMediaRecord struct {
+	MediaMd5    string           `gorm:"column:mediaMd5"`
+	MediaSize   int64            `gorm:"column:mediaSize"`
+	InodeNumber int64            `gorm:"column:inodeNumber"`
+	ModifyTime  int64            `gorm:"column:modifyTime"`
+	Detail      HlinkMediaDetail `gorm:"foreignKey:inodeNumber"`
+}
+
+type HlinkMediaDetail struct {
+	LocalId      int64  `gorm:"column:localId"`
+	InodeNumber  int64  `gorm:"column:inodeNumber"`
+	RelativePath string `gorm:"column:relativePath"`
+	FileName     string `gorm:"column:fileName"`
+}

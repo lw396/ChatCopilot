@@ -26,6 +26,9 @@ type SQLiteClient interface {
 	CheckMessageExistDB(ctx context.Context, tx *gorm.DB, dbName string) (*sqlite.SQLiteSequence, error)
 	GetMessageContent(ctx context.Context, dbName, msgName string) ([]*sqlite.MessageContent, error)
 	GetUnsyncMessageContent(ctx context.Context, dbName, msgName string, newId int64) ([]*sqlite.MessageContent, error)
+
+	// Hink
+	GetHinkMediaByMediaMd5(ctx context.Context, mediaMd5 string) (*sqlite.HlinkMediaRecord, error)
 }
 
 type Repository interface {

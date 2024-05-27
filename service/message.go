@@ -78,3 +78,7 @@ func (a *Service) convertMessageContent(msg []*sqlite.MessageContent) (result []
 	}
 	return
 }
+
+func (a *Service) GetHinkMedia(ctx context.Context, content string) (result, err error) {
+	return
+}
