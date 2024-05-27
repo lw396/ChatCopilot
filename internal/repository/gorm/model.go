@@ -3,6 +3,7 @@ package gorm
 import (
 	"time"
 
+	"github.com/lw396/WeComCopilot/internal/model"
 	"gorm.io/gorm"
 )
 
@@ -36,15 +37,15 @@ type ContactPerson struct {
 }
 
 type MessageContent struct {
-	LocalID     int64  `gorm:"primaryKey;column:local_id"`
-	SvrID       int64  `gorm:"column:svr_id"`
-	CreateTime  int64  `gorm:"column:create_time"`
-	Content     string `gorm:"column:content"`
-	Status      int64  `gorm:"column:status"`
-	ImgStatus   int64  `gorm:"column:img_status"`
-	MessageType int64  `gorm:"column:message_type"`
-	Des         int64  `gorm:"column:des"`
-	Source      string `gorm:"column:source"`
-	VoiceText   string `gorm:"column:vice_text"`
-	Seq         int64  `gorm:"column:seq"`
+	LocalID     int64             `gorm:"primaryKey;column:local_id"`
+	SvrID       int64             `gorm:"column:svr_id"`
+	CreateTime  int64             `gorm:"column:create_time"`
+	Content     string            `gorm:"column:content"`
+	Status      int64             `gorm:"column:status"`
+	ImgStatus   int64             `gorm:"column:img_status"`
+	MessageType model.MessageType `gorm:"column:message_type"`
+	Des         bool              `gorm:"column:des"`
+	Source      string            `gorm:"column:source"`
+	VoiceText   string            `gorm:"column:vice_text"`
+	Seq         int64             `gorm:"column:seq"`
 }

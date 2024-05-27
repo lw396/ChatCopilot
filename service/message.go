@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/lw396/WeComCopilot/internal/errors"
+	"github.com/lw396/WeComCopilot/internal/model"
 	mysql "github.com/lw396/WeComCopilot/internal/repository/gorm"
 	"github.com/lw396/WeComCopilot/internal/repository/sqlite"
 	"github.com/lw396/WeComCopilot/pkg/db"
@@ -79,6 +80,21 @@ func (a *Service) convertMessageContent(msg []*sqlite.MessageContent) (result []
 	return
 }
 
-func (a *Service) GetHinkMedia(ctx context.Context, content string) (result, err error) {
+func (a *Service) GetHinkMedia(ctx context.Context, data *mysql.MessageContent) (result string, err error) {
+	switch data.MessageType {
+	case model.MsgTypeImage:
+		result, err = a.HandleImage(ctx, data.Content, data.Des)
+		if err != nil {
+			return
+		}
+	case model.MsgTypeVoice:
+
+	case model.MsgTypeVideo:
+
+	case model.MsgTypeMicroVideo:
+
+	default:
+
+	}
 	return
 }

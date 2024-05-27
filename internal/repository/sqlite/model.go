@@ -1,5 +1,9 @@
 package sqlite
 
+import (
+	"github.com/lw396/WeComCopilot/internal/model"
+)
+
 // Group
 type GroupContact struct {
 	UsrName           string `gorm:"column:m_nsUsrName"`
@@ -55,17 +59,17 @@ func (SQLiteSequence) TableName() string {
 }
 
 type MessageContent struct {
-	MesLocalID    int64  `gorm:"column:mesLocalID"`
-	MesSvrID      int64  `gorm:"column:mesSvrID"`
-	MsgCreateTime int64  `gorm:"column:msgCreateTime"`
-	MsgContent    string `gorm:"column:msgContent"`
-	MsgStatus     int64  `gorm:"column:msgStatus"`
-	MsgImgStatus  int64  `gorm:"column:msgImgStatus"`
-	MessageType   int64  `gorm:"column:messageType"`
-	MesDes        int64  `gorm:"column:mesDes"`
-	MsgSource     string `gorm:"column:msgSource"`
-	MsgVoiceText  string `gorm:"column:msgVoiceText"`
-	MsgSeq        int64  `gorm:"column:msgSeq"`
+	MesLocalID    int64             `gorm:"column:mesLocalID"`
+	MesSvrID      int64             `gorm:"column:mesSvrID"`
+	MsgCreateTime int64             `gorm:"column:msgCreateTime"`
+	MsgContent    string            `gorm:"column:msgContent"`
+	MsgStatus     int64             `gorm:"column:msgStatus"`
+	MsgImgStatus  int64             `gorm:"column:msgImgStatus"`
+	MessageType   model.MessageType `gorm:"column:messageType"`
+	MesDes        bool              `gorm:"column:mesDes"`
+	MsgSource     string            `gorm:"column:msgSource"`
+	MsgVoiceText  string            `gorm:"column:msgVoiceText"`
+	MsgSeq        int64             `gorm:"column:msgSeq"`
 }
 
 type HlinkMediaRecord struct {
