@@ -31,13 +31,13 @@ type SQLiteClient interface {
 type Repository interface {
 	// Group
 	SaveGroupContact(ctx context.Context, contact *db.GroupContact) error
-	GetGroupContacts(ctx context.Context, offset int) ([]*db.GroupContact, int64, error)
+	GetGroupContacts(ctx context.Context, nickname string, offset int) ([]*db.GroupContact, int64, error)
 	DelGroupContactByUsrName(ctx context.Context, usrName string) error
 	GetGroupContactByUsrName(ctx context.Context, usrName string) (*db.GroupContact, error)
 
 	// Contact
 	SaveContactPerson(ctx context.Context, contact *db.ContactPerson) error
-	GetContactPersons(ctx context.Context, offset int) ([]*db.ContactPerson, int64, error)
+	GetContactPersons(ctx context.Context, nickname string, offset int) ([]*db.ContactPerson, int64, error)
 	DelContactPersonByUsrName(ctx context.Context, usrname string) error
 	GetContactPersonByUsrName(ctx context.Context, usrName string) (*db.ContactPerson, error)
 

@@ -55,12 +55,14 @@ func (api *Api) Run() error {
 		v1.GET("/group_contact_list", api.getGroupContactList)
 
 		// 联系人
-		// 获取联系人列表
+		// 获取联系人信息列表
 		v1.GET("/contact_person", api.getContactPerson)
 		// 保存联系人聊天记录
 		v1.POST("/contact_person", api.saveContactPerson)
 		// 删除联系人信息及记录
 		v1.DELETE("/contact_person", api.delContactPerson)
+		// 查看联系人列表
+		v1.GET("/contact_person_list", api.getContactPersonList)
 
 		// 聊天记录
 		// 查看聊天记录列表

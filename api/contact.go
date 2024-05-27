@@ -1,6 +1,8 @@
 package api
 
 import (
+	"strconv"
+
 	"github.com/labstack/echo/v4"
 	"github.com/lw396/WeComCopilot/internal/errors"
 )
@@ -69,4 +71,22 @@ func (a *Api) delContactPerson(c echo.Context) (err error) {
 	}
 
 	return OK(c, "")
+}
+
+func (a *Api) getContactPersonList(c echo.Context) (err error) {
+	offset, err := strconv.Atoi(c.QueryParam("offset"))
+	if err != nil {
+		return errors.New(errors.CodeInvalidParam, "offset必须为数字且大于0")
+	}
+	nickname := c.QueryParam("nickname")
+
+	result, totle, err := a.service.GetContactPersonList(c.Request().Context(), offset, nickname)
+	if err != nil {
+		return
+	}
+
+	return OK(c, map[string]interface{}{
+		"list":  result,
+		"total": totle,
+	})
 }

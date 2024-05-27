@@ -63,7 +63,7 @@ func (a *Service) GetGroupContactByUsrname(ctx context.Context, usrname string) 
 }
 
 func (a *Service) GetGroupContactList(ctx context.Context, offset int, nickname string) (result []*GroupContact, totle int64, err error) {
-	group, totle, err := a.rep.GetGroupContacts(ctx, offset)
+	group, totle, err := a.rep.GetGroupContacts(ctx, nickname, offset)
 	if err != nil {
 		return
 	}
