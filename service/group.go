@@ -112,12 +112,12 @@ func (a *Service) SaveGroupContact(ctx context.Context, data *GroupContact) (err
 		return
 	}
 
-	content := a.convertMessageContent(messages)
+	content := a.convertMessageContent(ctx, messages, true)
 	if err = a.rep.SaveMessageContent(ctx, msgName, content); err != nil {
 		return
 	}
 
-	if err = a.AddSyncTask(ctx, msgName, data.DBName); err != nil {
+	if err = a.AddSyncTask(ctx, msgName, data.DBName, true); err != nil {
 		return
 	}
 

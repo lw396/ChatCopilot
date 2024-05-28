@@ -60,14 +60,20 @@ func (a *Service) GetMessageContent(ctx context.Context, usrName string, offset 
 	return
 }
 
-func (a *Service) convertMessageContent(msg []*sqlite.MessageContent) (result []*mysql.MessageContent) {
+func (a *Service) convertMessageContent(ctx context.Context, msg []*sqlite.MessageContent, isGroup bool) (result []*mysql.MessageContent) {
 	result = make([]*mysql.MessageContent, 0)
+
 	for _, v := range msg {
+		content, err := a.GetHinkMedia(ctx, v, isGroup)
+		if err != nil {
+			return
+		}
+
 		result = append(result, &mysql.MessageContent{
 			LocalID:     v.MesLocalID,
 			SvrID:       v.MesSvrID,
 			CreateTime:  v.MsgCreateTime,
-			Content:     v.MsgContent,
+			Content:     content,
 			Status:      v.MsgStatus,
 			ImgStatus:   v.MsgImgStatus,
 			MessageType: v.MessageType,
@@ -80,10 +86,10 @@ func (a *Service) convertMessageContent(msg []*sqlite.MessageContent) (result []
 	return
 }
 
-func (a *Service) GetHinkMedia(ctx context.Context, data *mysql.MessageContent) (result string, err error) {
+func (a *Service) GetHinkMedia(ctx context.Context, data *sqlite.MessageContent, isGroup bool) (result string, err error) {
 	switch data.MessageType {
 	case model.MsgTypeImage:
-		result, err = a.HandleImage(ctx, data.Content, data.Des)
+		result, err = a.HandleImage(ctx, data.MsgContent, data.MesDes, isGroup)
 		if err != nil {
 			return
 		}

@@ -120,12 +120,12 @@ func (a *Service) SaveContactPerson(ctx context.Context, data *ContactPerson) (e
 		return
 	}
 
-	content := a.convertMessageContent(messages)
+	content := a.convertMessageContent(ctx, messages, false)
 	if err = a.rep.SaveMessageContent(ctx, msgName, content); err != nil {
 		return
 	}
 
-	if err := a.AddSyncTask(ctx, msgName, data.DBName); err != nil {
+	if err := a.AddSyncTask(ctx, msgName, data.DBName, false); err != nil {
 		return err
 	}
 

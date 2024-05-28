@@ -40,7 +40,7 @@ type MediaMessage struct {
 	MessageType model.MessageType `json:"message_type"`
 }
 
-func (a *Service) HandleImage(ctx context.Context, content string, isDes bool) (result string, err error) {
+func (a *Service) HandleImage(ctx context.Context, content string, isDes, isGroup bool) (result string, err error) {
 	var data ImageMessageData
 	if err = xml.Unmarshal([]byte(content), &data); err != nil {
 		return
@@ -51,7 +51,10 @@ func (a *Service) HandleImage(ctx context.Context, content string, isDes bool) (
 		return
 	}
 
-	sender := strings.Split(content, ":")[0]
+	var sender string
+	if isDes && isGroup {
+		sender = strings.Split(content, ":")[0]
+	}
 	path := fmt.Sprintf("%s/%s", hlink.Detail.RelativePath, hlink.Detail.FileName)
 	_result, err := json.Marshal(&MediaMessage{
 		Sender:      sender,

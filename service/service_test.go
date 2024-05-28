@@ -21,7 +21,7 @@ func TestUnmarshalXml(t *testing.T) {
 		<platform_signature></platform_signature>
 		<imgdatahash></imgdatahash>
 	</msg>`
-	result, err := service.HandleImage(context.Background(), content, true)
+	result, err := service.HandleImage(context.Background(), content, true, true)
 	if err != nil {
 		t.Error(err)
 	}
