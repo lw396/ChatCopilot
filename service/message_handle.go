@@ -45,20 +45,23 @@ func (a *Service) HandleImage(ctx context.Context, content string, isDes, isGrou
 	if err = xml.Unmarshal([]byte(content), &data); err != nil {
 		return
 	}
-
-	if err = a.ConnectDB(ctx, sqlite.HlinkDB); err != nil {
-		return
-	}
-	hlink, err := a.sqlite.GetHinkMediaByMediaMd5(ctx, data.Img.Md5)
-	if err != nil {
-		return
-	}
-
-	var sender string
+	var sender, path string
 	if isDes && isGroup {
 		sender = strings.Split(content, ":")[0]
 	}
-	path := hlink.Detail.RelativePath + hlink.Detail.FileName
+
+	if data.Img.Md5 != "" {
+		if err = a.ConnectDB(ctx, sqlite.HlinkDB); err != nil {
+			return
+		}
+		var hlink *sqlite.HlinkMediaRecord
+		hlink, err = a.sqlite.GetHinkMediaByMediaMd5(ctx, data.Img.Md5)
+		if err != nil {
+			return
+		}
+		path = hlink.Detail.RelativePath + hlink.Detail.FileName
+	}
+
 	_result, err := json.Marshal(&MediaMessage{
 		Sender:      sender,
 		Path:        path,

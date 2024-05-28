@@ -128,13 +128,13 @@ func (a *Service) SaveGroupContact(ctx context.Context, data *GroupContact) (err
 }
 
 func (a *Service) DelGroupContact(ctx context.Context, usrName string) (err error) {
-	msgName := "Chat_" + hex.EncodeToString(util.Md5([]byte(usrName)))
-	err = a.rep.DelMessageContentTable(ctx, msgName)
-	if err != nil {
+	if err = a.rep.DelGroupContactByUsrName(ctx, usrName); err != nil {
 		return
 	}
 
-	if err = a.rep.DelGroupContactByUsrName(ctx, usrName); err != nil {
+	msgName := "Chat_" + hex.EncodeToString(util.Md5([]byte(usrName)))
+	err = a.rep.DelMessageContentTable(ctx, msgName)
+	if err != nil {
 		return
 	}
 

@@ -91,12 +91,6 @@ func (a *Service) SaveContactPerson(ctx context.Context, data *ContactPerson) (e
 	if err = a.ConnectMessageDB(ctx, data.DBName); err != nil {
 		return
 	}
-	msgName := "Chat_" + hex.EncodeToString(util.Md5([]byte(data.UsrName)))
-	messages, err := a.sqlite.GetMessageContent(ctx, data.DBName, msgName)
-	if err != nil {
-		return
-	}
-
 	if _, err = a.rep.GetContactPersonByUsrName(ctx, data.UsrName); err != gorm.ErrRecordNotFound {
 		if err == nil {
 			err = errors.New(errors.CodeAuthMessageFound, "contact person already exist")
@@ -113,6 +107,12 @@ func (a *Service) SaveContactPerson(ctx context.Context, data *ContactPerson) (e
 		DBName:     data.DBName,
 		Status:     1,
 	}); err != nil {
+		return
+	}
+
+	msgName := "Chat_" + hex.EncodeToString(util.Md5([]byte(data.UsrName)))
+	messages, err := a.sqlite.GetMessageContent(ctx, data.DBName, msgName)
+	if err != nil {
 		return
 	}
 
@@ -136,16 +136,14 @@ func (a *Service) SaveContactPerson(ctx context.Context, data *ContactPerson) (e
 }
 
 func (a *Service) DelContactPerson(ctx context.Context, usrName string) (err error) {
+	if err = a.rep.DelContactPersonByUsrName(ctx, usrName); err != nil {
+		return
+	}
 	msgName := "Chat_" + hex.EncodeToString(util.Md5([]byte(usrName)))
 	err = a.rep.DelMessageContentTable(ctx, msgName)
 	if err != nil {
 		return
 	}
-
-	if err = a.rep.DelContactPersonByUsrName(ctx, usrName); err != nil {
-		return
-	}
-
 	if err = a.DelSyncTask(ctx, usrName); err != nil {
 		return
 	}
