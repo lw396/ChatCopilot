@@ -60,11 +60,11 @@ func (a *Service) GetMessageContent(ctx context.Context, usrName string, offset 
 	return
 }
 
-func (a *Service) convertMessageContent(ctx context.Context, msg []*sqlite.MessageContent, isGroup bool) (result []*mysql.MessageContent) {
+func (a *Service) convertMessageContent(ctx context.Context, msg []*sqlite.MessageContent, isGroup bool) (result []*mysql.MessageContent, err error) {
 	result = make([]*mysql.MessageContent, 0)
-
 	for _, v := range msg {
-		content, err := a.GetHinkMedia(ctx, v, isGroup)
+		content := ""
+		content, err = a.GetHinkMedia(ctx, v, isGroup)
 		if err != nil {
 			return
 		}
@@ -93,14 +93,14 @@ func (a *Service) GetHinkMedia(ctx context.Context, data *sqlite.MessageContent,
 		if err != nil {
 			return
 		}
-	case model.MsgTypeVoice:
+	// case model.MsgTypeVoice:
 
-	case model.MsgTypeVideo:
+	// case model.MsgTypeVideo:
 
-	case model.MsgTypeMicroVideo:
+	// case model.MsgTypeMicroVideo:
 
 	default:
-
+		result = data.MsgContent
 	}
 	return
 }

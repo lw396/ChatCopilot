@@ -75,14 +75,22 @@ type MessageContent struct {
 type HlinkMediaRecord struct {
 	MediaMd5    string           `gorm:"column:mediaMd5"`
 	MediaSize   int64            `gorm:"column:mediaSize"`
-	InodeNumber int64            `gorm:"column:inodeNumber"`
+	InodeNumber int64            `gorm:"primary_key;column:inodeNumber"`
 	ModifyTime  int64            `gorm:"column:modifyTime"`
-	Detail      HlinkMediaDetail `gorm:"foreignKey:inodeNumber"`
+	Detail      HlinkMediaDetail `gorm:"foreignKey:InodeNumber"`
+}
+
+func (HlinkMediaRecord) TableName() string {
+	return "HlinkMediaRecord"
 }
 
 type HlinkMediaDetail struct {
 	LocalId      int64  `gorm:"column:localId"`
-	InodeNumber  int64  `gorm:"column:inodeNumber"`
+	InodeNumber  int64  `gorm:"primary_key;column:inodeNumber"`
 	RelativePath string `gorm:"column:relativePath"`
 	FileName     string `gorm:"column:fileName"`
+}
+
+func (HlinkMediaDetail) TableName() string {
+	return "HlinkMediaDetail"
 }

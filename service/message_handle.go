@@ -4,10 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"encoding/xml"
-	"fmt"
 	"strings"
 
 	"github.com/lw396/WeComCopilot/internal/model"
+	"github.com/lw396/WeComCopilot/internal/repository/sqlite"
 )
 
 // ImageMessageData 图片消息结构体
@@ -46,6 +46,9 @@ func (a *Service) HandleImage(ctx context.Context, content string, isDes, isGrou
 		return
 	}
 
+	if err = a.ConnectDB(ctx, sqlite.HlinkDB); err != nil {
+		return
+	}
 	hlink, err := a.sqlite.GetHinkMediaByMediaMd5(ctx, data.Img.Md5)
 	if err != nil {
 		return
@@ -55,7 +58,7 @@ func (a *Service) HandleImage(ctx context.Context, content string, isDes, isGrou
 	if isDes && isGroup {
 		sender = strings.Split(content, ":")[0]
 	}
-	path := fmt.Sprintf("%s/%s", hlink.Detail.RelativePath, hlink.Detail.FileName)
+	path := hlink.Detail.RelativePath + hlink.Detail.FileName
 	_result, err := json.Marshal(&MediaMessage{
 		Sender:      sender,
 		Path:        path,

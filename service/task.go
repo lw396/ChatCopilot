@@ -37,7 +37,10 @@ func (a *Service) SyncMessage(ctx context.Context) (err error) {
 				}
 				return
 			}
-			content := a.convertMessageContent(ctx, data, param.IsGroup)
+			content, err := a.convertMessageContent(ctx, data, param.IsGroup)
+			if err != nil {
+				return
+			}
 			if err = a.rep.SaveMessageContent(ctx, param.MsgName, content); err != nil {
 				return
 			}
