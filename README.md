@@ -44,7 +44,9 @@ path=./test
 
 `wechat.key` 为微信数据库密钥，获取方式见[这里](doc/mac数据库解密.md)。
 
-`wechat.path` 为 `mac` 微信聊天记录的目录，具体需要看你电脑存放位置的实际情况，例：`/Users/james/Library/Containers/com.tencent.xinWeChat/Data/Library/Application\ Support/com.tencent.xinWeChat/2.0b4.0.9/5a22781f14219edfffa333cb38aa92cf/Message`
+`wechat.path` 为 `mac` 微信聊天记录的目录，具体需要看你电脑存放位置的实际情况，例：`/Users/james/Library/Containers/com.tencent.xinWeChat/Data/Library/Application Support/com.tencent.xinWeChat/2.0b4.0.9/5a22781f14219edfffa333cb38aa92cf/Message`
+
+注：路径中若存在空格，`不需要`用在空格前添加 `\` 隔开。
 
 ### 创建数据库表
 

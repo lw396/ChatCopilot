@@ -22,6 +22,9 @@ func (s *SQLite) CheckMessageExistDB(ctx context.Context, tx *gorm.DB, userName 
 	result = &SQLiteSequence{}
 	err = tx.WithContext(ctx).Where("name = ?", userName).First(result).Error
 	if err != nil {
+		if err.Error() == "no such table: sqlite_sequence" {
+			err = gorm.ErrRecordNotFound
+		}
 		return
 	}
 	return

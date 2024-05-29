@@ -28,6 +28,6 @@ func getKey(oriKey string) string {
 		parts = append(parts, part)
 	}
 
-	key := "0x" + strings.Join(parts, "")
+	key := strings.Join(parts, "")
 	return key
 }

@@ -39,7 +39,7 @@ func (a *Service) ScanMessage(ctx context.Context, userName string) (result *Mes
 		break
 	}
 	if seq == nil {
-		err = errors.New(errors.CodeDB, "not found message")
+		err = errors.New(errors.CodeDB, "未找到该消息")
 		return
 	}
 	result = &MessageInfo{
@@ -93,6 +93,8 @@ func (a *Service) GetHinkMedia(ctx context.Context, data *sqlite.MessageContent,
 		if err != nil {
 			return
 		}
+	// case model.MsgTypeEmoticon:
+
 	// case model.MsgTypeVoice:
 
 	// case model.MsgTypeVideo:
