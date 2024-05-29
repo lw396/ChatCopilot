@@ -29,3 +29,7 @@ password=$2a$10$SyEUGNBoxQX/7Iac1cqJCeLqrfpY9D1hMaeZLzH5KV2.mQqFCr0Y2
 [wechat]
 key=
 path=./test
+
+[task]
+interval=10
+crontab=*/10 * * * * *

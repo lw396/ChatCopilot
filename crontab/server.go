@@ -12,6 +12,8 @@ type crontabServer struct {
 	service *service.Service
 }
 
+var spec string = "*/10 * * * * *"
+
 func NewServer(s *service.Service) *crontabServer {
 	return &crontabServer{
 		service: s,
@@ -29,7 +31,7 @@ func (s *crontabServer) Start(ctx context.Context) error {
 	}
 
 	// 执行定时任务
-	if _, err := s.cron.AddFunc("*/30 * * * * *", func() {
+	if _, err := s.cron.AddFunc(spec, func() {
 		if err := s.SyncMessage(context.Background()); err != nil {
 			return
 		}

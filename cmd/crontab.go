@@ -38,6 +38,7 @@ var scheduleCmd = &cli.Command{
 			service.WithRedis(redis),
 			service.WithLogger(ctx.buildLogger("CRONTAB")),
 			service.WithSQLite(ctx.buildSQLite()),
+			service.WithTask(ctx.buildTask()),
 		)
 
 		s := crontab.NewServer(service)

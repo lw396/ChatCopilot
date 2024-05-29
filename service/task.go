@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"encoding/hex"
+	"fmt"
 
 	mysql "github.com/lw396/WeComCopilot/internal/repository/gorm"
 	"github.com/lw396/WeComCopilot/pkg/db"
@@ -18,6 +19,13 @@ type SyncMessageTaskParam struct {
 	MsgName string
 	NewId   int64
 	IsGroup bool
+}
+
+func (a *Service) GetCrontab() string {
+	if 0 < a.task.Interval && 60 > a.task.Interval {
+		return fmt.Sprintf("*/%d * * * * *", a.task.Interval)
+	}
+	return a.task.Crontab
 }
 
 func (a *Service) SyncMessage(ctx context.Context) (err error) {

@@ -226,3 +226,17 @@ func (c *Context) buildAdmin() *service.AdminConfig {
 		Password: password,
 	}
 }
+
+func (c *Context) buildTask() *service.TaskConfig {
+	interval := valuer.Value(0).Try(
+		ctx.Section("task").Key("interval").Int(),
+	).Int()
+	crontab := valuer.Value("").Try(
+		ctx.Section("task").Key("crontab").String(),
+	).String()
+
+	return &service.TaskConfig{
+		Interval: uint8(interval),
+		Crontab:  crontab,
+	}
+}

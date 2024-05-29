@@ -40,13 +40,19 @@ max-age=7
 [wechat]
 key=
 path=./test
+
+[task]
+interval=10
+crontab=*/10 * * * * *
 ```
 
 `wechat.key` 为微信数据库密钥，获取方式见[这里](doc/mac数据库解密.md)。
 
 `wechat.path` 为 `mac` 微信聊天记录的目录，具体需要看你电脑存放位置的实际情况，例：`/Users/james/Library/Containers/com.tencent.xinWeChat/Data/Library/Application Support/com.tencent.xinWeChat/2.0b4.0.9/5a22781f14219edfffa333cb38aa92cf/Message`
+注：路径中若存在空格，`不需要`在空格前添加 `\`
 
-注：路径中若存在空格，`不需要`用在空格前添加 `\` 隔开。
+`task.interval`: 为执行同步任务的间隔时间，单位为 `秒`(范围为1-59)，默认为 `10`，优先级高于 `task.crontab`
+`task.crontab` : 当 `task.interval` 满足不了您执行任务的需求时，你可以使用 `crontab` 来设置定时任务
 
 ### 创建数据库表
 
@@ -72,7 +78,7 @@ path=./test
 
 ```
 
-每 30 秒同步一次新的群聊记录。
+每 10 秒同步一次新的群聊记录。
 
 ## 常见问题
 

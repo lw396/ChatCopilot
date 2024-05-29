@@ -5,6 +5,7 @@ import (
 )
 
 func (s *crontabServer) InitSyncTask(ctx context.Context) (err error) {
+	spec = s.service.GetCrontab()
 	return s.service.InitSyncTask(ctx)
 }
 

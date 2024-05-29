@@ -27,6 +27,11 @@ type AdminConfig struct {
 	Password string
 }
 
+type TaskConfig struct {
+	Interval uint8
+	Crontab  string
+}
+
 type options struct {
 	rep    repository.Repository
 	logger log.Logger
@@ -35,6 +40,7 @@ type options struct {
 	sqlite repository.SQLiteClient
 	jwt    *JWTConfig
 	admin  *AdminConfig
+	task   *TaskConfig
 }
 
 type Option func(*options)
@@ -78,6 +84,12 @@ func WithJWT(jwt *JWTConfig) Option {
 func WithAdmin(admin *AdminConfig) Option {
 	return func(o *options) {
 		o.admin = admin
+	}
+}
+
+func WithTask(task *TaskConfig) Option {
+	return func(o *options) {
+		o.task = task
 	}
 }
 
