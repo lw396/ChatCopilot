@@ -29,9 +29,6 @@ type SQLiteClient interface {
 
 	// Hink
 	GetHinkMediaByMediaMd5(ctx context.Context, mediaMd5 string) (*sqlite.HlinkMediaRecord, error)
-
-	// Sticker
-	GetStickerFavArchive(ctx context.Context, md5 string) (string, error)
 }
 
 type Repository interface {

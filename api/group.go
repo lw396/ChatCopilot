@@ -31,10 +31,7 @@ func (a *Api) getGroupContactList(c echo.Context) (err error) {
 		return
 	}
 
-	return OK(c, map[string]interface{}{
-		"list":  result,
-		"total": totle,
-	})
+	return Paginate(c, result, totle)
 }
 
 type ReqSaveGroup struct {

@@ -185,11 +185,9 @@ func (c *Context) buildRedis() (redis.RedisClient, error) {
 
 func (c *Context) buildSQLite() *sqlite.SQLite {
 	key := valuer.Value("").Try(
-		os.Getenv("WECHAT_KEY"),
 		ctx.Section("wechat").Key("key").String(),
 	).String()
 	path := valuer.Value("").Try(
-		os.Getenv("WECHAT_PATH"),
 		ctx.Section("wechat").Key("path").String(),
 	).String()
 
@@ -213,11 +211,9 @@ func (c *Context) buildJWT() *service.JWTConfig {
 
 func (c *Context) buildAdmin() *service.AdminConfig {
 	username := valuer.Value("").Try(
-		os.Getenv("ADMIN_USERNAME"),
 		ctx.Section("admin").Key("username").String(),
 	).String()
 	password := valuer.Value("").Try(
-		os.Getenv("ADMIN_PASSWORD"),
 		ctx.Section("admin").Key("password").String(),
 	).String()
 
@@ -239,4 +235,10 @@ func (c *Context) buildTask() *service.TaskConfig {
 		Interval: uint8(interval),
 		Crontab:  crontab,
 	}
+}
+
+func (c *Context) buildFilePath() string {
+	return valuer.Value("").Try(
+		ctx.Section("wechat").Key("path").String(),
+	).String()
 }

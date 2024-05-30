@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/hex"
 	"fmt"
+	"os"
 
 	"github.com/lw396/WeComCopilot/internal/errors"
 	"github.com/lw396/WeComCopilot/internal/model"
@@ -106,6 +107,14 @@ func (a *Service) GetHinkMedia(ctx context.Context, data *sqlite.MessageContent,
 
 	default:
 		result = data.MsgContent
+	}
+	return
+}
+
+func (a *Service) GetMessageImage(ctx context.Context, path string) (result string, err error) {
+	result = fmt.Sprintf("%s/Message/MessageTemp/%s", a.path, path)
+	if _, err = os.Stat(result); err != nil {
+		return
 	}
 	return
 }

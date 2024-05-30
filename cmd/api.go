@@ -45,6 +45,7 @@ var apiCmd = &cli.Command{
 			service.WithRedis(redis),
 			service.WithJWT(ctx.buildJWT()),
 			service.WithAdmin(ctx.buildAdmin()),
+			service.WithFilePath(ctx.buildFilePath()),
 		)
 
 		port := cmd.Int("port")

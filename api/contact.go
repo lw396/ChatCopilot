@@ -85,8 +85,5 @@ func (a *Api) getContactPersonList(c echo.Context) (err error) {
 		return
 	}
 
-	return OK(c, map[string]interface{}{
-		"list":  result,
-		"total": totle,
-	})
+	return Paginate(c, result, totle)
 }

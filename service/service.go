@@ -37,6 +37,7 @@ type options struct {
 	jwt    *JWTConfig
 	admin  *AdminConfig
 	task   *TaskConfig
+	path   string
 }
 
 type Option func(*options)
@@ -86,6 +87,12 @@ func WithAdmin(admin *AdminConfig) Option {
 func WithTask(task *TaskConfig) Option {
 	return func(o *options) {
 		o.task = task
+	}
+}
+
+func WithFilePath(path string) Option {
+	return func(o *options) {
+		o.path = path
 	}
 }
 

@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"strconv"
 
 	"github.com/labstack/echo/v4"
@@ -22,4 +23,17 @@ func (a *Api) getMessageContentList(c echo.Context) (err error) {
 		return
 	}
 	return OK(c, result)
+}
+
+func (a *Api) getMessageImage(c echo.Context) (err error) {
+	path := c.QueryParam("path")
+	if path == "" {
+		return errors.New(errors.CodeInvalidParam, "path为空")
+	}
+	fmt.Println(path)
+	image, err := a.service.GetMessageImage(c.Request().Context(), path)
+	if err != nil {
+		return
+	}
+	return c.File(image)
 }
