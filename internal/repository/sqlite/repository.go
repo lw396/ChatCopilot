@@ -15,7 +15,7 @@ const (
 	ContactDB = "Contact/wccontact_new2.db" // 联系人
 	HlinkDB   = "Hardlink/hldata.db"        // 文件路径
 
-	FavArchive = "Sticker/fav.archive" // 收藏表情包
+	FavArchive = "Stickers/fav.archive" // 收藏表情包
 )
 
 type SQLite struct {

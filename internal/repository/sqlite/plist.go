@@ -24,7 +24,7 @@ func (s *SQLite) GetStickerFavArchive(ctx context.Context, md5 string) (result s
 	var _url *url.URL
 	for _, item := range data["$objects"].([]any) {
 		str, succ := item.(string)
-		if succ {
+		if !succ {
 			continue
 		}
 		if !strings.Contains(str, md5) {
@@ -37,6 +37,9 @@ func (s *SQLite) GetStickerFavArchive(ctx context.Context, md5 string) (result s
 		break
 	}
 
+	if _url == nil {
+		return
+	}
 	result = _url.String()
 	return
 }
