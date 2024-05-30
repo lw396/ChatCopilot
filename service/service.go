@@ -12,10 +12,6 @@ type Service struct {
 	*options
 }
 
-type SQLiteConfig struct {
-	Key  string
-	Path string
-}
 type JWTConfig struct {
 	Secret          string
 	ExpireSecs      int

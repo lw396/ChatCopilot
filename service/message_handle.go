@@ -10,44 +10,28 @@ import (
 	"github.com/lw396/WeComCopilot/internal/repository/sqlite"
 )
 
-// ImageMessageData 图片消息结构体
-type ImageMessageData struct {
-	XMLName xml.Name `xml:"msg"`
-	Img     struct {
-		Text           string `xml:",chardata"`
-		AesKey         string `xml:"aeskey,attr"`
-		EnCryVer       string `xml:"encryver,attr"`
-		CdnThumbAesKey string `xml:"cdnthumbaeskey,attr"`
-		CdnThumbUrl    string `xml:"cdnthumburl,attr"`
-		CdnThumbLength string `xml:"cdnthumblength,attr"`
-		CdnThumbHeight string `xml:"cdnthumbheight,attr"`
-		CdnThumbWidth  string `xml:"cdnthumbwidth,attr"`
-		CdnMidHeight   string `xml:"cdnmidheight,attr"`
-		CdnMidWidth    string `xml:"cdnmidwidth,attr"`
-		CdnHdHeight    string `xml:"cdnhdheight,attr"`
-		CdnHdWidth     string `xml:"cdnhdwidth,attr"`
-		CdnMidImgUrl   string `xml:"cdnmidimgurl,attr"`
-		Length         int64  `xml:"length,attr"`
-		CdnBigImgUrl   string `xml:"cdnbigimgurl,attr"`
-		HdLength       int64  `xml:"hdlength,attr"`
-		Md5            string `xml:"md5,attr"`
-	} `xml:"img"`
-}
-
 type MediaMessage struct {
 	Sender      string            `json:"sender"`
 	Path        string            `json:"path"`
+	Url         string            `json:"url"`
 	MessageType model.MessageType `json:"message_type"`
 }
 
-func (a *Service) HandleImage(ctx context.Context, content string, isDes, isGroup bool) (result string, err error) {
+type ImageMessageData struct {
+	XMLName xml.Name `xml:"msg"`
+	Img     struct {
+		Md5 string `xml:"md5,attr"`
+	} `xml:"img"`
+}
+
+func (a *Service) HandleImage(ctx context.Context, message *sqlite.MessageContent, isGroup bool) (result string, err error) {
 	var data ImageMessageData
-	if err = xml.Unmarshal([]byte(content), &data); err != nil {
+	if err = xml.Unmarshal([]byte(message.MsgContent), &data); err != nil {
 		return
 	}
 	var sender, path string
-	if isDes && isGroup {
-		sender = strings.Split(content, ":")[0]
+	if message.MesDes && isGroup {
+		sender = strings.Split(message.MsgContent, ":")[0]
 	}
 
 	if data.Img.Md5 != "" {
@@ -55,8 +39,7 @@ func (a *Service) HandleImage(ctx context.Context, content string, isDes, isGrou
 			return
 		}
 		var hlink *sqlite.HlinkMediaRecord
-		hlink, err = a.sqlite.GetHinkMediaByMediaMd5(ctx, data.Img.Md5)
-		if err != nil {
+		if hlink, err = a.sqlite.GetHinkMediaByMediaMd5(ctx, data.Img.Md5); err != nil {
 			return
 		}
 		path = hlink.Detail.RelativePath + hlink.Detail.FileName
@@ -66,6 +49,50 @@ func (a *Service) HandleImage(ctx context.Context, content string, isDes, isGrou
 		Sender:      sender,
 		Path:        path,
 		MessageType: model.MsgTypeImage,
+	})
+	if err != nil {
+		return
+	}
+
+	result = string(_result)
+	return
+}
+
+type StickerMessageData struct {
+	XMLName xml.Name `xml:"msg"`
+	Sticker struct {
+		Md5 string `xml:"md5,attr"`
+		Url string `xml:"cdnurl,attr"`
+	} `xml:"emoji"`
+}
+
+func (a *Service) HandleSticker(ctx context.Context, message *sqlite.MessageContent, isGroup bool) (result string, err error) {
+	var data StickerMessageData
+	if err = xml.Unmarshal([]byte(message.MsgContent), &data); err != nil {
+		return
+	}
+
+	var sender string
+	if message.MesDes && isGroup {
+		sender = strings.Split(message.MsgContent, ":")[0]
+	}
+
+	var url string
+	if data.Sticker.Md5 != "" {
+		if data.Sticker.Url != "" {
+			url = strings.ReplaceAll(data.Sticker.Url, "amp;", "")
+		}
+		if data.Sticker.Url == "" {
+			if url, err = a.sqlite.GetStickerFavArchive(ctx, data.Sticker.Md5); err != nil {
+				return
+			}
+		}
+	}
+	_result, err := json.Marshal(&MediaMessage{
+		Sender:      sender,
+		Path:        data.Sticker.Md5,
+		Url:         url,
+		MessageType: model.MsgTypeEmoticon,
 	})
 	if err != nil {
 		return

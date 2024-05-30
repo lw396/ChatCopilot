@@ -89,12 +89,15 @@ func (a *Service) convertMessageContent(ctx context.Context, msg []*sqlite.Messa
 func (a *Service) GetHinkMedia(ctx context.Context, data *sqlite.MessageContent, isGroup bool) (result string, err error) {
 	switch data.MessageType {
 	case model.MsgTypeImage:
-		result, err = a.HandleImage(ctx, data.MsgContent, data.MesDes, isGroup)
+		result, err = a.HandleImage(ctx, data, isGroup)
 		if err != nil {
 			return
 		}
-	// case model.MsgTypeEmoticon:
-
+	case model.MsgTypeEmoticon:
+		result, err = a.HandleSticker(ctx, data, isGroup)
+		if err != nil {
+			return
+		}
 	// case model.MsgTypeVoice:
 
 	// case model.MsgTypeVideo:

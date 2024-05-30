@@ -37,6 +37,10 @@ func (a *Service) SyncMessage(ctx context.Context) (err error) {
 
 	for i, param := range params {
 		go func(ctx context.Context, param SyncMessageTaskParam, i int) {
+			err := a.ConnectDB(ctx, param.DBName)
+			if err != nil {
+				return
+			}
 			data, err := a.sqlite.GetUnsyncMessageContent(ctx, param.DBName, param.MsgName, param.NewId)
 			if err != nil {
 				if db.IsRecordNotFound(err) {
