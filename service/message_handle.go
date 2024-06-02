@@ -8,16 +8,14 @@ import (
 	"os"
 	"strings"
 
-	"github.com/lw396/WeComCopilot/internal/model"
 	"github.com/lw396/WeComCopilot/internal/repository/sqlite"
 	"howett.net/plist"
 )
 
 type MediaMessage struct {
-	Sender      string            `json:"sender"`
-	Path        string            `json:"path"`
-	Url         string            `json:"url"`
-	MessageType model.MessageType `json:"message_type"`
+	Sender string `json:"sender"`
+	Path   string `json:"path"`
+	Url    string `json:"url"`
 }
 
 type ImageMessageData struct {
@@ -49,9 +47,8 @@ func (a *Service) HandleImage(ctx context.Context, message *sqlite.MessageConten
 	}
 
 	_result, err := json.Marshal(&MediaMessage{
-		Sender:      sender,
-		Path:        path,
-		MessageType: model.MsgTypeImage,
+		Sender: sender,
+		Path:   path,
 	})
 	if err != nil {
 		return
@@ -93,10 +90,9 @@ func (a *Service) HandleSticker(ctx context.Context, message *sqlite.MessageCont
 	}
 
 	_result, err := json.Marshal(&MediaMessage{
-		Sender:      sender,
-		Path:        data.Sticker.Md5,
-		Url:         url,
-		MessageType: model.MsgTypeEmoticon,
+		Sender: sender,
+		Path:   data.Sticker.Md5,
+		Url:    url,
 	})
 	if err != nil {
 		return

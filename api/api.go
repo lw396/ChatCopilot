@@ -67,7 +67,10 @@ func (api *Api) Run() error {
 		// 聊天记录
 		// 查看聊天记录列表
 		v1.GET("/message_content_list", api.getMessageContentList)
+		// 查看图片
 		v1.GET("/message_image", api.getMessageImage)
+		// 查看表情包
+		v1.GET("/message_sticker", api.getMessageSticker)
 	}
 
 	return engine.Start(fmt.Sprintf(":%d", api.port))

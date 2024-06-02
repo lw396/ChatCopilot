@@ -39,6 +39,7 @@ var scheduleCmd = &cli.Command{
 			service.WithLogger(ctx.buildLogger("CRONTAB")),
 			service.WithSQLite(ctx.buildSQLite()),
 			service.WithTask(ctx.buildTask()),
+			service.WithFilePath(ctx.buildFilePath()),
 		)
 
 		s := crontab.NewServer(service)

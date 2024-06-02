@@ -2,6 +2,7 @@ package crontab
 
 import (
 	"context"
+	"log"
 
 	"github.com/lw396/WeComCopilot/service"
 	"github.com/robfig/cron/v3"
@@ -33,7 +34,7 @@ func (s *crontabServer) Start(ctx context.Context) error {
 	// 执行定时任务
 	if _, err := s.cron.AddFunc(spec, func() {
 		if err := s.SyncMessage(context.Background()); err != nil {
-			return
+			log.Println(err)
 		}
 	}); err != nil {
 		return err

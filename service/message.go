@@ -4,7 +4,11 @@ import (
 	"context"
 	"encoding/hex"
 	"fmt"
+	"io"
+	"io/fs"
+	"net/http"
 	"os"
+	"strings"
 
 	"github.com/lw396/WeComCopilot/internal/errors"
 	"github.com/lw396/WeComCopilot/internal/model"
@@ -114,6 +118,48 @@ func (a *Service) GetHinkMedia(ctx context.Context, data *sqlite.MessageContent,
 func (a *Service) GetMessageImage(ctx context.Context, path string) (result string, err error) {
 	result = fmt.Sprintf("%s/Message/MessageTemp/%s", a.path, path)
 	if _, err = os.Stat(result); err != nil {
+		return
+	}
+	return
+}
+
+const StickerDir = "./data/sticker/"
+
+func (a *Service) GetMessageSticker(ctx context.Context, path, url string) (result string, err error) {
+	result = StickerDir + path
+	if _, err = os.Stat(result); err != nil && os.IsExist(err) {
+		return
+	}
+	if os.IsNotExist(err) {
+		if err = a.CacheSticker(ctx, result, url); err != nil {
+			return
+		}
+	}
+
+	return
+}
+
+func (a *Service) CacheSticker(ctx context.Context, path, url string) (err error) {
+	url = strings.ReplaceAll(url, "\\u0026", "&")
+	resp, err := http.Get(url)
+	if err != nil {
+		return
+	}
+	content, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+	defer resp.Body.Close()
+
+	if _, err = os.Stat(StickerDir); err != nil && os.IsExist(err) {
+		return
+	}
+	if os.IsNotExist(err) {
+		if err = os.MkdirAll(StickerDir, fs.ModePerm); err != nil {
+			return
+		}
+	}
+	if err = os.WriteFile(path, content, 0644); err != nil {
 		return
 	}
 	return
