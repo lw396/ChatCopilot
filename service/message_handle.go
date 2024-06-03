@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/lw396/WeComCopilot/internal/repository/sqlite"
+	"github.com/lw396/WeComCopilot/pkg/db"
 	"howett.net/plist"
 )
 
@@ -25,6 +26,13 @@ type ImageMessageData struct {
 	} `xml:"img"`
 }
 
+type VideoMessageData struct {
+	XMLName xml.Name `xml:"msg"`
+	Video   struct {
+		Md5 string `xml:"md5,attr"`
+	} `xml:"videomsg"`
+}
+
 func (a *Service) HandleImage(ctx context.Context, message *sqlite.MessageContent, isGroup bool) (result string, err error) {
 	var data ImageMessageData
 	if err = xml.Unmarshal([]byte(message.MsgContent), &data); err != nil {
@@ -39,8 +47,10 @@ func (a *Service) HandleImage(ctx context.Context, message *sqlite.MessageConten
 		if err = a.ConnectDB(ctx, sqlite.HlinkDB); err != nil {
 			return
 		}
-		var hlink *sqlite.HlinkMediaRecord
-		if hlink, err = a.sqlite.GetHinkMediaByMediaMd5(ctx, data.Img.Md5); err != nil {
+
+		hlink := &sqlite.HlinkMediaRecord{}
+		hlink, err = a.sqlite.GetHinkMediaByMediaMd5(ctx, data.Img.Md5)
+		if err != nil && !db.IsRecordNotFound(err) {
 			return
 		}
 		path = hlink.Detail.RelativePath + hlink.Detail.FileName
@@ -135,5 +145,9 @@ func (a *Service) GetStickerFavArchive(ctx context.Context, md5 string) (result 
 		return
 	}
 	result = _url.String()
+	return
+}
+
+func (a *Service) HandleVideo(ctx context.Context, message *sqlite.MessageContent, isGroup bool) (result string, err error) {
 	return
 }

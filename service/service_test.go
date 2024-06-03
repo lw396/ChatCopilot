@@ -62,3 +62,31 @@ func TestUnmarshalEmoji(t *testing.T) {
 
 	fmt.Println(result)
 }
+
+func TestUnmarshalVideo(t *testing.T) {
+	service := New()
+	data := &sqlite.MessageContent{
+		MsgContent: `wxid_t99xk0w3nbe122:
+		<?xml version="1.0"?>
+		<msg>
+			<videomsg aeskey="71d50c579fbaebc25b267de3ff583966"
+				cdnvideourl="3057020100044b30490201000204dc45dde602032f591902040da90c790204665d2978042439386366333530302d356639312d343863382d616164322d6534313734306331663564640204052400040201000405004c511d00"
+				cdnthumbaeskey="71d50c579fbaebc25b267de3ff583966"
+				cdnthumburl="3057020100044b30490201000204dc45dde602032f591902040da90c790204665d2978042439386366333530302d356639312d343863382d616164322d6534313734306331663564640204052400040201000405004c511d00"
+				length="817956" playlength="4" cdnthumblength="6746" cdnthumbwidth="224"
+				cdnthumbheight="298" fromusername="wxid_t99xk0w3nbe122"
+				md5="443d7917ad367b35c289669bf4f0e789" newmd5="5a51c9abc61c8c606a5e8e580182fbea"
+				isplaceholder="0" rawmd5="47130090203fce25bf8df70ea98343a8" rawlength="9926637"
+				cdnrawvideourl="3057020100044b30490201000204dc45dde602032f591902040da90c790204665d2977042432393065633063352d373663352d343338652d613231312d346561326230393366343234020405a400040201000405004c4c6d00"
+				cdnrawvideoaeskey="19931fd31753220a853409ac0a7bacc6" overwritenewmsgid="0"
+				originsourcemd5="38ee59e8d1b22eddaaef4ebf54c9a3cc" isad="0" />
+		</msg>`,
+		MesDes: true,
+	}
+	result, err := service.HandleVideo(context.Background(), data, true)
+	if err != nil {
+		t.Error(err)
+	}
+
+	fmt.Println(result)
+}

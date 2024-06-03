@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/hex"
 	"fmt"
+	"sync"
 
 	mysql "github.com/lw396/WeComCopilot/internal/repository/gorm"
 	"github.com/lw396/WeComCopilot/pkg/db"
@@ -35,30 +36,48 @@ func (a *Service) SyncMessage(ctx context.Context) (err error) {
 		return
 	}
 
+	wg := sync.WaitGroup{}
+	newParams := make([]SyncMessageTaskParam, len(params))
 	for i, param := range params {
-		go func(ctx context.Context, param SyncMessageTaskParam, i int) {
-			err := a.ConnectDB(ctx, param.DBName)
+		wg.Add(1)
+		go func(ctx context.Context, param SyncMessageTaskParam, i int, newParams []SyncMessageTaskParam) {
+			defer wg.Done()
+			newParams[i], err = a.handleSaveMessageContent(ctx, param)
 			if err != nil {
 				return
 			}
-			data, err := a.sqlite.GetUnsyncMessageContent(ctx, param.DBName, param.MsgName, param.NewId)
-			if err != nil {
-				if db.IsRecordNotFound(err) {
-					err = nil
-					return
-				}
-				return
-			}
-			content, err := a.convertMessageContent(ctx, data, param.IsGroup)
-			if err != nil {
-				return
-			}
-			if err = a.rep.SaveMessageContent(ctx, param.MsgName, content); err != nil {
-				return
-			}
-			params[i].NewId = content[len(content)-1].LocalID
-		}(ctx, param, i)
+		}(ctx, param, i, newParams)
 	}
+	wg.Wait()
+
+	if err = a.redis.Set(ctx, SyncTaskCacheKey, newParams, 0); err != nil {
+		return
+	}
+	return
+}
+
+func (a *Service) handleSaveMessageContent(ctx context.Context, param SyncMessageTaskParam) (newParam SyncMessageTaskParam, err error) {
+	newParam = param
+	if err = a.ConnectDB(ctx, param.DBName); err != nil {
+		return
+	}
+	data, err := a.sqlite.GetUnsyncMessageContent(ctx, param.DBName, param.MsgName, param.NewId)
+	if err != nil {
+		return
+	}
+	if len(data) == 0 {
+		return
+	}
+
+	content, err := a.convertMessageContent(ctx, data, param.IsGroup)
+	if err != nil {
+		return
+	}
+	if err = a.rep.SaveMessageContent(ctx, param.MsgName, content); err != nil {
+		return
+	}
+
+	newParam.NewId = content[len(content)-1].LocalID
 	return
 }
 
@@ -130,7 +149,7 @@ func (a *Service) InitSyncTask(ctx context.Context) (err error) {
 			DBName:  v.DBName,
 			MsgName: msgName,
 			NewId:   data.LocalID,
-			IsGroup: true,
+			IsGroup: v.IsGroup,
 		})
 	}
 
