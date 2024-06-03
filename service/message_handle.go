@@ -53,7 +53,10 @@ func (a *Service) HandleImage(ctx context.Context, message *sqlite.MessageConten
 		if err != nil && !db.IsRecordNotFound(err) {
 			return
 		}
-		path = hlink.Detail.RelativePath + hlink.Detail.FileName
+
+		if !db.IsRecordNotFound(err) {
+			path = hlink.Detail.RelativePath + hlink.Detail.FileName
+		}
 	}
 
 	_result, err := json.Marshal(&MediaMessage{
