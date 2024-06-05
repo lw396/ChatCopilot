@@ -95,6 +95,12 @@ export CGO_LDFLAGS="-L/opt/homebrew/lib"
 
 ```
 
+### 读取同步图片或视频时，出现文件路径为空的情况
+
+进入 微信 -> 设置 -> 通用 -> 勾选 文件设置中 `小于 20MB 的文件自动下载`，并将自动下载大小文件设置为 `1024MB`（最大只能设为 `1024MB`，所以在同步时未下载文件的请况下无法同步大于`1024MB`的文件）
+
+![Alt](doc/img/wechat-file-setting.png)
+
 ## 参考文献
 
 - 导出多年微信聊天记录 [https://sspai.com/post/82577](https://sspai.com/post/82577)

@@ -123,6 +123,7 @@ func (a *Service) GetMessageImage(ctx context.Context, path string) (result stri
 	return
 }
 
+// 保存表情包路径
 const StickerDir = "./data/sticker/"
 
 func (a *Service) GetMessageSticker(ctx context.Context, path, url string) (result string, err error) {
