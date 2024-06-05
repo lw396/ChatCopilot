@@ -29,6 +29,12 @@ func (r *gormRepository) GetNewMessageContent(ctx context.Context, msgName strin
 	return
 }
 
+func (r *gormRepository) UpdateMessageContent(ctx context.Context, msgName string, content *MessageContent) (err error) {
+	err = r.db.WithContext(ctx).Table(msgName).Where("local_id = ?", content.LocalID).
+		Update("content", content.Content).Error
+	return
+}
+
 func (r *gormRepository) GetMessageContentList(ctx context.Context, msgName string, offset int) (result []*MessageContent, err error) {
 	err = r.db.WithContext(ctx).Table(msgName).Order("local_id desc").Limit(30).Offset(offset).
 		Find(&result).Error

@@ -12,7 +12,8 @@ import (
 )
 
 const (
-	SyncTaskCacheKey = "SYNC_TASK_CACHE_PARAM"
+	SyncTaskMessageContent = "SYNC_TASK_MESSAGE_CONTENRT"
+	SyncTaskUnloadedFile   = "SYNC_TASK_UNLOADED_FILE"
 )
 
 type SyncMessageTaskParam struct {
@@ -31,7 +32,7 @@ func (a *Service) GetCrontab() string {
 
 func (a *Service) SyncMessage(ctx context.Context) (err error) {
 	var params []SyncMessageTaskParam
-	_, err = a.redis.Get(ctx, SyncTaskCacheKey, &params)
+	_, err = a.redis.Get(ctx, SyncTaskMessageContent, &params)
 	if err != nil {
 		return
 	}
@@ -50,7 +51,7 @@ func (a *Service) SyncMessage(ctx context.Context) (err error) {
 	}
 	wg.Wait()
 
-	if err = a.redis.Set(ctx, SyncTaskCacheKey, newParams, 0); err != nil {
+	if err = a.redis.Set(ctx, SyncTaskMessageContent, newParams, 0); err != nil {
 		return
 	}
 	return
@@ -69,7 +70,7 @@ func (a *Service) handleSaveMessageContent(ctx context.Context, param SyncMessag
 		return
 	}
 
-	content, err := a.convertMessageContent(ctx, data, param.IsGroup)
+	content, err := a.HandleMessageContent(ctx, data, param.IsGroup)
 	if err != nil {
 		return
 	}
@@ -153,7 +154,7 @@ func (a *Service) InitSyncTask(ctx context.Context) (err error) {
 		})
 	}
 
-	err = a.redis.Set(ctx, SyncTaskCacheKey, param, 0)
+	err = a.redis.Set(ctx, SyncTaskMessageContent, param, 0)
 	if err != nil {
 		return
 	}
@@ -172,7 +173,7 @@ func (a *Service) AddSyncTask(ctx context.Context, msgName, dbName string, isGro
 	}
 
 	param := make([]SyncMessageTaskParam, 0)
-	_, err = a.redis.Get(ctx, SyncTaskCacheKey, &param)
+	_, err = a.redis.Get(ctx, SyncTaskMessageContent, &param)
 	if err != nil {
 		return
 	}
@@ -183,7 +184,7 @@ func (a *Service) AddSyncTask(ctx context.Context, msgName, dbName string, isGro
 		NewId:   data.LocalID,
 		IsGroup: isGroup,
 	})
-	err = a.redis.Set(ctx, SyncTaskCacheKey, param, 0)
+	err = a.redis.Set(ctx, SyncTaskMessageContent, param, 0)
 	if err != nil {
 		return
 	}
@@ -193,7 +194,7 @@ func (a *Service) AddSyncTask(ctx context.Context, msgName, dbName string, isGro
 
 func (a *Service) DelSyncTask(ctx context.Context, usrName string) (err error) {
 	_param := make([]SyncMessageTaskParam, 0)
-	_, err = a.redis.Get(ctx, SyncTaskCacheKey, &_param)
+	_, err = a.redis.Get(ctx, SyncTaskMessageContent, &_param)
 	if err != nil {
 		return
 	}
@@ -206,7 +207,7 @@ func (a *Service) DelSyncTask(ctx context.Context, usrName string) (err error) {
 		}
 		param = append(param, p)
 	}
-	err = a.redis.Set(ctx, SyncTaskCacheKey, param, 0)
+	err = a.redis.Set(ctx, SyncTaskMessageContent, param, 0)
 	if err != nil {
 		return
 	}

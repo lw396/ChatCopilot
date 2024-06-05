@@ -2,12 +2,13 @@ package service
 
 import (
 	"context"
-	"encoding/json"
 	"encoding/xml"
 	"net/url"
 	"os"
 	"strings"
+	"time"
 
+	"github.com/lw396/WeComCopilot/internal/model"
 	"github.com/lw396/WeComCopilot/internal/repository/sqlite"
 	"github.com/lw396/WeComCopilot/pkg/db"
 	"howett.net/plist"
@@ -17,6 +18,7 @@ type MediaMessage struct {
 	Sender string `json:"sender"`
 	Path   string `json:"path"`
 	Url    string `json:"url"`
+	Md5    string `json:"md5"`
 }
 
 type ImageMessageData struct {
@@ -33,7 +35,7 @@ type VideoMessageData struct {
 	} `xml:"videomsg"`
 }
 
-func (a *Service) HandleImage(ctx context.Context, message *sqlite.MessageContent, isGroup bool) (result string, err error) {
+func (a *Service) HandleImage(ctx context.Context, message *sqlite.MessageContent, isGroup bool) (result *MediaMessage, err error) {
 	var data ImageMessageData
 	if err = xml.Unmarshal([]byte(message.MsgContent), &data); err != nil {
 		return
@@ -59,15 +61,11 @@ func (a *Service) HandleImage(ctx context.Context, message *sqlite.MessageConten
 		}
 	}
 
-	_result, err := json.Marshal(&MediaMessage{
+	result = &MediaMessage{
 		Sender: sender,
 		Path:   path,
-	})
-	if err != nil {
-		return
+		Md5:    data.Img.Md5,
 	}
-
-	result = string(_result)
 	return
 }
 
@@ -79,7 +77,7 @@ type StickerMessageData struct {
 	} `xml:"emoji"`
 }
 
-func (a *Service) HandleSticker(ctx context.Context, message *sqlite.MessageContent, isGroup bool) (result string, err error) {
+func (a *Service) HandleSticker(ctx context.Context, message *sqlite.MessageContent, isGroup bool) (result *MediaMessage, err error) {
 	var data StickerMessageData
 	if err = xml.Unmarshal([]byte(message.MsgContent), &data); err != nil {
 		return
@@ -102,16 +100,12 @@ func (a *Service) HandleSticker(ctx context.Context, message *sqlite.MessageCont
 		}
 	}
 
-	_result, err := json.Marshal(&MediaMessage{
+	result = &MediaMessage{
 		Sender: sender,
 		Path:   data.Sticker.Md5,
+		Md5:    data.Sticker.Md5,
 		Url:    url,
-	})
-	if err != nil {
-		return
 	}
-
-	result = string(_result)
 	return
 }
 
@@ -152,5 +146,32 @@ func (a *Service) GetStickerFavArchive(ctx context.Context, md5 string) (result 
 }
 
 func (a *Service) HandleVideo(ctx context.Context, message *sqlite.MessageContent, isGroup bool) (result string, err error) {
+	return
+}
+
+type RecordUndownloadedFileParams struct {
+	Md5         string
+	Sender      string
+	LocalID     int64
+	MessageType model.MessageType
+	CreatedAt   time.Time
+}
+
+func (a *Service) recordUndownloadedFile(ctx context.Context, params []RecordUndownloadedFileParams) (err error) {
+	_params := make([]RecordUndownloadedFileParams, 0)
+	if _, err = a.redis.Get(ctx, SyncTaskUnloadedFile, &_params); err != nil {
+		return
+	}
+
+	var now = time.Now()
+	for _, param := range params {
+		if !param.CreatedAt.After(now) {
+			continue
+		}
+		params = append(params, param)
+	}
+	if err = a.redis.Set(ctx, SyncTaskUnloadedFile, params, time.Minute*10); err != nil {
+		return
+	}
 	return
 }

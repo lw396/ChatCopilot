@@ -120,7 +120,7 @@ func (a *Service) SaveContactPerson(ctx context.Context, data *ContactPerson) (e
 		return
 	}
 
-	content, err := a.convertMessageContent(ctx, messages, false)
+	content, err := a.HandleMessageContent(ctx, messages, false)
 	if err != nil {
 		return
 	}

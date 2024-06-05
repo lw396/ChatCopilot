@@ -3,12 +3,14 @@ package service
 import (
 	"context"
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"io"
 	"io/fs"
 	"net/http"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/lw396/WeComCopilot/internal/errors"
 	"github.com/lw396/WeComCopilot/internal/model"
@@ -65,19 +67,37 @@ func (a *Service) GetMessageContent(ctx context.Context, usrName string, offset 
 	return
 }
 
-func (a *Service) convertMessageContent(ctx context.Context, msg []*sqlite.MessageContent, isGroup bool) (result []*mysql.MessageContent, err error) {
-	result = make([]*mysql.MessageContent, 0)
-	for _, v := range msg {
-		var content string
+func (a *Service) HandleMessageContent(ctx context.Context, msg []*sqlite.MessageContent, isGroup bool) (result []*mysql.MessageContent, err error) {
+	result = make([]*mysql.MessageContent, len(msg))
+	record := make([]RecordUndownloadedFileParams, 0)
+	nowTime := time.Now()
+	for i, v := range msg {
+		var content *MediaMessage
 		if content, err = a.GetHinkMedia(ctx, v, isGroup); err != nil {
 			return
 		}
+		if content != nil {
+			var data []byte
+			if data, err = json.Marshal(content); err != nil {
+				return
+			}
+			v.MsgContent = string(data)
+		}
 
-		result = append(result, &mysql.MessageContent{
+		if content != nil && content.Path == "" && content.Md5 != "" {
+			record = append(record, RecordUndownloadedFileParams{
+				LocalID:     v.MesLocalID,
+				MessageType: v.MessageType,
+				CreatedAt:   nowTime,
+				Md5:         content.Md5,
+				Sender:      content.Sender,
+			})
+		}
+		result[i] = &mysql.MessageContent{
 			LocalID:     v.MesLocalID,
 			SvrID:       v.MesSvrID,
 			CreateTime:  v.MsgCreateTime,
-			Content:     content,
+			Content:     v.MsgContent,
 			Status:      v.MsgStatus,
 			ImgStatus:   v.MsgImgStatus,
 			MessageType: v.MessageType,
@@ -85,12 +105,20 @@ func (a *Service) convertMessageContent(ctx context.Context, msg []*sqlite.Messa
 			Source:      v.MsgSource,
 			VoiceText:   v.MsgVoiceText,
 			Seq:         v.MsgSeq,
-		})
+		}
 	}
+
+	// 缓存已收到文件消息内容，但文件还未下载完成的消息
+	if len(record) > 0 {
+		if err = a.recordUndownloadedFile(ctx, record); err != nil {
+			return
+		}
+	}
+
 	return
 }
 
-func (a *Service) GetHinkMedia(ctx context.Context, data *sqlite.MessageContent, isGroup bool) (result string, err error) {
+func (a *Service) GetHinkMedia(ctx context.Context, data *sqlite.MessageContent, isGroup bool) (result *MediaMessage, err error) {
 	switch data.MessageType {
 	case model.MsgTypeImage:
 		result, err = a.HandleImage(ctx, data, isGroup)
@@ -110,7 +138,7 @@ func (a *Service) GetHinkMedia(ctx context.Context, data *sqlite.MessageContent,
 	// case model.MsgTypeMicroVideo:
 
 	default:
-		result = data.MsgContent
+		result = nil
 	}
 	return
 }
