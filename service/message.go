@@ -67,9 +67,11 @@ func (a *Service) GetMessageContent(ctx context.Context, usrName string, offset 
 	return
 }
 
-func (a *Service) HandleMessageContent(ctx context.Context, msg []*sqlite.MessageContent, isGroup bool) (result []*mysql.MessageContent, err error) {
+func (a *Service) HandleMessageContent(ctx context.Context, msg []*sqlite.MessageContent, isGroup bool, msgName string) (
+	result []*mysql.MessageContent, err error) {
+
 	result = make([]*mysql.MessageContent, len(msg))
-	record := make([]RecordUndownloadedFileParams, 0)
+	record := []RecordUndownloadedFileParam{}
 	nowTime := time.Now()
 	for i, v := range msg {
 		var content *MediaMessage
@@ -85,7 +87,8 @@ func (a *Service) HandleMessageContent(ctx context.Context, msg []*sqlite.Messag
 		}
 
 		if content != nil && content.Path == "" && content.Md5 != "" {
-			record = append(record, RecordUndownloadedFileParams{
+			record = append(record, RecordUndownloadedFileParam{
+				MsgName:     msgName,
 				LocalID:     v.MesLocalID,
 				MessageType: v.MessageType,
 				CreatedAt:   nowTime,

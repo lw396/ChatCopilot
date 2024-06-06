@@ -112,7 +112,7 @@ func (a *Service) SaveGroupContact(ctx context.Context, data *GroupContact) (err
 		return
 	}
 
-	content, err := a.HandleMessageContent(ctx, messages, true)
+	content, err := a.HandleMessageContent(ctx, messages, true, msgName)
 	if err != nil {
 		return
 	}

@@ -33,8 +33,14 @@ func (s *crontabServer) Start(ctx context.Context) error {
 
 	// 执行定时任务
 	if _, err := s.cron.AddFunc(spec, func() {
-		if err := s.SyncMessage(context.Background()); err != nil {
-			log.Println("TaskError:", err)
+		ctx := context.Background()
+
+		if err := s.SyncMessage(ctx); err != nil {
+			log.Println("TaskSyncMessageError:", err)
+		}
+
+		if err := s.SyncUndownloadedMessage(ctx); err != nil {
+			log.Println("UndownloadedMessageError:", err)
 		}
 	}); err != nil {
 		return err
