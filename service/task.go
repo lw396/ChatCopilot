@@ -134,7 +134,7 @@ type InitSyncTaskParam struct {
 
 func (a *Service) InitSyncTask(ctx context.Context) (err error) {
 	data := []*InitSyncTaskParam{}
-	group, _, err := a.rep.GetGroupContacts(ctx, "", 0)
+	group, _, err := a.rep.GetGroupContacts(ctx, "", -1)
 	if err != nil {
 		return
 	}
@@ -147,7 +147,7 @@ func (a *Service) InitSyncTask(ctx context.Context) (err error) {
 		})
 	}
 
-	contact, _, err := a.rep.GetContactPersons(ctx, "", 0)
+	contact, _, err := a.rep.GetContactPersons(ctx, "", -1)
 	if err != nil {
 		return
 	}

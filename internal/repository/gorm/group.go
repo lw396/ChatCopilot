@@ -29,7 +29,7 @@ func (r *gormRepository) GetGroupContacts(ctx context.Context, nickname string, 
 	}
 	tx = tx.Count(&total)
 
-	if offset > 0 {
+	if offset >= 0 {
 		tx = tx.Limit(10).Offset(offset)
 	}
 	err = tx.Find(&result).Error

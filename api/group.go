@@ -22,7 +22,7 @@ func (a *Api) getGroupContact(c echo.Context) (err error) {
 func (a *Api) getGroupContactList(c echo.Context) (err error) {
 	offset, err := strconv.Atoi(c.QueryParam("offset"))
 	if err != nil {
-		return errors.New(errors.CodeInvalidParam, "offset必须为数字且大于0")
+		return errors.New(errors.CodeInvalidParam, "offset必须为数字")
 	}
 	nickname := c.QueryParam("nickname")
 

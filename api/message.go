@@ -13,8 +13,8 @@ func (a *Api) getMessageContentList(c echo.Context) (err error) {
 		return errors.New(errors.CodeInvalidParam, "user_name为空")
 	}
 	offset, err := strconv.Atoi(c.QueryParam("offset"))
-	if err != nil && offset > 0 {
-		return errors.New(errors.CodeInvalidParam, "offset必须为数字且大于0")
+	if err != nil {
+		return errors.New(errors.CodeInvalidParam, "offset必须为数字")
 	}
 
 	result, err := a.service.GetMessageContent(c.Request().Context(), usrName, offset)
