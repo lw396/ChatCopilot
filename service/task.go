@@ -60,7 +60,7 @@ func (a *Service) SyncMessage(ctx context.Context) (err error) {
 
 func (a *Service) SyncUndownloadedMessage(ctx context.Context) (err error) {
 	params := []RecordUndownloadedFileParam{}
-	found, err := a.redis.Get(ctx, SyncTaskUnloadedFile, params)
+	found, err := a.redis.Get(ctx, SyncTaskUnloadedFile, &params)
 	if err != nil {
 		return
 	}

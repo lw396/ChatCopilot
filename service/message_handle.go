@@ -64,10 +64,11 @@ func (a *Service) getImagePath(ctx context.Context, md5 string) (path string, er
 	if err != nil && !db.IsRecordNotFound(err) {
 		return
 	}
-
-	if !db.IsRecordNotFound(err) {
-		path = hlink.Detail.RelativePath + hlink.Detail.FileName
+	if db.IsRecordNotFound(err) {
+		return "", nil
 	}
+
+	path = hlink.Detail.RelativePath + hlink.Detail.FileName
 	return
 }
 
