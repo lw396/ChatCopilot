@@ -207,8 +207,8 @@ func (a *Service) HandleUndownloadedMessage(ctx context.Context, param RecordUnd
 			return
 		}
 		if err = a.rep.UpdateMessageContent(ctx, param.MsgName, &mysql.MessageContent{
-			LocalID: param.LocalID,
-			Content: string(data),
+			LocalID:   param.LocalID,
+			Translate: string(data),
 		}); err != nil {
 			return
 		}

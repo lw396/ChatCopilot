@@ -31,7 +31,7 @@ func (r *gormRepository) GetNewMessageContent(ctx context.Context, msgName strin
 
 func (r *gormRepository) UpdateMessageContent(ctx context.Context, msgName string, content *MessageContent) (err error) {
 	err = r.db.WithContext(ctx).Table(msgName).Where("local_id = ?", content.LocalID).
-		Update("content", content.Content).Error
+		Update("translate", content.Translate).Error
 	return
 }
 

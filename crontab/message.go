@@ -10,9 +10,11 @@ func (s *crontabServer) InitSyncTask(ctx context.Context) (err error) {
 }
 
 func (s *crontabServer) SyncMessage(ctx context.Context) (err error) {
-	return s.service.SyncMessage(ctx)
-}
-
-func (s *crontabServer) SyncUndownloadedMessage(ctx context.Context) (err error) {
-	return s.service.SyncUndownloadedMessage(ctx)
+	if err = s.service.SyncMessage(ctx); err != nil {
+		return
+	}
+	if err = s.service.SyncUndownloadedMessage(ctx); err != nil {
+		return
+	}
+	return
 }

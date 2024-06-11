@@ -41,6 +41,7 @@ type MessageContent struct {
 	SvrID       int64             `gorm:"column:svr_id"`
 	CreateTime  int64             `gorm:"column:create_time"`
 	Content     string            `gorm:"column:content"`
+	Translate   string            `gorm:"column:translate"`
 	Status      int64             `gorm:"column:status"`
 	ImgStatus   int64             `gorm:"column:img_status"`
 	MessageType model.MessageType `gorm:"column:message_type"`

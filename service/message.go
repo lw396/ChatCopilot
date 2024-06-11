@@ -57,13 +57,39 @@ func (a *Service) ScanMessage(ctx context.Context, userName string) (result *Mes
 	return
 }
 
-func (a *Service) GetMessageContent(ctx context.Context, usrName string, offset int) (result []*mysql.MessageContent, err error) {
+type MessageContent struct {
+	Id          int64             `json:"id"`
+	Content     string            `json:"content"`
+	Translate   string            `json:"translate"`
+	VoiceText   string            `json:"vice_text"`
+	Des         bool              `json:"des"`
+	MessageType model.MessageType `json:"message_type"`
+	Status      int64             `json:"status"`
+	ImgStatus   int64             `json:"img_status"`
+	CreateTime  int64             `json:"create_time"`
+}
+
+func (a *Service) GetMessageContent(ctx context.Context, usrName string, offset int) (result []*MessageContent, err error) {
 	msgName := "Chat_" + hex.EncodeToString(util.Md5([]byte(usrName)))
-	result, err = a.rep.GetMessageContentList(ctx, msgName, offset)
+	contact, err := a.rep.GetMessageContentList(ctx, msgName, offset)
 	if err != nil {
 		return
 	}
 
+	result = make([]*MessageContent, len(contact))
+	for i, v := range contact {
+		result[i] = &MessageContent{
+			Id:          v.LocalID,
+			Content:     v.Content,
+			Translate:   v.Translate,
+			VoiceText:   v.VoiceText,
+			Des:         v.Des,
+			MessageType: v.MessageType,
+			Status:      v.Status,
+			ImgStatus:   v.ImgStatus,
+			CreateTime:  v.CreateTime,
+		}
+	}
 	return
 }
 
@@ -73,7 +99,9 @@ func (a *Service) HandleMessageContent(ctx context.Context, msg []*sqlite.Messag
 	result = make([]*mysql.MessageContent, len(msg))
 	record := []RecordUndownloadedFileParam{}
 	nowTime := time.Now()
+
 	for i, v := range msg {
+		var translate string
 		var content *MediaMessage
 		if content, err = a.GetHinkMedia(ctx, v, isGroup); err != nil {
 			return
@@ -83,7 +111,7 @@ func (a *Service) HandleMessageContent(ctx context.Context, msg []*sqlite.Messag
 			if data, err = json.Marshal(content); err != nil {
 				return
 			}
-			v.MsgContent = string(data)
+			translate = string(data)
 		}
 
 		if content != nil && content.Path == "" && content.Md5 != "" {
@@ -101,6 +129,7 @@ func (a *Service) HandleMessageContent(ctx context.Context, msg []*sqlite.Messag
 			SvrID:       v.MesSvrID,
 			CreateTime:  v.MsgCreateTime,
 			Content:     v.MsgContent,
+			Translate:   translate,
 			Status:      v.MsgStatus,
 			ImgStatus:   v.MsgImgStatus,
 			MessageType: v.MessageType,
