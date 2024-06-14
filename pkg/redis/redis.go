@@ -11,11 +11,13 @@ import (
 type RedisClient interface {
 	// String
 	Set(ctx context.Context, key string, value interface{}, expiration time.Duration) error
-	Get(ctx context.Context, key string, target interface{}) (found bool, err error)
+	Get(ctx context.Context, key string, target interface{}) (bool, error)
 	Del(ctx context.Context, key string) error
 
 	// Set
-	SMembers(ctx context.Context, key string) ([]string, error)
+	SAdd(ctx context.Context, key string, members ...interface{}) error
+	SMembers(ctx context.Context, key string, target interface{}) (bool, error)
+	SRem(ctx context.Context, key string, members ...interface{}) error
 }
 
 type redisClient struct {
@@ -64,7 +66,7 @@ func (r *redisClient) Get(ctx context.Context, key string, target interface{}) (
 		if err == redis.Nil {
 			return false, nil
 		}
-		return false, err
+		return
 	}
 	return true, r.packer.Unmarshal(data, target)
 }
@@ -73,6 +75,53 @@ func (r *redisClient) Del(ctx context.Context, key string) error {
 	return r.rc.Del(ctx, key).Err()
 }
 
-func (r *redisClient) SMembers(ctx context.Context, key string) ([]string, error) {
-	return r.rc.SMembers(ctx, key).Result()
+func (r *redisClient) SAdd(ctx context.Context, key string, members ...interface{}) error {
+	dataList := make([]interface{}, len(members))
+	for i, member := range members {
+		data, err := r.packer.Marshal(member)
+		if err != nil {
+			return err
+		}
+		dataList[i] = data
+	}
+
+	if err := r.rc.SAdd(ctx, key, dataList...).Err(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *redisClient) SMembers(ctx context.Context, key string, target interface{}) (found bool, err error) {
+	val, err := r.rc.SMembers(ctx, key).Result()
+	if err != nil {
+		if err == redis.Nil {
+			return
+		}
+		return
+	}
+	data, err := r.packer.MarshalToString(val)
+	if err != nil {
+		return
+	}
+	if err = r.packer.UnmarshalFromString(data, target); err != nil {
+		return
+	}
+
+	return true, nil
+}
+
+func (r *redisClient) SRem(ctx context.Context, key string, members ...interface{}) error {
+	dataList := make([]interface{}, len(members))
+	for i, member := range members {
+		data, err := r.packer.Marshal(member)
+		if err != nil {
+			return err
+		}
+		dataList[i] = data
+	}
+
+	if err := r.rc.SAdd(ctx, key, dataList).Err(); err != nil {
+		return err
+	}
+	return nil
 }

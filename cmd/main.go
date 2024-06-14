@@ -12,7 +12,7 @@ var ctx *Context
 
 var app = cli.Command{
 	Name:  "github.com/lw396/WeComCopilot",
-	Usage: "微信机器人消息转发服务",
+	Usage: "微信消息转存储",
 	Flags: []cli.Flag{
 		&cli.StringFlag{
 			Name:    "config-dir",

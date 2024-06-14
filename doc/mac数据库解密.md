@@ -17,7 +17,7 @@
 - 注：如果运行了 lldb（第二步）之后出现 error: attach failed: xxxxxxxxxxx
 - 1、重启电脑 黑屏后
 - 2、按住 command + R 进入恢复模式，然后输入账户密码
-- 3、进入之后到上方点《实用工具》-〉点击〈终端〉之后输入 `csrutil disable` 然后 reboot 重启即可进行调试。
+- 3、进入之后到上方点 `实用工具` -> 点击 `终端` 之后输入 `csrutil disable` 然后 reboot 重启即可进行调试。
 - (csrutil 的开启是为了提供系统完整性保护 关闭了之后就能使用 lldb 对 wechat 进行调试)
 
 ```python
