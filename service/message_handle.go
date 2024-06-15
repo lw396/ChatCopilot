@@ -7,7 +7,6 @@ import (
 	"net/url"
 	"os"
 	"strings"
-	"time"
 
 	"github.com/lw396/WeComCopilot/internal/model"
 	mysql "github.com/lw396/WeComCopilot/internal/repository/gorm"
@@ -159,35 +158,20 @@ func (a *Service) HandleVideo(ctx context.Context, message *sqlite.MessageConten
 	return
 }
 
-type RecordUndownloadedFileParam struct {
+type RecordUndownloadedFile struct {
 	MsgName     string
 	Md5         string
 	Sender      string
 	LocalID     int64
+	CreatedAt   int64
 	MessageType model.MessageType
-	CreatedAt   time.Time
 }
 
-func (a *Service) recordUndownloadedFile(ctx context.Context, params []RecordUndownloadedFileParam) (err error) {
-	params = []RecordUndownloadedFileParam{}
-	if _, err = a.redis.Get(ctx, SyncTaskUnloadedFile, &params); err != nil {
-		return
-	}
-
-	var now = time.Now()
-	for _, param := range params {
-		if !param.CreatedAt.After(now) {
-			continue
-		}
-		params = append(params, param)
-	}
-	if err = a.redis.Set(ctx, SyncTaskUnloadedFile, params, time.Minute*10); err != nil {
-		return
-	}
-	return
+func (a *Service) recordUndownloadedFile(ctx context.Context, param RecordUndownloadedFile) (err error) {
+	return a.redis.SAdd(ctx, SyncTaskUnloadedFile, &param)
 }
 
-func (a *Service) HandleUndownloadedMessage(ctx context.Context, param RecordUndownloadedFileParam) (finish bool, err error) {
+func (a *Service) HandleUndownloadedMessage(ctx context.Context, param RecordUndownloadedFile) (finish bool, err error) {
 	var path string
 	switch param.MessageType {
 	case model.MsgTypeImage:

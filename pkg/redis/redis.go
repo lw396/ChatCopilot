@@ -2,6 +2,7 @@ package redis
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -19,6 +20,7 @@ type RedisClient interface {
 	SAdd(ctx context.Context, key string, members ...interface{}) error
 	SMembers(ctx context.Context, key string, target interface{}) (bool, error)
 	SRem(ctx context.Context, key string, members ...interface{}) error
+	SUpdate(ctx context.Context, key string, members ...interface{}) error
 }
 
 type redisClient struct {
@@ -121,5 +123,36 @@ func (r *redisClient) SRem(ctx context.Context, key string, members ...interface
 	if err := r.rc.SRem(ctx, key, dataList).Err(); err != nil {
 		return err
 	}
+	return nil
+}
+
+// SUpdate 更新集合
+func (r *redisClient) SUpdate(ctx context.Context, key string, members ...interface{}) error {
+	numMembers := len(members)
+	if numMembers%2 != 0 {
+		return errors.New("the number of members must be even")
+	}
+
+	oldMembers := make([]interface{}, numMembers/2)
+	newMembers := make([]interface{}, numMembers/2)
+	for i, member := range members {
+		data, err := r.packer.Marshal(member)
+		if err != nil {
+			return err
+		}
+		if i%2 == 0 {
+			oldMembers[i/2] = data
+		} else {
+			newMembers[i/2] = data
+		}
+	}
+
+	pipe := r.rc.TxPipeline()
+	pipe.SRem(ctx, key, oldMembers...)
+	pipe.SAdd(ctx, key, newMembers...)
+	if _, err := pipe.Exec(ctx); err != nil {
+		return err
+	}
+
 	return nil
 }

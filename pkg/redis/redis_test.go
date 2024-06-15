@@ -25,7 +25,7 @@ func TestSAdd(t *testing.T) {
 	}
 
 	for _, d := range data {
-		if err := client.SAdd(context.Background(), "TEST_MEMNERS", &d); err != nil {
+		if err := client.SAdd(context.Background(), "TEST_MEMNERS", d); err != nil {
 			t.Fatal(err)
 		}
 	}
@@ -62,7 +62,7 @@ func TestSMembers(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	data := []struct {
+	data := []*struct {
 		Name string
 		Age  int
 	}{}
@@ -71,7 +71,7 @@ func TestSMembers(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	t.Log(found, data)
+	t.Log(found, data[0].Name)
 }
 
 func NewRedisClient() (RedisClient, error) {

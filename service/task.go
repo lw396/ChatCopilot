@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/hex"
 	"fmt"
-	"sync"
 	"time"
 
 	mysql "github.com/lw396/WeComCopilot/internal/repository/gorm"
@@ -17,7 +16,7 @@ const (
 	SyncTaskUnloadedFile   = "SYNC_TASK_UNLOADED_FILE"
 )
 
-type SyncMessageTaskParam struct {
+type SyncMessageTask struct {
 	DBName  string
 	MsgName string
 	NewId   int64
@@ -32,35 +31,33 @@ func (a *Service) GetCrontab() string {
 }
 
 func (a *Service) SyncMessage(ctx context.Context) (err error) {
-	var params []SyncMessageTaskParam
-	_, err = a.redis.Get(ctx, SyncTaskMessageContent, &params)
+	var params []*SyncMessageTask
+	_, err = a.redis.SMembers(ctx, SyncTaskMessageContent, &params)
 	if err != nil {
 		return
 	}
-
-	wg := sync.WaitGroup{}
-	newParams := make([]SyncMessageTaskParam, len(params))
-	for i, param := range params {
-		wg.Add(1)
-		go func(ctx context.Context, param SyncMessageTaskParam, i int, newParams []SyncMessageTaskParam) {
-			defer wg.Done()
-			newParams[i], err = a.handleSaveMessageContent(ctx, param)
+	for _, param := range params {
+		go func(ctx context.Context, param *SyncMessageTask) {
+			oldParam := *param
+			isAlter, err := a.handleSaveMessageContent(ctx, param)
 			if err != nil {
 				return
 			}
-		}(ctx, param, i, newParams)
+			if !isAlter {
+				return
+			}
+			if err = a.redis.SUpdate(ctx, SyncTaskMessageContent, &oldParam, param); err != nil {
+				return
+			}
+		}(ctx, param)
 	}
-	wg.Wait()
 
-	if err = a.redis.Set(ctx, SyncTaskMessageContent, newParams, 0); err != nil {
-		return
-	}
 	return
 }
 
 func (a *Service) SyncUndownloadedMessage(ctx context.Context) (err error) {
-	params := []RecordUndownloadedFileParam{}
-	found, err := a.redis.Get(ctx, SyncTaskUnloadedFile, &params)
+	params := []RecordUndownloadedFile{}
+	found, err := a.redis.SMembers(ctx, SyncTaskUnloadedFile, &params)
 	if err != nil {
 		return
 	}
@@ -68,28 +65,24 @@ func (a *Service) SyncUndownloadedMessage(ctx context.Context) (err error) {
 		return
 	}
 
-	var now = time.Now()
+	var deadline = time.Now().Add(-time.Minute * 10)
 	for _, param := range params {
-		if !param.CreatedAt.After(now) {
-			continue
-		}
 		finish, err := a.HandleUndownloadedMessage(ctx, param)
 		if err != nil {
 			return err
 		}
-		if !finish {
-			params = append(params, param)
+		if !finish && !time.Unix(param.CreatedAt, 0).After(deadline) {
+			continue
 		}
-	}
 
-	if err = a.redis.Set(ctx, SyncTaskUnloadedFile, params, 10*time.Minute); err != nil {
-		return
+		if err = a.redis.SRem(ctx, SyncTaskUnloadedFile, &param); err != nil {
+			return err
+		}
 	}
 	return
 }
 
-func (a *Service) handleSaveMessageContent(ctx context.Context, param SyncMessageTaskParam) (newParam SyncMessageTaskParam, err error) {
-	newParam = param
+func (a *Service) handleSaveMessageContent(ctx context.Context, param *SyncMessageTask) (isAlter bool, err error) {
 	if err = a.ConnectDB(ctx, param.DBName); err != nil {
 		return
 	}
@@ -109,7 +102,8 @@ func (a *Service) handleSaveMessageContent(ctx context.Context, param SyncMessag
 		return
 	}
 
-	newParam.NewId = content[len(content)-1].LocalID
+	param.NewId = content[len(content)-1].LocalID
+	isAlter = true
 	return
 }
 
@@ -125,7 +119,7 @@ func (a *Service) ConnectMessageDB(ctx context.Context, dbName string) (err erro
 	return
 }
 
-type InitSyncTaskParam struct {
+type InitSyncTask struct {
 	UsrName string
 	DBName  string
 	Status  uint8
@@ -133,13 +127,13 @@ type InitSyncTaskParam struct {
 }
 
 func (a *Service) InitSyncTask(ctx context.Context) (err error) {
-	data := []*InitSyncTaskParam{}
+	data := []*InitSyncTask{}
 	group, _, err := a.rep.GetGroupContacts(ctx, "", -1)
 	if err != nil {
 		return
 	}
 	for _, v := range group {
-		data = append(data, &InitSyncTaskParam{
+		data = append(data, &InitSyncTask{
 			UsrName: v.UsrName,
 			DBName:  v.DBName,
 			Status:  v.Status,
@@ -152,7 +146,7 @@ func (a *Service) InitSyncTask(ctx context.Context) (err error) {
 		return
 	}
 	for _, v := range contact {
-		data = append(data, &InitSyncTaskParam{
+		data = append(data, &InitSyncTask{
 			UsrName: v.UsrName,
 			DBName:  v.DBName,
 			Status:  v.Status,
@@ -160,7 +154,6 @@ func (a *Service) InitSyncTask(ctx context.Context) (err error) {
 		})
 	}
 
-	param := []SyncMessageTaskParam{}
 	for _, v := range data {
 		msgName := "Chat_" + hex.EncodeToString(util.Md5([]byte(v.UsrName)))
 		var data *mysql.MessageContent
@@ -177,17 +170,16 @@ func (a *Service) InitSyncTask(ctx context.Context) (err error) {
 		if v.Status != 1 {
 			continue
 		}
-		param = append(param, SyncMessageTaskParam{
+
+		param := SyncMessageTask{
 			DBName:  v.DBName,
 			MsgName: msgName,
 			NewId:   data.LocalID,
 			IsGroup: v.IsGroup,
-		})
-	}
-
-	err = a.redis.Set(ctx, SyncTaskMessageContent, param, 0)
-	if err != nil {
-		return
+		}
+		if err = a.redis.SAdd(ctx, SyncTaskMessageContent, param); err != nil {
+			return
+		}
 	}
 
 	return
@@ -199,23 +191,14 @@ func (a *Service) AddSyncTask(ctx context.Context, msgName, dbName string, isGro
 	if err != nil {
 		return
 	}
-	if err = a.ConnectMessageDB(ctx, dbName); err != nil {
-		return
-	}
 
-	param := []SyncMessageTaskParam{}
-	_, err = a.redis.Get(ctx, SyncTaskMessageContent, &param)
-	if err != nil {
-		return
-	}
-
-	param = append(param, SyncMessageTaskParam{
+	param := SyncMessageTask{
 		DBName:  dbName,
 		MsgName: msgName,
 		NewId:   data.LocalID,
 		IsGroup: isGroup,
-	})
-	err = a.redis.Set(ctx, SyncTaskMessageContent, param, 0)
+	}
+	err = a.redis.SAdd(ctx, SyncTaskMessageContent, param, 0)
 	if err != nil {
 		return
 	}
@@ -224,23 +207,19 @@ func (a *Service) AddSyncTask(ctx context.Context, msgName, dbName string, isGro
 }
 
 func (a *Service) DelSyncTask(ctx context.Context, usrName string) (err error) {
-	_param := []SyncMessageTaskParam{}
-	_, err = a.redis.Get(ctx, SyncTaskMessageContent, &_param)
-	if err != nil {
+	params := []SyncMessageTask{}
+	if _, err = a.redis.SMembers(ctx, SyncTaskMessageContent, &params); err != nil {
 		return
 	}
 
 	msgName := "Chat_" + hex.EncodeToString(util.Md5([]byte(usrName)))
-	param := []SyncMessageTaskParam{}
-	for _, p := range _param {
-		if p.MsgName == msgName {
+	for _, param := range params {
+		if param.MsgName != msgName {
 			continue
 		}
-		param = append(param, p)
-	}
-	err = a.redis.Set(ctx, SyncTaskMessageContent, param, 0)
-	if err != nil {
-		return
+		if err = a.redis.SRem(ctx, SyncTaskMessageContent, param); err != nil {
+			return
+		}
 	}
 	return
 }
