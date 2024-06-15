@@ -169,8 +169,8 @@ type RecordUndownloadedFileParam struct {
 }
 
 func (a *Service) recordUndownloadedFile(ctx context.Context, params []RecordUndownloadedFileParam) (err error) {
-	_params := []RecordUndownloadedFileParam{}
-	if _, err = a.redis.Get(ctx, SyncTaskUnloadedFile, &_params); err != nil {
+	params = []RecordUndownloadedFileParam{}
+	if _, err = a.redis.Get(ctx, SyncTaskUnloadedFile, &params); err != nil {
 		return
 	}
 

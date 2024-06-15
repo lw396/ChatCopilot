@@ -3,6 +3,7 @@ package redis
 import (
 	"context"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/go-redis/redis/v8"
@@ -99,14 +100,11 @@ func (r *redisClient) SMembers(ctx context.Context, key string, target interface
 		}
 		return
 	}
-	data, err := r.packer.MarshalToString(val)
-	if err != nil {
-		return
-	}
+
+	data := "[" + strings.Join(val, ",") + "]"
 	if err = r.packer.UnmarshalFromString(data, target); err != nil {
 		return
 	}
-
 	return true, nil
 }
 
@@ -120,7 +118,7 @@ func (r *redisClient) SRem(ctx context.Context, key string, members ...interface
 		dataList[i] = data
 	}
 
-	if err := r.rc.SAdd(ctx, key, dataList).Err(); err != nil {
+	if err := r.rc.SRem(ctx, key, dataList).Err(); err != nil {
 		return err
 	}
 	return nil
