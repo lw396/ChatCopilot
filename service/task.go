@@ -36,6 +36,7 @@ func (a *Service) SyncMessage(ctx context.Context) (err error) {
 	if err != nil {
 		return
 	}
+
 	for _, param := range params {
 		go func(ctx context.Context, param *SyncMessageTask) {
 			oldParam := *param
@@ -71,10 +72,9 @@ func (a *Service) SyncUndownloadedMessage(ctx context.Context) (err error) {
 		if err != nil {
 			return err
 		}
-		if !finish && !time.Unix(param.CreatedAt, 0).After(deadline) {
+		if !finish || !time.Unix(param.CreatedAt, 0).After(deadline) {
 			continue
 		}
-
 		if err = a.redis.SRem(ctx, SyncTaskUnloadedFile, &param); err != nil {
 			return err
 		}
@@ -198,7 +198,7 @@ func (a *Service) AddSyncTask(ctx context.Context, msgName, dbName string, isGro
 		NewId:   data.LocalID,
 		IsGroup: isGroup,
 	}
-	err = a.redis.SAdd(ctx, SyncTaskMessageContent, param, 0)
+	err = a.redis.SAdd(ctx, SyncTaskMessageContent, param)
 	if err != nil {
 		return
 	}
