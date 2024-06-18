@@ -69,7 +69,7 @@ crontab=*/10 * * * * *
 #### 运行 `api` 服务
 
 ```sh
-./ChatCopilot api
+./chat-copilot api
 
 ```
 
@@ -78,7 +78,7 @@ crontab=*/10 * * * * *
 #### 运行定时服务
 
 ```sh
-./ChatCopilot crontab
+./chat-copilot crontab
 
 ```
 
