@@ -31,11 +31,11 @@ type options struct {
 func defaultOptions() *options {
 	return &options{
 		driver:        "mysql",
-		dsn:           "root:secret@tcp(127.0.0.1:3306)/peiwan?charset=utf8&parseTime=true&loc=UTC",
+		dsn:           "root:secret@tcp(127.0.0.1:3306)/WeChatCopilot?charset=utf8&parseTime=true&loc=UTC",
 		slowThreshold: time.Millisecond * 100,
 		logger:        log.NewConsoleLogger("DB"),
 		cacheStore:    cache.DefaultStore(),
-		tracer:        otel.Tracer("github.com/lw396/WeComCopilot/pkg/db"),
+		tracer:        otel.Tracer("github.com/lw396/ChatCopilot/pkg/db"),
 	}
 }
 

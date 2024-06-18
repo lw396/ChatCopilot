@@ -1,0 +1,34 @@
+version: "3.9"
+
+services:
+  chat-copilot:
+    build: ../.
+    image: lw396/chat-copilot
+    container_name: chat-copilot
+    volumes:
+      - ./data:/data
+      - /Users/apple/Library/Containers/com.tencent.xinWeChat/Data/Library/Application Support/com.tencent.xinWeChat/2.0b4.0.9/293965cbc2d9540d58a40005449a458b:/Users/apple/Library/Containers/com.tencent.xinWeChat/Data/Library/Application Support/com.tencent.xinWeChat/2.0b4.0.9/293965cbc2d9540d58a40005449a458b
+    command:
+      - api
+      - crontab
+    ports:
+      - "6978:6978"
+  mysql:
+    image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      - MYSQL_ROOT_PASSWORD=secret
+      - MYSQL_DATABASE=WeChatCopilot
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=secret
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+    ports:
+      - "3306:3306"
+  redis:
+    image: "redis:6-alpine"
+    command: "redis-server --requirepass secret"
+    volumes:
+      - ./data/redis:/data
+    ports:
+      - "6379:6379"

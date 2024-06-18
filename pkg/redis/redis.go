@@ -126,7 +126,6 @@ func (r *redisClient) SRem(ctx context.Context, key string, members ...interface
 	return nil
 }
 
-// SUpdate 更新集合
 func (r *redisClient) SUpdate(ctx context.Context, key string, members ...interface{}) error {
 	numMembers := len(members)
 	if numMembers%2 != 0 {
