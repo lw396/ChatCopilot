@@ -27,7 +27,11 @@ func TestUnmarshalImage(t *testing.T) {
 		</msg>`,
 		MesDes: true,
 	}
-	result, err := service.HandleImage(context.Background(), data, true)
+	result, err := service.HandleImage(context.Background(), HinkMediaParam{
+		Data:    data,
+		MsgName: "wxid_t99xk0w3nbe122",
+		IsGroup: true,
+	})
 	if err != nil {
 		t.Error(err)
 	}
@@ -55,7 +59,11 @@ func TestUnmarshalEmoji(t *testing.T) {
 		</msg>`,
 		MesDes: false,
 	}
-	result, err := service.HandleSticker(context.Background(), data, true)
+	result, err := service.HandleSticker(context.Background(), HinkMediaParam{
+		Data:    data,
+		MsgName: "wxid_t99xk0w3nbe122",
+		IsGroup: true,
+	})
 	if err != nil {
 		t.Error(err)
 	}
@@ -66,24 +74,20 @@ func TestUnmarshalEmoji(t *testing.T) {
 func TestUnmarshalVideo(t *testing.T) {
 	service := New()
 	data := &sqlite.MessageContent{
-		MsgContent: `wxid_t99xk0w3nbe122:
-		<?xml version="1.0"?>
-		<msg>
-			<videomsg aeskey="71d50c579fbaebc25b267de3ff583966"
-				cdnvideourl="3057020100044b30490201000204dc45dde602032f591902040da90c790204665d2978042439386366333530302d356639312d343863382d616164322d6534313734306331663564640204052400040201000405004c511d00"
-				cdnthumbaeskey="71d50c579fbaebc25b267de3ff583966"
-				cdnthumburl="3057020100044b30490201000204dc45dde602032f591902040da90c790204665d2978042439386366333530302d356639312d343863382d616164322d6534313734306331663564640204052400040201000405004c511d00"
-				length="817956" playlength="4" cdnthumblength="6746" cdnthumbwidth="224"
-				cdnthumbheight="298" fromusername="wxid_t99xk0w3nbe122"
-				md5="443d7917ad367b35c289669bf4f0e789" newmd5="5a51c9abc61c8c606a5e8e580182fbea"
-				isplaceholder="0" rawmd5="47130090203fce25bf8df70ea98343a8" rawlength="9926637"
-				cdnrawvideourl="3057020100044b30490201000204dc45dde602032f591902040da90c790204665d2977042432393065633063352d373663352d343338652d613231312d346561326230393366343234020405a400040201000405004c4c6d00"
-				cdnrawvideoaeskey="19931fd31753220a853409ac0a7bacc6" overwritenewmsgid="0"
-				originsourcemd5="38ee59e8d1b22eddaaef4ebf54c9a3cc" isad="0" />
-		</msg>`,
+		MsgContent: `<msg>
+		<voicemsg endflag="1" cancelflag="0" forwardflag="0" voiceformat="4" voicelength="1680" length="3066" bufid="0"
+			aeskey="2223bbc155e91c4100d3c2393e928dbe"
+			voiceurl="3052020100044b30490201000204e07810d702032f59e1020429c7587d02046673d0f3042432343634346464362d356166332d346635362d613330302d64666132323331656134333702040518000f0201000400"
+			voicemd5="" clientmsgid="49b2df904d1292f8fa1b229b0de4aaa5wxid_7bs5fvhk611g21_200_1718866162"
+			fromusername="wxid_t99xk0w3nbe122" />
+	</msg>`,
 		MesDes: true,
 	}
-	result, err := service.HandleVideo(context.Background(), data, true)
+	result, err := service.HandleVoice(context.Background(), HinkMediaParam{
+		Data:    data,
+		MsgName: "wxid_t99xk0w3nbe122",
+		IsGroup: false,
+	})
 	if err != nil {
 		t.Error(err)
 	}

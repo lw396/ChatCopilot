@@ -97,9 +97,14 @@ func (a *Service) HandleMessageContent(ctx context.Context, msg []*sqlite.Messag
 	for i, v := range msg {
 		var translate string
 		var content *MediaMessage
-		if content, err = a.GetHinkMedia(ctx, v, isGroup); err != nil {
+		if content, err = a.GetHinkMedia(ctx, HinkMediaParam{
+			Data:    v,
+			IsGroup: isGroup,
+			MsgName: msgName,
+		}); err != nil {
 			return
 		}
+
 		if content != nil {
 			var data []byte
 			if data, err = json.Marshal(content); err != nil {
@@ -117,7 +122,7 @@ func (a *Service) HandleMessageContent(ctx context.Context, msg []*sqlite.Messag
 				Md5:         content.Md5,
 				Sender:      content.Sender,
 			}
-			if err = a.recordUndownloadedFile(ctx, param); err != nil {
+			if err = a.RecordUndownloadedFile(ctx, param); err != nil {
 				return
 			}
 		}
@@ -139,22 +144,31 @@ func (a *Service) HandleMessageContent(ctx context.Context, msg []*sqlite.Messag
 	return
 }
 
-func (a *Service) GetHinkMedia(ctx context.Context, data *sqlite.MessageContent, isGroup bool) (result *MediaMessage, err error) {
-	switch data.MessageType {
+type HinkMediaParam struct {
+	MsgName string
+	IsGroup bool
+	Data    *sqlite.MessageContent
+}
+
+func (a *Service) GetHinkMedia(ctx context.Context, param HinkMediaParam) (result *MediaMessage, err error) {
+	switch param.Data.MessageType {
 	case model.MsgTypeImage:
-		result, err = a.HandleImage(ctx, data, isGroup)
+		result, err = a.HandleImage(ctx, param)
 		if err != nil {
 			return
 		}
 	case model.MsgTypeEmoticon:
-		result, err = a.HandleSticker(ctx, data, isGroup)
+		result, err = a.HandleSticker(ctx, param)
+		if err != nil {
+			return
+		}
+	case model.MsgTypeVoice:
+		result, err = a.HandleVoice(ctx, param)
 		if err != nil {
 			return
 		}
 
 	// case model.MsgTypeVideo:
-
-	// case model.MsgTypeVoice:
 
 	// case model.MsgTypeMicroVideo:
 

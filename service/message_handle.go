@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"encoding/xml"
+	"fmt"
 	"net/url"
 	"os"
 	"strings"
@@ -29,14 +30,14 @@ type ImageMessageData struct {
 	} `xml:"img"`
 }
 
-func (a *Service) HandleImage(ctx context.Context, message *sqlite.MessageContent, isGroup bool) (result *MediaMessage, err error) {
+func (a *Service) HandleImage(ctx context.Context, param HinkMediaParam) (result *MediaMessage, err error) {
 	var data ImageMessageData
-	if err = xml.Unmarshal([]byte(message.MsgContent), &data); err != nil {
+	if err = xml.Unmarshal([]byte(param.Data.MsgContent), &data); err != nil {
 		return
 	}
 	var sender, path string
-	if message.MesDes && isGroup {
-		sender = strings.Split(message.MsgContent, ":")[0]
+	if param.Data.MesDes && param.IsGroup {
+		sender = strings.Split(param.Data.MsgContent, ":")[0]
 	}
 
 	if data.Img.Md5 != "" {
@@ -79,15 +80,15 @@ type StickerMessageData struct {
 	} `xml:"emoji"`
 }
 
-func (a *Service) HandleSticker(ctx context.Context, message *sqlite.MessageContent, isGroup bool) (result *MediaMessage, err error) {
+func (a *Service) HandleSticker(ctx context.Context, param HinkMediaParam) (result *MediaMessage, err error) {
 	var data StickerMessageData
-	if err = xml.Unmarshal([]byte(message.MsgContent), &data); err != nil {
+	if err = xml.Unmarshal([]byte(param.Data.MsgContent), &data); err != nil {
 		return
 	}
 
 	var sender string
-	if message.MesDes && isGroup {
-		sender = strings.Split(message.MsgContent, ":")[0]
+	if param.Data.MesDes && param.IsGroup {
+		sender = strings.Split(param.Data.MsgContent, ":")[0]
 	}
 
 	var url string
@@ -154,7 +155,25 @@ type VideoMessageData struct {
 	} `xml:"videomsg"`
 }
 
-func (a *Service) HandleVideo(ctx context.Context, message *sqlite.MessageContent, isGroup bool) (result string, err error) {
+func (a *Service) HandleVoice(ctx context.Context, param HinkMediaParam) (result *MediaMessage, err error) {
+	msgName := strings.Split(param.MsgName, "Chat_")[1]
+	folder := fmt.Sprintf("%s/Message/MessageTemp/%s/Audio", a.path, msgName)
+	files, err := os.ReadDir(folder)
+	if err != nil {
+		return
+	}
+
+	var path string
+	for _, file := range files {
+		str := strings.Split(file.Name(), ".aud.")[0]
+		if str[:len(str)-16] == fmt.Sprint(param.Data.MesLocalID) {
+			path = msgName + "/Audio/" + file.Name()
+			break
+		}
+	}
+	result = &MediaMessage{
+		Path: path,
+	}
 	return
 }
 
@@ -167,7 +186,7 @@ type RecordUndownloadedFile struct {
 	MessageType model.MessageType
 }
 
-func (a *Service) recordUndownloadedFile(ctx context.Context, param RecordUndownloadedFile) (err error) {
+func (a *Service) RecordUndownloadedFile(ctx context.Context, param RecordUndownloadedFile) (err error) {
 	return a.redis.SAdd(ctx, SyncTaskUnloadedFile, &param)
 }
 
