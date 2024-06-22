@@ -242,9 +242,6 @@ int main( int argc, char* argv[] )
     for( i = 0; i < MAX_LBRR_DELAY; i++ ) {
         /* Read payload size */
         counter = fread( &nBytes, sizeof( SKP_int16 ), 1, bitInFile );
-#ifdef _SYSTEM_IS_BIG_ENDIAN
-        swap_endian( &nBytes, 1 );
-#endif
         /* Read payload */
         counter = fread( payloadEnd, sizeof( SKP_uint8 ), nBytes, bitInFile );
 
@@ -259,9 +256,6 @@ int main( int argc, char* argv[] )
     while( 1 ) {
         /* Read payload size */
         counter = fread( &nBytes, sizeof( SKP_int16 ), 1, bitInFile );
-#ifdef _SYSTEM_IS_BIG_ENDIAN
-        swap_endian( &nBytes, 1 );
-#endif
         if( nBytes < 0 || counter < 1 ) {
             break;
         }
