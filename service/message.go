@@ -240,7 +240,6 @@ func (a *Service) GetMessageVoice(ctx context.Context, path string) (result stri
 
 	if os.IsNotExist(err) {
 		folder := filepath.Join(a.path, "Message", "MessageTemp")
-		fmt.Println(folder, path)
 		if err = audio.Decoder(folder, path); err != nil {
 			return
 		}
