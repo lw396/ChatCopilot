@@ -24,10 +24,10 @@
 /* Seed for the random number generator, which is used for simulating packet loss */
 static SKP_int32 rand_seed = 1;
 
-int decoder( int argc, char* argv[] )
+int decoder( char *input, char *output )
 {
     size_t    counter;
-    SKP_int32 args, i, k;
+    SKP_int32 i, k;
     SKP_int16 ret, len, tot_len;
     SKP_int16 nBytes;
     SKP_uint8 payload[    MAX_BYTES_PER_FRAME * MAX_INPUT_FRAMES * ( MAX_LBRR_DELAY + 1 ) ];
@@ -36,7 +36,7 @@ int decoder( int argc, char* argv[] )
     SKP_int16 nBytesFEC;
     SKP_int16 nBytesPerPacket[ MAX_LBRR_DELAY + 1 ], totBytes;
     SKP_int16 out[ ( ( FRAME_LENGTH_MS * MAX_API_FS_KHZ ) << 1 ) * MAX_INPUT_FRAMES ], *outPtr;
-    char      speechOutFileName[ 150 ], bitInFileName[ 150 ];
+    char      speechOutFileName[ 300 ], bitInFileName[ 300 ];
     FILE      *bitInFile, *speechOutFile;
     SKP_int32 API_Fs_Hz = 0;
     SKP_int32 decSizeBytes;
@@ -45,39 +45,18 @@ int decoder( int argc, char* argv[] )
     SKP_int32 frames, lost, quiet;
     SKP_SILK_SDK_DecControlStruct DecControl;
 
-    if( argc < 3 ) {
-        return -1;
-    }
-
     /* default settings */
     quiet     = 0;
     loss_prob = 0.0f;
 
     /* get arguments */
-    args = 1;
-    strcpy( bitInFileName, argv[ args ] );
-    args++;
-    strcpy( speechOutFileName, argv[ args ] );
-    args++;
-    while( args < argc ) {
-        if( SKP_STR_CASEINSENSITIVE_COMPARE( argv[ args ], "-loss" ) == 0 ) {
-            sscanf( argv[ args + 1 ], "%f", &loss_prob );
-            args += 2;
-        } else if( SKP_STR_CASEINSENSITIVE_COMPARE( argv[ args ], "-Fs_API" ) == 0 ) {
-            sscanf( argv[ args + 1 ], "%d", &API_Fs_Hz );
-            args += 2;
-        } else if( SKP_STR_CASEINSENSITIVE_COMPARE( argv[ args ], "-quiet" ) == 0 ) {
-            quiet = 1;
-            args++;
-        } else {
-            return -1;
-        }
-    }
+    strcpy( bitInFileName, input );
+    strcpy( speechOutFileName, output );
 
     /* Open files */
     bitInFile = fopen( bitInFileName, "rb" );
     if( bitInFile == NULL ) {
-        return -1;
+        return 3;
     }
 
     /* Check Silk header */
@@ -89,20 +68,20 @@ int decoder( int argc, char* argv[] )
            counter = fread( header_buf, sizeof( char ), strlen( "!SILK_V3" ), bitInFile );
            header_buf[ strlen( "!SILK_V3" ) ] = '\0'; /* Terminate with a null character */
            if( strcmp( header_buf, "!SILK_V3" ) != 0 ) {
-               return -1;
+               return 4;
            }
         } else {
            counter = fread( header_buf, sizeof( char ), strlen( "#!SILK_V3" ), bitInFile );
            header_buf[ strlen( "#!SILK_V3" ) ] = '\0'; /* Terminate with a null character */
            if( strcmp( header_buf, "#!SILK_V3" ) != 0 ) {
-               return -1;
+               return 5;
            }
         }
     }
 
     speechOutFile = fopen( speechOutFileName, "wb" );
     if( speechOutFile == NULL ) {
-        return -1;
+        return 6;
     }
 
     /* Set the samplingrate that is requested for the output */
@@ -227,7 +206,7 @@ int decoder( int argc, char* argv[] )
         /* Check if the received totBytes is valid */
         if (totBytes < 0 || totBytes > sizeof(payload))
         {
-            return -1;
+            return 7;
         }
         SKP_memmove( payload, &payload[ nBytesPerPacket[ 0 ] ], totBytes * sizeof( SKP_uint8 ) );
         payloadEnd -= nBytesPerPacket[ 0 ];
@@ -304,7 +283,7 @@ int decoder( int argc, char* argv[] )
         /* Check if the received totBytes is valid */
         if (totBytes < 0 || totBytes > sizeof(payload))
         {
-            return -1;
+            return 8;
         }
         
         SKP_memmove( payload, &payload[ nBytesPerPacket[ 0 ] ], totBytes * sizeof( SKP_uint8 ) );

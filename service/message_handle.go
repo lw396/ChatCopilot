@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/url"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/lw396/WeComCopilot/internal/model"
@@ -157,7 +158,7 @@ type VideoMessageData struct {
 
 func (a *Service) HandleVoice(ctx context.Context, param HinkMediaParam) (result *MediaMessage, err error) {
 	msgName := strings.Split(param.MsgName, "Chat_")[1]
-	folder := fmt.Sprintf("%s/Message/MessageTemp/%s/Audio", a.path, msgName)
+	folder := filepath.Join(a.path, "Message", "MessageTemp", msgName, "Audio")
 	files, err := os.ReadDir(folder)
 	if err != nil {
 		return
