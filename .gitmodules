@@ -1,0 +1,3 @@
+[submodule "fmap-demo"]
+    path = pkg/audio/silk
+    url = https://github.com/chenfengyanyu/fmap-demo.git
