@@ -8,6 +8,6 @@ chat-copilot
 data
 wasm
 
-pkg/silk-v3-decoder/silk/*.a
-pkg/silk-v3-decoder/silk/decoder
-pkg/silk-v3-decoder/silk/*/*.o
+pkg/audio/silk/*.a
+pkg/audio/silk/decoder
+pkg/audio/silk/*/*.o

@@ -73,12 +73,13 @@ ARCHIVE.cmdline     = $(AR) $(ARFLAGS) $@ $^ && $(RANLIB) $@
 
 # Directives
 
-CINCLUDES += interface src
+CINCLUDES += interface src test
 
 # VPATH e.g. VPATH = src:../headers
 VPATH = ./ \
         interface \
-        src
+        src \
+		test
 
 # Variable definitions
 LIB_NAME = SKP_SILK_SDK

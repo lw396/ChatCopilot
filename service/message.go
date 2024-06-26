@@ -9,6 +9,7 @@ import (
 	"io/fs"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/lw396/WeComCopilot/internal/errors"
@@ -187,11 +188,11 @@ func (a *Service) GetMessageImage(ctx context.Context, path string) (result stri
 }
 
 // 保存表情包路径
-const StickerDir = "./data/sticker/"
+const StickerDir = "./data/sticker"
 
 func (a *Service) GetMessageSticker(ctx context.Context, path, url string) (result string, err error) {
-	result = StickerDir + path
-	if _, err = os.Stat(result); err != nil && os.IsExist(err) {
+	result = filepath.Join(StickerDir, path)
+	if _, err = os.Stat(result); err != nil && !os.IsNotExist(err) {
 		return
 	}
 	if os.IsNotExist(err) {
@@ -215,7 +216,7 @@ func (a *Service) CacheSticker(ctx context.Context, path, url string) (err error
 	}
 	defer resp.Body.Close()
 
-	if _, err = os.Stat(StickerDir); err != nil && os.IsExist(err) {
+	if _, err = os.Stat(StickerDir); err != nil && !os.IsNotExist(err) {
 		return
 	}
 	if os.IsNotExist(err) {
