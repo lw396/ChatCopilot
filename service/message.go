@@ -9,12 +9,14 @@ import (
 	"io/fs"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/lw396/WeComCopilot/internal/errors"
 	"github.com/lw396/WeComCopilot/internal/model"
 	mysql "github.com/lw396/WeComCopilot/internal/repository/gorm"
 	"github.com/lw396/WeComCopilot/internal/repository/sqlite"
+	"github.com/lw396/WeComCopilot/pkg/audio"
 	"github.com/lw396/WeComCopilot/pkg/db"
 	"github.com/lw396/WeComCopilot/pkg/util"
 	"gorm.io/gorm"
@@ -179,7 +181,7 @@ func (a *Service) GetHinkMedia(ctx context.Context, param HinkMediaParam) (resul
 }
 
 func (a *Service) GetMessageImage(ctx context.Context, path string) (result string, err error) {
-	result = fmt.Sprintf("%s/Message/MessageTemp/%s", a.path, path)
+	result = filepath.Join(a.path, "Message", "MessageTemp", path)
 	if _, err = os.Stat(result); err != nil {
 		return
 	}
@@ -187,11 +189,11 @@ func (a *Service) GetMessageImage(ctx context.Context, path string) (result stri
 }
 
 // 保存表情包路径
-const StickerDir = "./data/sticker/"
+const StickerDir = "./data/sticker"
 
 func (a *Service) GetMessageSticker(ctx context.Context, path, url string) (result string, err error) {
-	result = StickerDir + path
-	if _, err = os.Stat(result); err != nil && os.IsExist(err) {
+	result = filepath.Join(StickerDir, path)
+	if _, err = os.Stat(result); err != nil && !os.IsNotExist(err) {
 		return
 	}
 	if os.IsNotExist(err) {
@@ -215,7 +217,7 @@ func (a *Service) CacheSticker(ctx context.Context, path, url string) (err error
 	}
 	defer resp.Body.Close()
 
-	if _, err = os.Stat(StickerDir); err != nil && os.IsExist(err) {
+	if _, err = os.Stat(StickerDir); err != nil && !os.IsNotExist(err) {
 		return
 	}
 	if os.IsNotExist(err) {
@@ -225,6 +227,22 @@ func (a *Service) CacheSticker(ctx context.Context, path, url string) (err error
 	}
 	if err = os.WriteFile(path, content, 0644); err != nil {
 		return
+	}
+	return
+}
+
+func (a *Service) GetMessageVoice(ctx context.Context, path string) (result string, err error) {
+	file := strings.TrimSuffix(path, filepath.Ext(path)) + ".wav"
+	result = filepath.Join(audio.ResourceDir, file)
+	if _, err = os.Stat(result); err != nil && !os.IsNotExist(err) {
+		return
+	}
+
+	if os.IsNotExist(err) {
+		folder := filepath.Join(a.path, "Message", "MessageTemp")
+		if err = audio.Decoder(folder, path); err != nil {
+			return
+		}
 	}
 	return
 }

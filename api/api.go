@@ -71,6 +71,8 @@ func (api *Api) Run() error {
 		v1.GET("/message_image", api.getMessageImage)
 		// 查看表情包
 		v1.GET("/message_sticker", api.getMessageSticker)
+		// 播放语音
+		v1.GET("/message_voice", api.getMessageVoice)
 	}
 
 	return engine.Start(fmt.Sprintf(":%d", api.port))
