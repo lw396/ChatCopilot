@@ -13,11 +13,19 @@ package audio
 */
 import "C"
 import (
+	"unsafe"
+
 	"github.com/lw396/WeComCopilot/internal/errors"
 )
 
 func SilkToPcm(input, output string) (err error) {
-	if errcode := C.decoder(C.CString(input), C.CString(output)); errcode != 0 {
+	cInput := C.CString(input)
+	defer C.free(unsafe.Pointer(cInput))
+
+	cOutput := C.CString(output)
+	defer C.free(unsafe.Pointer(cOutput))
+
+	if errcode := C.decoder(cInput, cOutput); errcode != 0 {
 		err = errors.New(errors.CodeGeneral, "Silk to pem error")
 		return
 	}
