@@ -1,0 +1,3 @@
+[submodule "pkg/audio/silk"]
+	path = pkg/audio/silk
+	url = https://github.com/lw396/silk-v3-decoder

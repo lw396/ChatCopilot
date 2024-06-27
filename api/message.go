@@ -50,3 +50,17 @@ func (a *Api) getMessageSticker(c echo.Context) (err error) {
 
 	return c.File(image)
 }
+
+func (a *Api) getMessageVoice(c echo.Context) (err error) {
+	path := c.QueryParam("path")
+	if path == "" {
+		return errors.New(errors.CodeInvalidParam, "参数错误")
+	}
+
+	voice, err := a.service.GetMessageVoice(c.Request().Context(), path)
+	if err != nil {
+		return
+	}
+
+	return c.File(voice)
+}
