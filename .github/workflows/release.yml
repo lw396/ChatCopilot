@@ -2,29 +2,36 @@ name: Release
 
 on:
   push:
-    tags:
-      - "v*"
-
-permissions:
-  contents: write
-  packages: write
+    branches: [main]
+  pull_request:
+    branches: [main]
 
 jobs:
-  goreleaser:
+  build:
     runs-on: macos-latest
+
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
-          fetch-depth: 0
-      - run: git fetch --force --tags
-      - uses: actions/setup-go@v3
+          show-progress: true
+          submodules: true
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
         with:
           go-version: "1.21.x"
-          cache: true
-      - uses: goreleaser/goreleaser-action@v4
-        with:
-          distribution: goreleaser
-          version: latest
-          args: release --clean
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install dependencies
+        run: |
+          brew update
+          brew install make
+
+      - name: Build C binary
+        run: |
+          cd pkg/audio/slik
+          make
+
+      - name: Build go binary
+        run: |
+          CGO_ENABLED=1 GOARCH=arm64 go build -v -o chat-copilot_arm64 cmd/...
+          CGO_ENABLED=1 GOARCH=amd64 go build -v -o chat-copilot_amd64 cmd/...
