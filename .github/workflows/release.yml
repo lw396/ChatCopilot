@@ -31,7 +31,44 @@ jobs:
           cd ./pkg/audio/silk
           make universal
 
-      - name: Build go binary
+      - name: Build Go binary
         run: |
           CGO_ENABLED=1 GOARCH=arm64 go build -v -o chat-copilot_arm64 ./cmd/...
           CGO_ENABLED=1 GOARCH=amd64 go build -v -o chat-copilot_amd64 ./cmd/...
+
+      - name: Get current tag
+        id: get_tag
+        run: |
+          tag=$(git describe --tags)
+          echo ::set-output name=tag::$tag
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.get_tag.outputs.tag }}
+          release_name: Release ${{ steps.get_tag.outputs.tag }}
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Asset (arm64)
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./chat-copilot_arm64
+          asset_name: chat-copilot_arm64
+          asset_content_type: application/octet-stream
+
+      - name: Upload Release Asset (amd64)
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./chat-copilot_amd64
+          asset_name: chat-copilot_amd64
+          asset_content_type: application/octet-stream
