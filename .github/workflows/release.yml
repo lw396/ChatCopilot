@@ -39,8 +39,8 @@ jobs:
       - name: Get current tag
         id: get_tag
         run: |
-          tag=$(git describe --tags)
-          echo ::set-output name=tag::$tag
+          tag=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+          echo "tag=$tag" >> $GITHUB_ENV
 
       - name: Create Release
         id: create_release
@@ -48,8 +48,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.get_tag.outputs.tag }}
-          release_name: Release ${{ steps.get_tag.outputs.tag }}
+          tag_name: ${{ steps.get_tag.outputs.tag  }}
+          release_name: Release ${{ steps.get_tag.outputs.tag  }}
           draft: false
           prerelease: false
 
@@ -60,7 +60,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./chat-copilot_arm64
-          asset_name: chat-copilot_arm64
+          asset_name: chat-copilot_arm64_${{ steps.get_tag.outputs.tag  }}
           asset_content_type: application/octet-stream
 
       - name: Upload Release Asset (amd64)
@@ -70,5 +70,5 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./chat-copilot_amd64
-          asset_name: chat-copilot_amd64
+          asset_name: chat-copilot_amd64_${{ steps.get_tag.outputs.tag  }}
           asset_content_type: application/octet-stream
