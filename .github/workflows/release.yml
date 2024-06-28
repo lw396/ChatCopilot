@@ -28,10 +28,10 @@ jobs:
 
       - name: Build C binary
         run: |
-          cd pkg/audio/slik
+          cd ./pkg/audio/slik
           make
 
       - name: Build go binary
         run: |
-          CGO_ENABLED=1 GOARCH=arm64 go build -v -o chat-copilot_arm64 cmd/...
-          CGO_ENABLED=1 GOARCH=amd64 go build -v -o chat-copilot_amd64 cmd/...
+          CGO_ENABLED=1 GOARCH=arm64 go build -v -o chat-copilot_arm64 ./cmd/...
+          CGO_ENABLED=1 GOARCH=amd64 go build -v -o chat-copilot_amd64 ./cmd/...
