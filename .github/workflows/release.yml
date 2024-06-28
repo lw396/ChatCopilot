@@ -26,20 +26,9 @@ jobs:
           brew update
           brew install make
 
-      - name: Debug - List files
-        run: |
-          echo "Current directory: $(pwd)"
-          echo "List of files:"
-          ls -la
-
-      - name: Debug - List files in pkg/audio
-        run: |
-          echo "List of files in pkg/audio:"
-          ls -la ./pkg/audio
-
       - name: Build C binary
         run: |
-          cd ./pkg/audio/slik
+          cd ./pkg/audio/silk
           make
 
       - name: Build go binary
