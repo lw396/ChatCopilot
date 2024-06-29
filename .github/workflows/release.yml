@@ -2,9 +2,8 @@ name: Release
 
 on:
   push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+    branches:
+      - "v*"
 
 jobs:
   build:
@@ -15,6 +14,7 @@ jobs:
         with:
           show-progress: true
           submodules: true
+          fetch-tags: true
 
       - name: Set up Go
         uses: actions/setup-go@v5
@@ -28,10 +28,41 @@ jobs:
 
       - name: Build C binary
         run: |
-          cd ./pkg/audio/slik
-          make
+          cd ./pkg/audio/silk
+          make universal
 
-      - name: Build go binary
+      - name: Build Go binary
         run: |
           CGO_ENABLED=1 GOARCH=arm64 go build -v -o chat-copilot_arm64 ./cmd/...
           CGO_ENABLED=1 GOARCH=amd64 go build -v -o chat-copilot_amd64 ./cmd/...
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Asset (arm64)
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./chat-copilot_arm64
+          asset_name: chat-copilot_arm64_${{ github.ref }}
+          asset_content_type: application/octet-stream
+
+      - name: Upload Release Asset (amd64)
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./chat-copilot_amd64
+          asset_name: chat-copilot_amd64_${{ github.ref }}
+          asset_content_type: application/octet-stream
