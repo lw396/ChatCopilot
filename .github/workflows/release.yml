@@ -5,6 +5,10 @@ on:
     tags:
       - "v*"
 
+permissions:
+  contents: write
+  packages: write
+
 jobs:
   build:
     runs-on: macos-latest
@@ -53,7 +57,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./chat-copilot_arm64
-          asset_name: chat-copilot_arm64_${{ github.ref }}
+          asset_name: chat-copilot_arm64
           asset_content_type: application/octet-stream
 
       - name: Upload Release Asset (amd64)
@@ -63,5 +67,5 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./chat-copilot_amd64
-          asset_name: chat-copilot_amd64_${{ github.ref }}
+          asset_name: chat-copilot_amd64
           asset_content_type: application/octet-stream
