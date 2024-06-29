@@ -6,9 +6,25 @@
 
 ### 当前实现功能
 
-- 1、获取群聊天记录
-- 2、实时获取已保存记录
-- 3、获取联系人聊天记录
+- 1、群聊
+
+* 通过群昵称获取群聊基本信息
+* 将群聊历史记录保存至 mysql
+* 实时更新接收到的群聊消息
+
+- 2、联系人聊天
+
+* 通过昵称获取联系人基本信息
+* 将聊天历史记录保存至 mysql
+* 实时更新接收到的聊天消息
+
+- 3、消息处理
+
+* 图片：明文显示图片说在路径
+* 视频：明文显示视频说在路径
+* 表情包：保存表情包图片到本地
+* 语音：解码语音消息转为 wav 格式
+* ......
 
 ## 使用方法
 
@@ -112,3 +128,5 @@ export CGO_LDFLAGS="-L/opt/homebrew/lib"
 - PyWxDump [https://github.com/xaoyaoo/PyWxDump](https://github.com/xaoyaoo/PyWxDump)
 
 - 使用 macOS 微信提取自定义表情 [https://blog.jogle.top/2022/08/14/macos-wechat-sticker-dump/](https://blog.jogle.top/2022/08/14/macos-wechat-sticker-dump/)
+
+- silk-v3-decoder [https://github.com/kn007/silk-v3-decoder](https://github.com/kn007/silk-v3-decoder)
