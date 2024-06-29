@@ -14,7 +14,6 @@ jobs:
         with:
           show-progress: true
           submodules: true
-          fetch-tags: true
 
       - name: Set up Go
         uses: actions/setup-go@v5
