@@ -20,3 +20,10 @@ const (
 	MsgTypeSys            MessageType = 10000 // 系统消息
 	MsgTypeRecalled       MessageType = 10002 // 消息撤回
 )
+
+type ChatType int
+
+const (
+	ChatTypePerson ChatType = 1 // 私聊
+	ChatTypeGroup  ChatType = 2 // 群聊
+)

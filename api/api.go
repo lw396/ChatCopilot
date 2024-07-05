@@ -73,6 +73,12 @@ func (api *Api) Run() error {
 		v1.GET("/message_sticker", api.getMessageSticker)
 		// 播放语音
 		v1.GET("/message_voice", api.getMessageVoice)
+
+		// 聊天助手
+		// 添加聊天助手
+		v1.POST("/chat_copilot", api.addChatCopilot)
+		// 获取聊天提示
+		v1.GET("/chat_tips", api.getChatTips)
 	}
 
 	return engine.Start(fmt.Sprintf(":%d", api.port))

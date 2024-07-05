@@ -51,4 +51,13 @@ type Repository interface {
 	UpdateMessageContent(ctx context.Context, msgName string, content *db.MessageContent) error
 	DelMessageContentTable(ctx context.Context, msgName string) error
 	GetMessageContentList(ctx context.Context, msgName string, offset, limit int) ([]*db.MessageContent, error)
+
+	// Copilot
+	AddChatCopilot(ctx context.Context, copilot *db.ChatCopilot) error
+	GetChatCopilotList(ctx context.Context) ([]*db.ChatCopilot, error)
+	GetChatCopilot(ctx context.Context, id int64) (*db.ChatCopilot, error)
+
+	// Prompt
+	GetPromptCurationList(ctx context.Context, offset, limit int) ([]*db.PromptCuration, error)
+	GetPromptCuration(ctx context.Context, id int64) (*db.PromptCuration, error)
 }

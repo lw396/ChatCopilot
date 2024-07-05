@@ -50,3 +50,19 @@ type MessageContent struct {
 	VoiceText   string            `gorm:"column:vice_text"`
 	Seq         int64             `gorm:"column:seq"`
 }
+
+type ChatCopilot struct {
+	Model
+	UsrName  string         `gorm:"column:usr_name"`
+	Type     model.ChatType `gorm:"column:type"`
+	PromptID int64          `gorm:"column:prompt_id"`
+	Status   uint8          `gorm:"column:status"`
+	Prompt   PromptCuration `gorm:"column:prompt"`
+}
+
+type PromptCuration struct {
+	Model
+	Title  string `gorm:"column:title"`
+	Prompt string `gorm:"column:prompt"`
+	Start  uint8  `gorm:"column:start"`
+}

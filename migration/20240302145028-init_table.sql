@@ -45,17 +45,17 @@ CREATE TABLE if NOT EXISTS `prompt_curation` (
     KEY `idx_contact_person_deleted_at` (`deleted_at`) USING BTREE
 );
 
-CREATE TABLE IF NOT EXISTS `chat_record` (
+CREATE TABLE IF NOT EXISTS `chat_copilot` (
     `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-    `user_name` VARCHAR(255) NOT NULL COMMENT '用户名称',
-    `prompt_id` LONGTEXT NOT NULL COMMENT '提示词',
-    `messages` JSON NOT NULL COMMENT '聊天记录',
-    `start` TINYINT(1) NOT NULL DEFAULT 0 COMMENT '状态',
+    `usr_name` VARCHAR(255) NOT NULL COMMENT '用户名称',
+    `type` ENUM('person', 'group') NOT NULL COMMENT '聊天类型',
+    `prompt_id` BIGINT UNSIGNED NOT NULL COMMENT '提示词id',
+    `status` TINYINT(1) NOT NULL DEFAULT 0 COMMENT '状态',
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     `deleted_at` TIMESTAMP DEFAULT NULL,
     PRIMARY KEY (`id`) USING BTREE,
-    KEY `idx_contact_person_deleted_at` (`deleted_at`) USING BTREE
+    KEY `idx_chat_copilot_deleted_at` (`deleted_at`) USING BTREE
 );
 
 -- +migrate Down
