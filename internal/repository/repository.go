@@ -50,5 +50,5 @@ type Repository interface {
 	GetNewMessageContent(ctx context.Context, msgName string) (*db.MessageContent, error)
 	UpdateMessageContent(ctx context.Context, msgName string, content *db.MessageContent) error
 	DelMessageContentTable(ctx context.Context, msgName string) error
-	GetMessageContentList(ctx context.Context, msgName string, offset int) ([]*db.MessageContent, error)
+	GetMessageContentList(ctx context.Context, msgName string, offset, limit int) ([]*db.MessageContent, error)
 }
