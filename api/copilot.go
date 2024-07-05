@@ -1,8 +1,8 @@
 package api
 
 import (
-	"io"
 	"net/http"
+	"strings"
 
 	"github.com/labstack/echo/v4"
 	"github.com/lw396/WeComCopilot/internal/errors"
@@ -37,12 +37,22 @@ func (a *Api) addChatCopilot(c echo.Context) (err error) {
 }
 
 func (a *Api) getChatTips(c echo.Context) (err error) {
+	c.Response().Header().Set(echo.HeaderContentType, echo.MIMETextPlainCharsetUTF8)
+	c.Response().WriteHeader(http.StatusOK)
+
 	usrname := c.QueryParam("user_name")
 	if usrname == "" {
 		return errors.New(errors.CodeInvalidParam, "user_name 为空")
 	}
 
-	//
-	var r io.Reader
-	return c.Stream(http.StatusOK, echo.MIMEOctetStream, r)
+	streamResponseFunc := func(r *strings.Reader) error {
+		return c.Stream(http.StatusOK, echo.MIMETextPlainCharsetUTF8, r)
+	}
+
+	err = a.service.GetChatTips(c.Request().Context(), usrname, streamResponseFunc)
+	if err != nil {
+		return
+	}
+
+	return
 }

@@ -2,7 +2,6 @@ package copilot
 
 import (
 	"context"
-	"fmt"
 
 	ollama "github.com/ollama/ollama/api"
 )
@@ -27,13 +26,11 @@ func (c *CopilotClient) Chat(ctx context.Context, messages []ollama.Message) (er
 	}
 
 	chat := ollama.Message{}
-	channel := make(chan ollama.Message)
 	respFunc := func(resp ollama.ChatResponse) error {
 		chat = ollama.Message{
 			Role:    resp.Message.Role,
 			Content: chat.Content + resp.Message.Content,
 		}
-		channel <- chat
 
 		return nil
 	}
@@ -42,6 +39,5 @@ func (c *CopilotClient) Chat(ctx context.Context, messages []ollama.Message) (er
 		return
 	}
 
-	fmt.Println(<-channel)
 	return
 }
