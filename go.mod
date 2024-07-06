@@ -26,7 +26,7 @@ require (
 	gopkg.in/ini.v1 v1.67.0
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 	gorm.io/driver/mysql v1.5.7
-	gorm.io/gorm v1.25.7
+	gorm.io/gorm v1.25.10
 	howett.net/plist v1.0.1
 )
 
