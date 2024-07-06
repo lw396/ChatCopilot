@@ -1,8 +1,8 @@
 package api
 
 import (
+	"io"
 	"net/http"
-	"strings"
 
 	"github.com/labstack/echo/v4"
 	"github.com/lw396/WeComCopilot/internal/errors"
@@ -45,14 +45,11 @@ func (a *Api) getChatTips(c echo.Context) (err error) {
 		return errors.New(errors.CodeInvalidParam, "user_name 为空")
 	}
 
-	streamResponseFunc := func(r *strings.Reader) error {
-		return c.Stream(http.StatusOK, echo.MIMETextPlainCharsetUTF8, r)
-	}
+	pipeReader, pipeWriter := io.Pipe()
 
-	err = a.service.GetChatTips(c.Request().Context(), usrname, streamResponseFunc)
-	if err != nil {
+	if err = a.service.GetChatTips(c.Request().Context(), usrname, pipeWriter); err != nil {
 		return
 	}
 
-	return
+	return c.Stream(http.StatusOK, "application/x-ndjson", pipeReader)
 }

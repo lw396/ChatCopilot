@@ -1,20 +1,39 @@
 package copilot
 
 import (
+	"net"
 	"net/http"
 	"net/url"
 
+	"github.com/lw396/WeComCopilot/internal/repository/gorm"
 	ollama "github.com/ollama/ollama/api"
+	"github.com/ollama/ollama/envconfig"
 )
 
-func NewClient(base *url.URL, http *http.Client) *CopilotClient {
-	return &CopilotClient{
-		ollama: ollama.NewClient(base, http),
-		model:  "qwen",
-		stream: true,
-	}
+type CopilotClient struct {
+	ollama      *ollama.Client
+	model       string
+	temperature float32
+	topP        float32
 }
 
-func ClientFromEnvironment() (*ollama.Client, error) {
-	return ollama.ClientFromEnvironment()
+func NewClient(config *gorm.CopilotConfig) *CopilotClient {
+	ollamaHost := envconfig.Host
+	if config.Url == "" {
+		config.Url = net.JoinHostPort(ollamaHost.Host, ollamaHost.Port)
+	}
+
+	client := ollama.NewClient(
+		&url.URL{
+			Scheme: ollamaHost.Scheme,
+			Host:   config.Url,
+		},
+		http.DefaultClient,
+	)
+	return &CopilotClient{
+		ollama:      client,
+		model:       config.ModelName,
+		temperature: config.Temperature,
+		topP:        config.TopP,
+	}
 }

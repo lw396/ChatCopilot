@@ -31,8 +31,32 @@ values
         "0"
     );
 
+INSERT INTO
+    `copilot_config` (
+        `id`,
+        `url`,
+        `token`,
+        `model`,
+        `temperature`,
+        `top_p`
+    )
+values
+    (
+        1,
+        "",
+        "",
+        "qwen2",
+        0.9,
+        0.7
+    );
+
 -- +migrate Down
 delete from
     `prompt_curation`
 where
     id <= 2;
+
+delete from
+    `copilot_config`
+where
+    id <= 1;

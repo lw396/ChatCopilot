@@ -66,3 +66,12 @@ type PromptCuration struct {
 	Prompt string `gorm:"column:prompt"`
 	Start  uint8  `gorm:"column:start"`
 }
+
+type CopilotConfig struct {
+	Model
+	Url         string  `gorm:"column:url"`
+	Token       string  `gorm:"column:token"`
+	ModelName   string  `gorm:"column:model"`
+	Temperature float32 `gorm:"column:temperature"`
+	TopP        float32 `gorm:"column:top_k"`
+}

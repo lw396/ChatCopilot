@@ -58,9 +58,24 @@ CREATE TABLE IF NOT EXISTS `chat_copilot` (
     KEY `idx_chat_copilot_deleted_at` (`deleted_at`) USING BTREE
 );
 
+CREATE TABLE IF NOT EXISTS `copilot_config` (
+    `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `url` VARCHAR(255) NOT NULL COMMENT '地址',
+    `token` VARCHAR(255) NOT NULL COMMENT '令牌',
+    `model` VARCHAR(100) NOT NULL COMMENT '模型名称',
+    `temperature` DOUBLE NOT NULL DEFAULT 0.9 COMMENT '温度',
+    `top_p` DOUBLE NOT NULL DEFAULT 0.7 COMMENT 'top_p',
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `deleted_at` TIMESTAMP DEFAULT NULL,
+    INDEX `idx_model` (`model`),
+    PRIMARY KEY (`id`) USING BTREE,
+    KEY `idx_copilot_config_deleted_at` (`deleted_at`) USING BTREE
+);
+
 -- +migrate Down
-DROP TABLE IF EXISTS `group_contact`;
+DROP TABLE IF EXISTS ` group_contact `;
 
-DROP TABLE IF EXISTS `contact_person`;
+DROP TABLE IF EXISTS ` contact_person `;
 
-DROP TABLE IF EXISTS `prompt_curation`;
+DROP TABLE IF EXISTS ` prompt_curation `;

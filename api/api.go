@@ -78,7 +78,7 @@ func (api *Api) Run() error {
 		// 添加聊天助手
 		v1.POST("/chat_copilot", api.addChatCopilot)
 		// 获取聊天提示
-		v1.GET("/chat_tips", api.getChatTips)
+		v1.POST("/chat_tips", api.getChatTips)
 	}
 
 	return engine.Start(fmt.Sprintf(":%d", api.port))

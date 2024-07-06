@@ -57,6 +57,9 @@ type Repository interface {
 	GetChatCopilotList(ctx context.Context) ([]*db.ChatCopilot, error)
 	GetChatCopilot(ctx context.Context, id int64) (*db.ChatCopilot, error)
 
+	// Copilot Config
+	GetCopilotConfigByModel(ctx context.Context, model string) (*db.CopilotConfig, error)
+
 	// Prompt
 	GetPromptCurationList(ctx context.Context, offset, limit int) ([]*db.PromptCuration, error)
 	GetPromptCuration(ctx context.Context, id int64) (*db.PromptCuration, error)

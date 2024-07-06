@@ -6,19 +6,12 @@ import (
 	ollama "github.com/ollama/ollama/api"
 )
 
-type CopilotClient struct {
-	ollama      *ollama.Client
-	model       string
-	temperature float32
-	topP        float32
-	stream      bool
-}
-
 func (c *CopilotClient) Chat(ctx context.Context, messages []ollama.Message) (err error) {
+	stream := true
 	req := &ollama.ChatRequest{
 		Model:    c.model,
 		Messages: messages,
-		Stream:   &c.stream,
+		Stream:   &stream,
 		Options: map[string]interface{}{
 			"temperature": c.temperature,
 			"top_p":       c.topP,

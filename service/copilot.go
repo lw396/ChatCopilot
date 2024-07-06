@@ -2,7 +2,7 @@ package service
 
 import (
 	"context"
-	"strings"
+	"io"
 
 	"github.com/lw396/WeComCopilot/internal/errors"
 	"github.com/lw396/WeComCopilot/internal/model"
@@ -36,9 +36,7 @@ func (a *Service) AddChatCopilot(ctx context.Context, req *gorm.ChatCopilot) (er
 	return
 }
 
-type streamResponseFunc func(r *strings.Reader) error
-
-func (a *Service) GetChatTips(ctx context.Context, usrname string, fn streamResponseFunc) (err error) {
+func (a *Service) GetChatTips(ctx context.Context, usrname string, writer io.Writer) (err error) {
 
 	return
 }

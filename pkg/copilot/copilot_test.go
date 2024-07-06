@@ -4,20 +4,16 @@ import (
 	"context"
 	"testing"
 
+	"github.com/lw396/WeComCopilot/internal/repository/gorm"
 	ollama "github.com/ollama/ollama/api"
 )
 
 func TestChat(t *testing.T) {
-	ollamaclient, err := ClientFromEnvironment()
-	if err != nil {
-		return
-	}
-
-	client := &CopilotClient{
-		ollama: ollamaclient,
-		model:  "qwen2",
-		stream: true,
-	}
+	client := NewClient(&gorm.CopilotConfig{
+		ModelName:   "qwen2",
+		Temperature: 0.1,
+		TopP:        0.1,
+	})
 
 	messages := []ollama.Message{
 		{
