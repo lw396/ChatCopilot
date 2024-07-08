@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"io"
 
 	"github.com/lw396/WeComCopilot/internal/errors"
 	"github.com/lw396/WeComCopilot/internal/model"
@@ -36,7 +35,18 @@ func (a *Service) AddChatCopilot(ctx context.Context, req *gorm.ChatCopilot) (er
 	return
 }
 
-func (a *Service) GetChatTips(ctx context.Context, usrname string, writer io.Writer) (err error) {
+func (a *Service) GetChatTips(ctx context.Context, usrname string, ch chan interface{}) (err error) {
+	messages := []ollama.Message{
+		{
+			Role:    "user",
+			Content: "你好",
+		},
+	}
+
+	err = a.copilot.Chat(context.Background(), messages, ch)
+	if err != nil {
+		return
+	}
 
 	return
 }

@@ -38,7 +38,8 @@ INSERT INTO
         `token`,
         `model`,
         `temperature`,
-        `top_p`
+        `top_p`,
+        `statys`
     )
 values
     (
@@ -47,7 +48,8 @@ values
         "",
         "qwen2",
         0.9,
-        0.7
+        0.7,
+        1
     );
 
 -- +migrate Down

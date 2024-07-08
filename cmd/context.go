@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/lw396/WeComCopilot/internal/model"
 	"github.com/lw396/WeComCopilot/internal/repository"
 	"github.com/lw396/WeComCopilot/internal/repository/sqlite"
 	"github.com/lw396/WeComCopilot/pkg/copilot"
@@ -247,11 +248,8 @@ func (c *Context) buildFilePath() string {
 }
 
 func (c *Context) buildCopilot(rep repository.Repository) (*copilot.CopilotClient, error) {
-	model := valuer.Value("").Try(
-		ctx.Section("ollama").Key("model").String(),
-	).String()
-
-	config, err := rep.GetCopilotConfigByModel(context.Background(), model)
+	ctx := context.Background()
+	config, err := rep.GetCopilotConfigByStatus(ctx, model.StatusUse)
 	if err != nil {
 		return nil, err
 	}

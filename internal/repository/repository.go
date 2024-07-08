@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 
+	"github.com/lw396/WeComCopilot/internal/model"
 	db "github.com/lw396/WeComCopilot/internal/repository/gorm"
 	"github.com/lw396/WeComCopilot/internal/repository/sqlite"
 	"gorm.io/gorm"
@@ -58,7 +59,7 @@ type Repository interface {
 	GetChatCopilot(ctx context.Context, id int64) (*db.ChatCopilot, error)
 
 	// Copilot Config
-	GetCopilotConfigByModel(ctx context.Context, model string) (*db.CopilotConfig, error)
+	GetCopilotConfigByStatus(ctx context.Context, status model.CopilotConfigStatus) (*db.CopilotConfig, error)
 
 	// Prompt
 	GetPromptCurationList(ctx context.Context, offset, limit int) ([]*db.PromptCuration, error)

@@ -2,6 +2,7 @@ package copilot
 
 import (
 	"context"
+	"fmt"
 	"testing"
 
 	"github.com/lw396/WeComCopilot/internal/repository/gorm"
@@ -21,8 +22,14 @@ func TestChat(t *testing.T) {
 			Content: "你好",
 		},
 	}
-
-	if err := client.Chat(context.Background(), messages); err != nil {
+	ch := make(chan interface{})
+	err := client.Chat(context.Background(), messages, ch)
+	if err != nil {
 		t.Error("erorr:", err)
 	}
+
+	for val := range ch {
+		fmt.Println(val)
+	}
+
 }

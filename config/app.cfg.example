@@ -33,6 +33,3 @@ path=./test
 [task]
 interval=10
 crontab=*/10 * * * * *
-
-[ollama]
-model = "qwen2"

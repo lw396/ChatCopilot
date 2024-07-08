@@ -1,7 +1,7 @@
 -- +migrate Up 
 CREATE TABLE if NOT EXISTS `group_contact` (
     `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-    `usr_name` VARCHAR(32) NOT NULL COMMENT '用户名称',
+    `usr_name` VARCHAR(32) UNIQUE NOT NULL COMMENT '用户名称',
     `nickname` VARCHAR(255) NOT NULL COMMENT '昵称',
     `head_img` VARCHAR(600) NOT NULL COMMENT '头像',
     `group_member` TEXT NOT NULL COMMENT '群成员',
@@ -17,7 +17,7 @@ CREATE TABLE if NOT EXISTS `group_contact` (
 
 CREATE TABLE if NOT EXISTS `contact_person` (
     `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-    `usr_name` VARCHAR(32) NOT NULL COMMENT '用户名称',
+    `usr_name` VARCHAR(32) UNIQUE NOT NULL COMMENT '用户名称',
     `nickname` VARCHAR(255) NOT NULL COMMENT '昵称',
     `remark` VARCHAR(255) NOT NULL COMMENT '备注',
     `head_img_url` VARCHAR(600) NOT NULL COMMENT '头像',
@@ -47,7 +47,7 @@ CREATE TABLE if NOT EXISTS `prompt_curation` (
 
 CREATE TABLE IF NOT EXISTS `chat_copilot` (
     `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-    `usr_name` VARCHAR(255) NOT NULL COMMENT '用户名称',
+    `usr_name` VARCHAR(255) UNIQUE NOT NULL COMMENT '用户名称',
     `type` ENUM('person', 'group') NOT NULL COMMENT '聊天类型',
     `prompt_id` BIGINT UNSIGNED NOT NULL COMMENT '提示词id',
     `status` TINYINT(1) NOT NULL DEFAULT 0 COMMENT '状态',
@@ -65,6 +65,7 @@ CREATE TABLE IF NOT EXISTS `copilot_config` (
     `model` VARCHAR(100) NOT NULL COMMENT '模型名称',
     `temperature` DOUBLE NOT NULL DEFAULT 0.9 COMMENT '温度',
     `top_p` DOUBLE NOT NULL DEFAULT 0.7 COMMENT 'top_p',
+    `status` TINYINT(1) NOT NULL DEFAULT 0 COMMENT '状态',
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     `deleted_at` TIMESTAMP DEFAULT NULL,

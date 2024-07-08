@@ -57,7 +57,7 @@ type ChatCopilot struct {
 	Type     model.ChatType `gorm:"column:type"`
 	PromptID int64          `gorm:"column:prompt_id"`
 	Status   uint8          `gorm:"column:status"`
-	Prompt   PromptCuration `gorm:"column:prompt"`
+	Prompt   PromptCuration `gorm:"foreignKey:PromptID"`
 }
 
 type PromptCuration struct {

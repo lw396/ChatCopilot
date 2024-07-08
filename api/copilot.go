@@ -1,7 +1,6 @@
 package api
 
 import (
-	"io"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -45,11 +44,10 @@ func (a *Api) getChatTips(c echo.Context) (err error) {
 		return errors.New(errors.CodeInvalidParam, "user_name 为空")
 	}
 
-	pipeReader, pipeWriter := io.Pipe()
-
-	if err = a.service.GetChatTips(c.Request().Context(), usrname, pipeWriter); err != nil {
+	ch := make(chan interface{})
+	if err = a.service.GetChatTips(c.Request().Context(), usrname, ch); err != nil {
 		return
 	}
 
-	return c.Stream(http.StatusOK, "application/x-ndjson", pipeReader)
+	return StreamResponse(c, ch)
 }
