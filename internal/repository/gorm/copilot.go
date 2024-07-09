@@ -30,8 +30,9 @@ func (r *gormRepository) GetChatCopilotList(ctx context.Context) (result []*Chat
 	return
 }
 
-func (r *gormRepository) GetChatCopilot(ctx context.Context, id int64) (result *ChatCopilot, err error) {
-	err = r.db.WithContext(ctx).Preload("Prompt").Where("id = ?", id).First(result).Error
+func (r *gormRepository) GetChatCopilotByUsrName(ctx context.Context, usrname string) (result *ChatCopilot, err error) {
+	result = &ChatCopilot{}
+	err = r.db.WithContext(ctx).Preload("Prompt").Where("usr_name = ?", usrname).First(result).Error
 	if err != nil {
 		return
 	}

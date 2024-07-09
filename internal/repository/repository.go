@@ -43,7 +43,7 @@ type Repository interface {
 	SaveContactPerson(ctx context.Context, contact *db.ContactPerson) error
 	GetContactPersons(ctx context.Context, nickname string, offset int) ([]*db.ContactPerson, int64, error)
 	DelContactPersonByUsrName(ctx context.Context, usrname string) error
-	GetContactPersonByUsrName(ctx context.Context, usrName string) (*db.ContactPerson, error)
+	GetContactPersonByUsrName(ctx context.Context, usrname string) (*db.ContactPerson, error)
 
 	// Message
 	CreateMessageContentTable(ctx context.Context, msgName string) error
@@ -56,7 +56,7 @@ type Repository interface {
 	// Copilot
 	AddChatCopilot(ctx context.Context, copilot *db.ChatCopilot) error
 	GetChatCopilotList(ctx context.Context) ([]*db.ChatCopilot, error)
-	GetChatCopilot(ctx context.Context, id int64) (*db.ChatCopilot, error)
+	GetChatCopilotByUsrName(ctx context.Context, usrname string) (*db.ChatCopilot, error)
 
 	// Copilot Config
 	GetCopilotConfigByStatus(ctx context.Context, status model.CopilotConfigStatus) (*db.CopilotConfig, error)

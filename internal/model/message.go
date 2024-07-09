@@ -21,11 +21,11 @@ const (
 	MsgTypeRecalled       MessageType = 10002 // 消息撤回
 )
 
-type ChatType int8
+type ChatType string
 
 const (
-	ChatTypePerson ChatType = 1 // 私聊
-	ChatTypeGroup  ChatType = 2 // 群聊
+	ChatTypePerson ChatType = "person" // 私聊
+	ChatTypeGroup  ChatType = "group"  // 群聊
 )
 
 type CopilotConfigStatus uint8

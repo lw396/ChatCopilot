@@ -2,10 +2,12 @@ package service
 
 import (
 	"context"
+	"encoding/hex"
 
 	"github.com/lw396/WeComCopilot/internal/errors"
 	"github.com/lw396/WeComCopilot/internal/model"
 	"github.com/lw396/WeComCopilot/internal/repository/gorm"
+	"github.com/lw396/WeComCopilot/pkg/util"
 	ollama "github.com/ollama/ollama/api"
 )
 
@@ -36,39 +38,36 @@ func (a *Service) AddChatCopilot(ctx context.Context, req *gorm.ChatCopilot) (er
 }
 
 func (a *Service) GetChatTips(ctx context.Context, usrname string, ch chan interface{}) (err error) {
-	messages := []ollama.Message{
-		{
-			Role:    "user",
-			Content: "你好",
-		},
+	copilot, err := a.rep.GetChatCopilotByUsrName(ctx, usrname)
+	if err != nil {
+		return
 	}
-
-	err = a.copilot.Chat(context.Background(), messages, ch)
+	message, err := a.HandleMessageFormat(ctx, usrname)
+	if err != nil {
+		return
+	}
+	promptMessages := []ollama.Message{{
+		Role:    "system",
+		Content: copilot.Prompt.Prompt,
+	}}
+	promptMessages = append(promptMessages, message...)
+	err = a.copilot.Chat(ctx, promptMessages, ch)
 	if err != nil {
 		return
 	}
 
 	return
 }
-func (a *Service) InitCopilot(ctx context.Context, msgName string) (err error) {
-	messages, err := a.rep.GetMessageContentList(ctx, msgName, 1, -1)
+
+func (a *Service) HandleMessageFormat(ctx context.Context, usrname string) (result []ollama.Message, err error) {
+	msgName := "Chat_" + hex.EncodeToString(util.Md5([]byte(usrname)))
+	messages, err := a.rep.GetMessageContentList(ctx, msgName, -1, -1)
 	if err != nil {
 		return
 	}
 
-	data, err := a.HandleMessageFormat(messages)
-	if err != nil {
-		return
-	}
-
-	_ = data
-
-	return
-}
-
-func (c *Service) HandleMessageFormat(message []*gorm.MessageContent) (result []ollama.Message, err error) {
 	result = make([]ollama.Message, 0)
-	for _, msg := range message {
+	for _, msg := range messages {
 		if msg.MessageType != model.MsgTypeText {
 			continue
 		}
