@@ -2,8 +2,9 @@ package gorm
 
 import "context"
 
-func (r *gormRepository) GetPromptCurationList(ctx context.Context, offset, limit int) (result []*PromptCuration, err error) {
-	err = r.db.WithContext(ctx).Offset(offset).Limit(limit).Find(&result).Error
+func (r *gormRepository) GetPromptCurationList(ctx context.Context, offset, limit int) (result []*PromptCuration, total int64, err error) {
+	tx := r.db.WithContext(ctx).Model(&PromptCuration{}).Count(&total)
+	err = tx.Offset(offset).Limit(limit).Find(&result).Error
 	if err != nil {
 		return
 	}

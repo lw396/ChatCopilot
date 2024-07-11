@@ -45,12 +45,12 @@ func (a *Api) getPromptCurationList(c echo.Context) (err error) {
 		return errors.New(errors.CodeInvalidParam, "limit必须为数字")
 	}
 
-	list, err := a.service.GetPromptCurationList(c.Request().Context(), offset, limit)
+	list, total, err := a.service.GetPromptCurationList(c.Request().Context(), offset, limit)
 	if err != nil {
 		return
 	}
 
-	return OK(c, list)
+	return Paginate(c, list, total)
 }
 
 type RepDelPrompt struct {
