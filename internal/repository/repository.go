@@ -62,6 +62,9 @@ type Repository interface {
 	GetCopilotConfigByStatus(ctx context.Context, status model.CopilotConfigStatus) (*db.CopilotConfig, error)
 
 	// Prompt
+	AddPromptCuration(ctx context.Context, req *db.PromptCuration) (err error)
+	DelPromptCuration(ctx context.Context, id uint64) (err error)
+	UpdatePromptCuration(ctx context.Context, req *db.PromptCuration) (err error)
 	GetPromptCurationList(ctx context.Context, offset, limit int) ([]*db.PromptCuration, error)
 	GetPromptCuration(ctx context.Context, id int64) (*db.PromptCuration, error)
 }
