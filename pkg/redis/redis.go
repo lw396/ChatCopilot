@@ -7,7 +7,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/go-redis/redis/v8"
+	"github.com/redis/go-redis/extra/redisotel/v9"
+	"github.com/redis/go-redis/v9"
 )
 
 type RedisClient interface {
@@ -45,8 +46,11 @@ func NewClient(opts ...Option) (RedisClient, error) {
 		return nil, err
 	}
 
-	if o.tracer != nil {
-		rc.AddHook(NewTraceHook(o.tracer))
+	if o.tracerProvider != nil {
+		err := redisotel.InstrumentTracing(rc, redisotel.WithTracerProvider(o.tracerProvider))
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return &redisClient{

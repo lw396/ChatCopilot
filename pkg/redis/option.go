@@ -3,13 +3,13 @@ package redis
 import "go.opentelemetry.io/otel/trace"
 
 type options struct {
-	host     string
-	port     int
-	user     string
-	password string
-	db       int
-	packer   Packer
-	tracer   trace.Tracer
+	host           string
+	port           int
+	user           string
+	password       string
+	db             int
+	packer         Packer
+	tracerProvider trace.TracerProvider
 }
 
 func defaultOptions() *options {
@@ -49,8 +49,8 @@ func WithPacker(packer Packer) Option {
 	}
 }
 
-func WithTracer(tracer trace.Tracer) Option {
+func WithTracerProvider(tracerProvider trace.TracerProvider) Option {
 	return func(o *options) {
-		o.tracer = tracer
+		o.tracerProvider = tracerProvider
 	}
 }
