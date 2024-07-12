@@ -14,7 +14,7 @@ services:
     ports:
       - "6978:6978"
   mysql:
-    image: mysql:8.4
+    image: mysql:9.0
     command: --default-authentication-plugin=mysql_native_password
     environment:
       - MYSQL_ROOT_PASSWORD=secret
