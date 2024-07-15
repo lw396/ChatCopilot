@@ -2,6 +2,7 @@ package service
 
 import (
 	"github.com/lw396/WeComCopilot/internal/repository"
+	"github.com/lw396/WeComCopilot/pkg/copilot"
 	"github.com/lw396/WeComCopilot/pkg/log"
 	"github.com/lw396/WeComCopilot/pkg/redis"
 
@@ -29,15 +30,16 @@ type TaskConfig struct {
 }
 
 type options struct {
-	rep    repository.Repository
-	logger log.Logger
-	tracer trace.Tracer
-	redis  redis.RedisClient
-	sqlite repository.SQLiteClient
-	jwt    *JWTConfig
-	admin  *AdminConfig
-	task   *TaskConfig
-	path   string
+	rep     repository.Repository
+	logger  log.Logger
+	tracer  trace.Tracer
+	redis   redis.RedisClient
+	sqlite  repository.SQLiteClient
+	jwt     *JWTConfig
+	admin   *AdminConfig
+	task    *TaskConfig
+	path    string
+	copilot *copilot.CopilotClient
 }
 
 type Option func(*options)
@@ -93,6 +95,12 @@ func WithTask(task *TaskConfig) Option {
 func WithFilePath(path string) Option {
 	return func(o *options) {
 		o.path = path
+	}
+}
+
+func WithCopilot(copilot *copilot.CopilotClient) Option {
+	return func(o *options) {
+		o.copilot = copilot
 	}
 }
 

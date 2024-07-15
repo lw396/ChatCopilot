@@ -72,7 +72,7 @@ type MessageContent struct {
 
 func (a *Service) GetMessageContent(ctx context.Context, usrName string, offset int) (result []*MessageContent, err error) {
 	msgName := "Chat_" + hex.EncodeToString(util.Md5([]byte(usrName)))
-	contact, err := a.rep.GetMessageContentList(ctx, msgName, offset)
+	contact, err := a.rep.GetMessageContentList(ctx, msgName, offset, 30)
 	if err != nil {
 		return
 	}

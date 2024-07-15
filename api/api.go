@@ -6,7 +6,6 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/lw396/WeComCopilot/service"
-	_ "github.com/swaggo/echo-swagger/example/docs"
 )
 
 type Api struct {
@@ -73,6 +72,22 @@ func (api *Api) Run() error {
 		v1.GET("/message_sticker", api.getMessageSticker)
 		// 播放语音
 		v1.GET("/message_voice", api.getMessageVoice)
+
+		// 聊天助手
+		// 添加聊天助手
+		v1.POST("/chat_copilot", api.addChatCopilot)
+		// 获取聊天提示
+		v1.POST("/chat_tips", api.getChatTips)
+
+		// 提示词
+		// 新增提示词
+		v1.POST("/prompt_curation", api.addPromptCuration)
+		// 删除提示词
+		v1.DELETE("/prompt_curation", api.delPromptCuration)
+		// 修改提示词
+		v1.PUT("/prompt_curation", api.updatePromptCuration)
+		// 获取提示词列表
+		v1.GET("/prompt_curation_list", api.getPromptCurationList)
 	}
 
 	return engine.Start(fmt.Sprintf(":%d", api.port))

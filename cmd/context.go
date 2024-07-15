@@ -1,13 +1,17 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
 
+	"github.com/lw396/WeComCopilot/internal/model"
+	"github.com/lw396/WeComCopilot/internal/repository"
 	"github.com/lw396/WeComCopilot/internal/repository/sqlite"
+	"github.com/lw396/WeComCopilot/pkg/copilot"
 	"github.com/lw396/WeComCopilot/pkg/db"
 	"github.com/lw396/WeComCopilot/pkg/log"
 	"github.com/lw396/WeComCopilot/pkg/redis"
@@ -241,4 +245,13 @@ func (c *Context) buildFilePath() string {
 	return valuer.Value("").Try(
 		ctx.Section("wechat").Key("path").String(),
 	).String()
+}
+
+func (c *Context) buildCopilot(rep repository.Repository) (*copilot.CopilotClient, error) {
+	ctx := context.Background()
+	config, err := rep.GetCopilotConfigByStatus(ctx, model.StatusUse)
+	if err != nil {
+		return nil, err
+	}
+	return copilot.NewClient(config), nil
 }

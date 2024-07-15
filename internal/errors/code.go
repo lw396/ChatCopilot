@@ -8,6 +8,8 @@ const (
 	CodeInvalidParam = 11000
 	// 数据库错误
 	CodeDB = 12000
+	// 暂未支持功能
+	CodeNotSupport = 13000
 
 	// 认证相关
 	CodeAuth = 20000

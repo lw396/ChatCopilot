@@ -40,5 +40,9 @@ func (r *gormRepository) GetGroupContacts(ctx context.Context, nickname string, 
 }
 
 func (r *gormRepository) DelGroupContactByUsrName(ctx context.Context, usrName string) (err error) {
-	return r.db.WithContext(ctx).Where("usr_name = ?", usrName).Unscoped().Delete(&GroupContact{}).Error
+	err = r.db.WithContext(ctx).Where("usr_name = ?", usrName).Unscoped().Delete(&GroupContact{}).Error
+	if err != nil {
+		return err
+	}
+	return
 }
