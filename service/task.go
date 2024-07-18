@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"time"
 
-	mysql "github.com/lw396/WeComCopilot/internal/repository/gorm"
-	"github.com/lw396/WeComCopilot/pkg/db"
-	"github.com/lw396/WeComCopilot/pkg/util"
+	mysql "github.com/lw396/ChatCopilot/internal/repository/gorm"
+	"github.com/lw396/ChatCopilot/pkg/db"
+	"github.com/lw396/ChatCopilot/pkg/util"
 )
 
 const (

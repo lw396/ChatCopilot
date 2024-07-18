@@ -4,10 +4,10 @@ import (
 	"context"
 	"encoding/hex"
 
-	"github.com/lw396/WeComCopilot/internal/errors"
-	"github.com/lw396/WeComCopilot/internal/model"
-	"github.com/lw396/WeComCopilot/internal/repository/gorm"
-	"github.com/lw396/WeComCopilot/pkg/util"
+	"github.com/lw396/ChatCopilot/internal/errors"
+	"github.com/lw396/ChatCopilot/internal/model"
+	"github.com/lw396/ChatCopilot/internal/repository/gorm"
+	"github.com/lw396/ChatCopilot/pkg/util"
 	ollama "github.com/ollama/ollama/api"
 )
 

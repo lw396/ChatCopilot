@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	db "github.com/lw396/WeComCopilot/internal/repository/gorm"
+	db "github.com/lw396/ChatCopilot/internal/repository/gorm"
 )
 
 func (a *Service) AddPromptCuration(ctx context.Context, req *db.PromptCuration) (err error) {

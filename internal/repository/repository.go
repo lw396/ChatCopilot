@@ -3,9 +3,9 @@ package repository
 import (
 	"context"
 
-	"github.com/lw396/WeComCopilot/internal/model"
-	db "github.com/lw396/WeComCopilot/internal/repository/gorm"
-	"github.com/lw396/WeComCopilot/internal/repository/sqlite"
+	"github.com/lw396/ChatCopilot/internal/model"
+	db "github.com/lw396/ChatCopilot/internal/repository/gorm"
+	"github.com/lw396/ChatCopilot/internal/repository/sqlite"
 	"gorm.io/gorm"
 )
 

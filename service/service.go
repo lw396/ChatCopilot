@@ -1,10 +1,10 @@
 package service
 
 import (
-	"github.com/lw396/WeComCopilot/internal/repository"
-	"github.com/lw396/WeComCopilot/pkg/copilot"
-	"github.com/lw396/WeComCopilot/pkg/log"
-	"github.com/lw396/WeComCopilot/pkg/redis"
+	"github.com/lw396/ChatCopilot/internal/repository"
+	"github.com/lw396/ChatCopilot/pkg/copilot"
+	"github.com/lw396/ChatCopilot/pkg/log"
+	"github.com/lw396/ChatCopilot/pkg/redis"
 
 	"go.opentelemetry.io/otel/trace"
 )

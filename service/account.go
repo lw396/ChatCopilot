@@ -6,7 +6,7 @@ import (
 
 	"github.com/golang-jwt/jwt"
 	"github.com/google/uuid"
-	"github.com/lw396/WeComCopilot/internal/errors"
+	"github.com/lw396/ChatCopilot/internal/errors"
 	"golang.org/x/crypto/bcrypt"
 )
 

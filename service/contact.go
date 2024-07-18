@@ -5,10 +5,10 @@ import (
 	"encoding/hex"
 	"time"
 
-	"github.com/lw396/WeComCopilot/internal/errors"
-	mysql "github.com/lw396/WeComCopilot/internal/repository/gorm"
-	"github.com/lw396/WeComCopilot/internal/repository/sqlite"
-	"github.com/lw396/WeComCopilot/pkg/util"
+	"github.com/lw396/ChatCopilot/internal/errors"
+	mysql "github.com/lw396/ChatCopilot/internal/repository/gorm"
+	"github.com/lw396/ChatCopilot/internal/repository/sqlite"
+	"github.com/lw396/ChatCopilot/pkg/util"
 	"gorm.io/gorm"
 )
 

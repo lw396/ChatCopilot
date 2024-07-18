@@ -3,7 +3,7 @@ package gorm
 import (
 	"context"
 
-	"github.com/lw396/WeComCopilot/internal/model"
+	"github.com/lw396/ChatCopilot/internal/model"
 )
 
 func (r *gormRepository) GetCopilotConfigByStatus(ctx context.Context, status model.CopilotConfigStatus) (result *CopilotConfig, err error) {

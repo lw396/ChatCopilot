@@ -2,9 +2,9 @@ package api
 
 import (
 	"github.com/labstack/echo/v4"
-	"github.com/lw396/WeComCopilot/internal/errors"
-	"github.com/lw396/WeComCopilot/internal/model"
-	mysql "github.com/lw396/WeComCopilot/internal/repository/gorm"
+	"github.com/lw396/ChatCopilot/internal/errors"
+	"github.com/lw396/ChatCopilot/internal/model"
+	mysql "github.com/lw396/ChatCopilot/internal/repository/gorm"
 )
 
 type ReqAddCopilot struct {

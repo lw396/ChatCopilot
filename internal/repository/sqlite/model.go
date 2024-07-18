@@ -1,7 +1,7 @@
 package sqlite
 
 import (
-	"github.com/lw396/WeComCopilot/internal/model"
+	"github.com/lw396/ChatCopilot/internal/model"
 )
 
 // Group

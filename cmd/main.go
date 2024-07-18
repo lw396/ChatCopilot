@@ -11,7 +11,7 @@ import (
 var ctx *Context
 
 var app = cli.Command{
-	Name:  "github.com/lw396/WeComCopilot",
+	Name:  "github.com/lw396/ChatCopilot",
 	Usage: "微信消息转存储",
 	Flags: []cli.Flag{
 		&cli.StringFlag{

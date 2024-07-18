@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/lw396/WeComCopilot/internal/repository/sqlite"
+	"github.com/lw396/ChatCopilot/internal/repository/sqlite"
 )
 
 func TestUnmarshalImage(t *testing.T) {

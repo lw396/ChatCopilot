@@ -6,9 +6,9 @@ import (
 	"reflect"
 	"time"
 
-	"github.com/lw396/WeComCopilot/pkg/log"
+	"github.com/lw396/ChatCopilot/pkg/log"
 
-	"github.com/lw396/WeComCopilot/pkg/cache"
+	"github.com/lw396/ChatCopilot/pkg/cache"
 
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/trace"

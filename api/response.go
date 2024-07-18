@@ -7,7 +7,7 @@ import (
 
 	"github.com/go-sql-driver/mysql"
 	"github.com/labstack/echo/v4"
-	"github.com/lw396/WeComCopilot/internal/errors"
+	"github.com/lw396/ChatCopilot/internal/errors"
 )
 
 func Success(c echo.Context, statusCode int, data interface{}, metaKVs ...interface{}) error {

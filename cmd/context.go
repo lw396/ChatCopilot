@@ -8,16 +8,16 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/lw396/WeComCopilot/internal/model"
-	"github.com/lw396/WeComCopilot/internal/repository"
-	"github.com/lw396/WeComCopilot/internal/repository/sqlite"
-	"github.com/lw396/WeComCopilot/pkg/copilot"
-	"github.com/lw396/WeComCopilot/pkg/db"
-	"github.com/lw396/WeComCopilot/pkg/log"
-	"github.com/lw396/WeComCopilot/pkg/redis"
-	"github.com/lw396/WeComCopilot/pkg/snowflake"
-	"github.com/lw396/WeComCopilot/pkg/valuer"
-	"github.com/lw396/WeComCopilot/service"
+	"github.com/lw396/ChatCopilot/internal/model"
+	"github.com/lw396/ChatCopilot/internal/repository"
+	"github.com/lw396/ChatCopilot/internal/repository/sqlite"
+	"github.com/lw396/ChatCopilot/pkg/copilot"
+	"github.com/lw396/ChatCopilot/pkg/db"
+	"github.com/lw396/ChatCopilot/pkg/log"
+	"github.com/lw396/ChatCopilot/pkg/redis"
+	"github.com/lw396/ChatCopilot/pkg/snowflake"
+	"github.com/lw396/ChatCopilot/pkg/valuer"
+	"github.com/lw396/ChatCopilot/service"
 
 	"github.com/urfave/cli/v3"
 	"gopkg.in/ini.v1"
@@ -117,7 +117,7 @@ func (c *Context) buildDB() (*gorm.DB, error) {
 		os.Getenv("MYSQL_PORT"),
 		c.Section("mysql").Key("port").MustInt(),
 	).Int()
-	name := valuer.Value("github.com/lw396/WeComCopilot").Try(
+	name := valuer.Value("github.com/lw396/ChatCopilot").Try(
 		os.Getenv("MYSQL_DB"),
 		c.Section("mysql").Key("db").String(),
 	).String()

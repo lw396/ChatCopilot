@@ -3,7 +3,7 @@ package gorm
 import (
 	"time"
 
-	"github.com/lw396/WeComCopilot/internal/model"
+	"github.com/lw396/ChatCopilot/internal/model"
 	"gorm.io/gorm"
 )
 

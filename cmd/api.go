@@ -3,9 +3,9 @@ package main
 import (
 	"context"
 
-	"github.com/lw396/WeComCopilot/api"
-	"github.com/lw396/WeComCopilot/internal/repository/gorm"
-	"github.com/lw396/WeComCopilot/service"
+	"github.com/lw396/ChatCopilot/api"
+	"github.com/lw396/ChatCopilot/internal/repository/gorm"
+	"github.com/lw396/ChatCopilot/service"
 	"github.com/urfave/cli/v3"
 )
 

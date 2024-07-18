@@ -4,7 +4,7 @@ import (
 	"context"
 	"log"
 
-	"github.com/lw396/WeComCopilot/service"
+	"github.com/lw396/ChatCopilot/service"
 	"github.com/robfig/cron/v3"
 )
 

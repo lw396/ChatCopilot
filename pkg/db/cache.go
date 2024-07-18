@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"time"
 
-	"github.com/lw396/WeComCopilot/pkg/cache"
+	"github.com/lw396/ChatCopilot/pkg/cache"
 
 	"gorm.io/gorm"
 	"gorm.io/gorm/callbacks"

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/lw396/WeComCopilot/internal/repository/gorm"
+	"github.com/lw396/ChatCopilot/internal/repository/gorm"
 	ollama "github.com/ollama/ollama/api"
 )
 

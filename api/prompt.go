@@ -4,8 +4,8 @@ import (
 	"strconv"
 
 	"github.com/labstack/echo/v4"
-	"github.com/lw396/WeComCopilot/internal/errors"
-	"github.com/lw396/WeComCopilot/internal/repository/gorm"
+	"github.com/lw396/ChatCopilot/internal/errors"
+	"github.com/lw396/ChatCopilot/internal/repository/gorm"
 )
 
 type RepPromptCuration struct {

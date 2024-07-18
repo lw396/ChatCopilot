@@ -4,7 +4,7 @@ import (
 	"strings"
 
 	"github.com/labstack/echo/v4"
-	"github.com/lw396/WeComCopilot/internal/errors"
+	"github.com/lw396/ChatCopilot/internal/errors"
 )
 
 func (api *Api) authenticate(next echo.HandlerFunc) echo.HandlerFunc {

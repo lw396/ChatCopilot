@@ -15,7 +15,7 @@ import "C"
 import (
 	"unsafe"
 
-	"github.com/lw396/WeComCopilot/internal/errors"
+	"github.com/lw396/ChatCopilot/internal/errors"
 )
 
 func SilkToPcm(input, output string) (err error) {
