@@ -69,9 +69,10 @@ type PromptCuration struct {
 
 type CopilotConfig struct {
 	Model
-	Url         string  `gorm:"column:url"`
-	Token       string  `gorm:"column:token"`
-	ModelName   string  `gorm:"column:model"`
-	Temperature float32 `gorm:"column:temperature"`
-	TopP        float32 `gorm:"column:top_k"`
+	ApiType     model.ApiType `gorm:"column:api_type"`
+	Url         string        `gorm:"column:url"`
+	Token       string        `gorm:"column:token"`
+	ModelName   string        `gorm:"column:model"`
+	Temperature float32       `gorm:"column:temperature"`
+	TopP        float32       `gorm:"column:top_k"`
 }

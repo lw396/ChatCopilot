@@ -247,11 +247,11 @@ func (c *Context) buildFilePath() string {
 	).String()
 }
 
-func (c *Context) buildCopilot(rep repository.Repository) (*copilot.CopilotClient, error) {
+func (c *Context) buildCopilot(rep repository.Repository) (copilot.CopilotClient, error) {
 	ctx := context.Background()
 	config, err := rep.GetCopilotConfigByStatus(ctx, model.StatusUse)
 	if err != nil {
 		return nil, err
 	}
-	return copilot.NewClient(config), nil
+	return copilot.NewClient(config)
 }

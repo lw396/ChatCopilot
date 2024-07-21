@@ -10,11 +10,14 @@ import (
 )
 
 func TestChat(t *testing.T) {
-	client := NewClient(&gorm.CopilotConfig{
+	client, err := NewClient(&gorm.CopilotConfig{
 		ModelName:   "qwen2",
 		Temperature: 0.1,
 		TopP:        0.1,
 	})
+	if err != nil {
+		t.Error("erorr:", err)
+	}
 
 	messages := []ollama.Message{
 		{
@@ -23,7 +26,7 @@ func TestChat(t *testing.T) {
 		},
 	}
 	ch := make(chan interface{})
-	err := client.Chat(context.Background(), messages, ch)
+	err = client.Chat(context.Background(), messages, ch)
 	if err != nil {
 		t.Error("erorr:", err)
 	}

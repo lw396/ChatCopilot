@@ -39,7 +39,7 @@ type options struct {
 	admin   *AdminConfig
 	task    *TaskConfig
 	path    string
-	copilot *copilot.CopilotClient
+	copilot copilot.CopilotClient
 }
 
 type Option func(*options)
@@ -98,7 +98,7 @@ func WithFilePath(path string) Option {
 	}
 }
 
-func WithCopilot(copilot *copilot.CopilotClient) Option {
+func WithCopilot(copilot copilot.CopilotClient) Option {
 	return func(o *options) {
 		o.copilot = copilot
 	}

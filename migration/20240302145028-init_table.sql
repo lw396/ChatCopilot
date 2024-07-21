@@ -60,7 +60,8 @@ CREATE TABLE IF NOT EXISTS `chat_copilot` (
 
 CREATE TABLE IF NOT EXISTS `copilot_config` (
     `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-    `url` VARCHAR(255) NOT NULL COMMENT '地址',
+    `api_type` INT UNSIGNED NOT NULL COMMENT 'api类型',
+    `url` VARCHAR(255) NOT NULL COMMENT '链接',
     `token` VARCHAR(255) NOT NULL COMMENT '令牌',
     `model` VARCHAR(100) NOT NULL COMMENT '模型名称',
     `temperature` DOUBLE NOT NULL DEFAULT 0.9 COMMENT '温度',

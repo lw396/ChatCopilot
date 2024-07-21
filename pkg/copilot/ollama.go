@@ -1,39 +1,50 @@
 package copilot
 
 import (
-	"net"
-	"net/http"
-	"net/url"
+	"context"
+	"fmt"
 
-	"github.com/lw396/ChatCopilot/internal/repository/gorm"
 	ollama "github.com/ollama/ollama/api"
-	"github.com/ollama/ollama/envconfig"
 )
 
-type CopilotClient struct {
-	ollama      *ollama.Client
+type OllamaClient struct {
+	client      *ollama.Client
 	model       string
 	temperature float32
 	topP        float32
 }
 
-func NewClient(config *gorm.CopilotConfig) *CopilotClient {
-	ollamaHost := envconfig.Host
-	if config.Url == "" {
-		config.Url = net.JoinHostPort(ollamaHost.Host, ollamaHost.Port)
+func (c *OllamaClient) Chat(ctx context.Context, msg interface{}, ch chan interface{}) (err error) {
+	message := msg.([]ollama.Message)
+	stream := true
+
+	req := &ollama.ChatRequest{
+		Model:    c.model,
+		Messages: message,
+		Stream:   &stream,
+		Options: map[string]interface{}{
+			"temperature": c.temperature,
+			"top_p":       c.topP,
+		},
 	}
 
-	client := ollama.NewClient(
-		&url.URL{
-			Scheme: ollamaHost.Scheme,
-			Host:   config.Url,
-		},
-		http.DefaultClient,
-	)
-	return &CopilotClient{
-		ollama:      client,
-		model:       config.ModelName,
-		temperature: config.Temperature,
-		topP:        config.TopP,
+	errCh := make(chan error)
+	respFunc := func(resp ollama.ChatResponse) error {
+		fmt.Print(resp.Message.Content)
+		ch <- resp
+		return nil
 	}
+	go func() {
+		errCh <- nil
+		if err = c.client.Chat(ctx, req, respFunc); err != nil {
+			errCh <- err
+			return
+		}
+		defer close(ch)
+	}()
+	if err := <-errCh; err != nil {
+		return err
+	}
+
+	return
 }
