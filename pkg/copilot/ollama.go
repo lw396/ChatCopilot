@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/lw396/ChatCopilot/internal/model"
 	ollama "github.com/ollama/ollama/api"
 )
 
@@ -12,6 +13,10 @@ type OllamaClient struct {
 	model       string
 	temperature float32
 	topP        float32
+}
+
+func (c *OllamaClient) Type() (result model.ApiType) {
+	return model.Ollama
 }
 
 func (c *OllamaClient) Chat(ctx context.Context, msg interface{}, ch chan interface{}) (err error) {

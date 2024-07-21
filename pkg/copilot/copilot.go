@@ -15,6 +15,7 @@ import (
 )
 
 type CopilotClient interface {
+	Type() (result model.ApiType)
 	Chat(ctx context.Context, msg interface{}, ch chan interface{}) (err error)
 }
 

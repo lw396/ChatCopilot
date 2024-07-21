@@ -3,6 +3,7 @@ package copilot
 import (
 	"context"
 
+	"github.com/lw396/ChatCopilot/internal/model"
 	"github.com/sashabaranov/go-openai"
 )
 
@@ -11,6 +12,10 @@ type OpenaiClient struct {
 	model       string
 	temperature float32
 	topP        float32
+}
+
+func (c *OpenaiClient) Type() (result model.ApiType) {
+	return model.Openai
 }
 
 func (c *OpenaiClient) Chat(ctx context.Context, msg interface{}, ch chan interface{}) (err error) {
