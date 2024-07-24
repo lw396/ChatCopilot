@@ -69,6 +69,8 @@ func (a *Service) HandleMessageFormat(ctx context.Context, messages []*gorm.Mess
 		result = a.HandleOllamaMessage(messages, copilot)
 	case model.Openai:
 		result = a.HandleOpanaiMessage(messages, copilot)
+	default:
+		err = errors.New(errors.CodeNotSupport, "not support")
 	}
 	return
 }
@@ -100,7 +102,7 @@ func (a *Service) HandleOllamaMessage(messages []*gorm.MessageContent, copilot *
 func (a *Service) HandleOpanaiMessage(messages []*gorm.MessageContent, copilot *gorm.ChatCopilot) (
 	result []openai.ChatCompletionMessage) {
 	result = append(result, openai.ChatCompletionMessage{
-		Role:    "system",
+		Role:    openai.ChatMessageRoleSystem,
 		Content: copilot.Prompt.Prompt,
 	})
 
@@ -109,9 +111,9 @@ func (a *Service) HandleOpanaiMessage(messages []*gorm.MessageContent, copilot *
 			continue
 		}
 
-		role := "user"
+		role := openai.ChatMessageRoleUser
 		if !msg.Des {
-			role = "assistant"
+			role = openai.ChatMessageRoleAssistant
 		}
 		result = append(result, openai.ChatCompletionMessage{
 			Role:    role,
