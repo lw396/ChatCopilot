@@ -1,8 +1,8 @@
 test/* 
 
-chat-copilot
-
 .vscode
 .DS_Store
 chat-copilot
 data
+
+wails.json

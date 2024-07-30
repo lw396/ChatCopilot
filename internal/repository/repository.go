@@ -41,7 +41,7 @@ type Repository interface {
 
 	// Contact
 	SaveContactPerson(ctx context.Context, contact *db.ContactPerson) error
-	GetContactPersons(ctx context.Context, nickname string, offset int) ([]*db.ContactPerson, int64, error)
+	GetContactPersons(ctx context.Context, nickname, remark string, offset int) ([]*db.ContactPerson, int64, error)
 	DelContactPersonByUsrName(ctx context.Context, usrname string) error
 	GetContactPersonByUsrName(ctx context.Context, usrname string) (*db.ContactPerson, error)
 

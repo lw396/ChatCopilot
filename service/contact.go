@@ -66,8 +66,10 @@ func (a *Service) GetContactPersonByUsrname(ctx context.Context, usrname string)
 	return
 }
 
-func (a *Service) GetContactPersonList(ctx context.Context, offset int, nickname string) (result []*ContactPerson, totle int64, err error) {
-	contact, totle, err := a.rep.GetContactPersons(ctx, nickname, offset)
+func (a *Service) GetContactPersonList(ctx context.Context, offset int, nickname, remark string) (
+	result []*ContactPerson, totle int64, err error) {
+
+	contact, totle, err := a.rep.GetContactPersons(ctx, nickname, remark, offset)
 	if err != nil {
 		return
 	}

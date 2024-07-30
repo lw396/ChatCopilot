@@ -141,7 +141,7 @@ func (a *Service) InitSyncTask(ctx context.Context) (err error) {
 		})
 	}
 
-	contact, _, err := a.rep.GetContactPersons(ctx, "", -1)
+	contact, _, err := a.rep.GetContactPersons(ctx, "", "", -1)
 	if err != nil {
 		return
 	}
