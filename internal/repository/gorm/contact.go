@@ -32,7 +32,10 @@ func (r *gormRepository) GetContactPersons(ctx context.Context, nickname, remark
 	tx = tx.Count(&total)
 
 	if nickname != "" {
-		tx = tx.Where("nickname LIKE ? OR remark LIKE ?", "%"+nickname+"%", "%"+remark+"%")
+		tx = tx.Where("nickname LIKE ?", "%"+nickname+"%")
+	}
+	if remark != "" {
+		tx = tx.Or("remark LIKE ?", "%"+remark+"%")
 	}
 	err = tx.Count(&total).Find(&result).Error
 	if err != nil {
