@@ -160,6 +160,7 @@ func (a *Service) InitSyncTask(ctx context.Context) (err error) {
 		data, err = a.rep.GetNewMessageContent(ctx, msgName)
 		if err != nil {
 			if db.IsRecordNotFound(err) {
+				err = nil
 				continue
 			}
 			return
