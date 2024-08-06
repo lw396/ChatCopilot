@@ -1,5 +1,7 @@
 # ChatCopilot
 
+<div align="center"><img width = "150" height = "150" src="./assets/logo-universal.png" /></div>
+
 ## 项目介绍
 
 `ChatCopilot` 是一款用 `golang` 实现的获取微信聊天记录并支持实时存储到数据库的工具，目前只支持在 `MacOS` 上可运行（因为我没有 windows 电脑）
