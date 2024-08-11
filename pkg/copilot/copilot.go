@@ -3,7 +3,6 @@ package copilot
 import (
 	"context"
 	"fmt"
-	"net"
 	"net/http"
 	"net/url"
 
@@ -32,12 +31,12 @@ func NewClient(config *gorm.CopilotConfig) (CopilotClient, error) {
 func NewOllamaClient(config *gorm.CopilotConfig) *OllamaClient {
 	ollamaHost := envconfig.Host
 	if config.Url == "" {
-		config.Url = net.JoinHostPort(ollamaHost.Host, ollamaHost.Port)
+		config.Url = ollamaHost().Host
 	}
 	return &OllamaClient{
 		client: ollama.NewClient(
 			&url.URL{
-				Scheme: ollamaHost.Scheme,
+				Scheme: ollamaHost().Scheme,
 				Host:   config.Url,
 			},
 			http.DefaultClient,
