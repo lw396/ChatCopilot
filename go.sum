@@ -63,6 +63,8 @@ github.com/mutecomm/go-sqlcipher v0.0.0-20190227152316-55dbde17881f h1:hd3r+uv9D
 github.com/mutecomm/go-sqlcipher v0.0.0-20190227152316-55dbde17881f/go.mod h1:MyUWrZlB1aI5bs7j9/pJ8ckLLZ4QcCYcNiSbsAW32D4=
 github.com/ollama/ollama v0.3.4 h1:WHXyMmDZ+c0OQVQV9FKj4PrKLB5IB522dKA0X0tbYa4=
 github.com/ollama/ollama v0.3.4/go.mod h1:USAVO5xFaXAoVWJ0rkPYgCVhTxE/oJ81o7YGcJxvyp8=
+github.com/ollama/ollama v0.3.6 h1:nA/N0AmjP327po5cZDGLqI40nl+aeei0pD0dLa92ypE=
+github.com/ollama/ollama v0.3.6/go.mod h1:YrWoNkFnPOYsnDvsf/Ztb1wxU9/IXrNsQHqcxbY2r94=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/redis/go-redis/extra/rediscmd/v9 v9.5.3 h1:1/BDligzCa40GTllkDnY3Y5DTHuKCONbB2JcRyIfl20=

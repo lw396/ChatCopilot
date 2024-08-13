@@ -12,7 +12,7 @@ require (
 	github.com/json-iterator/go v1.1.12
 	github.com/labstack/echo/v4 v4.12.0
 	github.com/mutecomm/go-sqlcipher v0.0.0-20190227152316-55dbde17881f
-	github.com/ollama/ollama v0.3.4
+	github.com/ollama/ollama v0.3.6
 	github.com/redis/go-redis/extra/redisotel/v9 v9.5.3
 	github.com/redis/go-redis/v9 v9.6.1
 	github.com/robfig/cron/v3 v3.0.1
