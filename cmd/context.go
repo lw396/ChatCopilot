@@ -117,7 +117,7 @@ func (c *Context) buildDB() (*gorm.DB, error) {
 		os.Getenv("MYSQL_PORT"),
 		c.Section("mysql").Key("port").MustInt(),
 	).Int()
-	name := valuer.Value("github.com/lw396/ChatCopilot").Try(
+	name := valuer.Value("WeChatCopilot").Try(
 		os.Getenv("MYSQL_DB"),
 		c.Section("mysql").Key("db").String(),
 	).String()
