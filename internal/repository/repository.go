@@ -5,6 +5,7 @@ import (
 
 	db "github.com/lw396/WeComCopilot/internal/repository/gorm"
 	"github.com/lw396/WeComCopilot/internal/repository/sqlite"
+	migrate "github.com/rubenv/sql-migrate"
 	"gorm.io/gorm"
 )
 
@@ -32,6 +33,9 @@ type SQLiteClient interface {
 }
 
 type Repository interface {
+	// Migrate
+	Migrate(dir string, direct migrate.MigrationDirection, step int) (int, error)
+
 	// Group
 	SaveGroupContact(ctx context.Context, contact *db.GroupContact) error
 	GetGroupContacts(ctx context.Context, nickname string, offset int) ([]*db.GroupContact, int64, error)

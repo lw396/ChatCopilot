@@ -31,7 +31,7 @@ type options struct {
 func defaultOptions() *options {
 	return &options{
 		driver:        "mysql",
-		dsn:           "root:secret@tcp(127.0.0.1:3306)/WeChatCopilot?charset=utf8&parseTime=true&loc=UTC",
+		dsn:           "root:secret@tcp(127.0.0.1:3306)/ChatCopilot?charset=utf8&parseTime=true&loc=UTC",
 		slowThreshold: time.Millisecond * 100,
 		logger:        log.NewConsoleLogger("DB"),
 		cacheStore:    cache.DefaultStore(),

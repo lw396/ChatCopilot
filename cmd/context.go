@@ -52,7 +52,6 @@ func buildContext(c *cli.Command, appName string) (*Context, error) {
 
 	var sources []interface{}
 	for _, fileName := range fileNames {
-		logger.Infof("加载配置文件: %s", fileName)
 		sources = append(sources, filepath.Join(configDir, fileName))
 	}
 
@@ -113,7 +112,7 @@ func (c *Context) buildDB() (*gorm.DB, error) {
 		os.Getenv("MYSQL_PORT"),
 		c.Section("mysql").Key("port").MustInt(),
 	).Int()
-	name := valuer.Value("github.com/lw396/WeComCopilot").Try(
+	name := valuer.Value("ChatCopilot").Try(
 		os.Getenv("MYSQL_DB"),
 		c.Section("mysql").Key("db").String(),
 	).String()

@@ -11,7 +11,7 @@ import (
 var ctx *Context
 
 var app = cli.Command{
-	Name:  "github.com/lw396/WeComCopilot",
+	Name:  "chat-copilot",
 	Usage: "微信消息转存储",
 	Flags: []cli.Flag{
 		&cli.StringFlag{
@@ -36,7 +36,7 @@ var app = cli.Command{
 			Usage: "输出配置文件信息",
 		},
 	},
-	Commands: []*cli.Command{apiCmd, scheduleCmd},
+	Commands: []*cli.Command{apiCmd, scheduleCmd, migrateCmd},
 }
 
 func main() {
