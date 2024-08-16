@@ -34,16 +34,18 @@ values
 INSERT INTO
     `copilot_config` (
         `id`,
+        `api_type`,
         `url`,
         `token`,
         `model`,
         `temperature`,
         `top_p`,
-        `statys`
+        `status`
     )
 values
     (
         1,
+        0,
         "",
         "",
         "qwen2",

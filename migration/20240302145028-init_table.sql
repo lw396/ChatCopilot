@@ -1,5 +1,5 @@
 -- +migrate Up 
-CREATE TABLE if NOT EXISTS `group_contact` (
+CREATE TABLE IF NOT EXISTS `group_contact` (
     `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
     `usr_name` VARCHAR(32) UNIQUE NOT NULL COMMENT '用户名称',
     `nickname` VARCHAR(255) NOT NULL COMMENT '昵称',
@@ -15,7 +15,7 @@ CREATE TABLE if NOT EXISTS `group_contact` (
     KEY `idx_group_contact_deleted_at` (`deleted_at`) USING BTREE
 );
 
-CREATE TABLE if NOT EXISTS `contact_person` (
+CREATE TABLE IF NOT EXISTS `contact_person` (
     `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
     `usr_name` VARCHAR(32) UNIQUE NOT NULL COMMENT '用户名称',
     `nickname` VARCHAR(255) NOT NULL COMMENT '昵称',
@@ -33,7 +33,7 @@ CREATE TABLE if NOT EXISTS `contact_person` (
     KEY `idx_contact_person_deleted_at` (`deleted_at`) USING BTREE
 );
 
-CREATE TABLE if NOT EXISTS `prompt_curation` (
+CREATE TABLE IF NOT EXISTS `prompt_curation` (
     `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
     `title` VARCHAR(255) NOT NULL COMMENT '标题',
     `prompt` LONGTEXT NOT NULL COMMENT '提示词',
@@ -76,8 +76,12 @@ CREATE TABLE IF NOT EXISTS `copilot_config` (
 );
 
 -- +migrate Down
-DROP TABLE IF EXISTS ` group_contact `;
+DROP TABLE IF EXISTS `group_contact`;
 
-DROP TABLE IF EXISTS ` contact_person `;
+DROP TABLE IF EXISTS `contact_person`;
 
-DROP TABLE IF EXISTS ` prompt_curation `;
+DROP TABLE IF EXISTS `prompt_curation`;
+
+DROP TABLE IF EXISTS `chat_copilot`;
+
+DROP TABLE IF EXISTS `copilot_config`;

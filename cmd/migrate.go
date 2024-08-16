@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/lw396/WeComCopilot/internal/repository/gorm"
+	"github.com/lw396/ChatCopilot/internal/repository/gorm"
 	migrate "github.com/rubenv/sql-migrate"
 	"github.com/urfave/cli/v3"
 )
@@ -53,7 +53,7 @@ var migrateCreateCmd = &cli.Command{
 		name := cmd.Args().First()
 		dir := cmd.String("dir")
 
-		version := time.Now().Format("060102150405")
+		version := time.Now().Format("20060102150405")
 		matches, err := filepath.Glob(filepath.Join(dir, fmt.Sprintf("%s_*.sql", version)))
 		if err != nil {
 			return err
@@ -133,12 +133,12 @@ var migrateDownCmd = &cli.Command{
 		step := cmd.Int("limit")
 
 		db := gorm.New(req)
-		num, err := db.Migrate(dir, migrate.Up, int(step))
+		num, err := db.Migrate(dir, migrate.Down, int(step))
 		if err != nil {
 			return err
 		}
 
-		fmt.Printf("运行 %d 步迁移完成\n", num)
+		fmt.Printf("运行 %d 步回滚完成\n", num)
 		return nil
 	},
 }
