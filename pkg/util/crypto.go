@@ -4,8 +4,6 @@ import (
 	"crypto/hmac"
 	"crypto/md5"
 	"crypto/sha256"
-
-	"golang.org/x/crypto/ripemd160"
 )
 
 func Sha256(raw []byte) []byte {
@@ -20,7 +18,7 @@ func HmacSha256(raw []byte, secret []byte) []byte {
 }
 
 func HmacRipeMD160(message, key []byte) []byte {
-	h := hmac.New(ripemd160.New, key)
+	h := hmac.New(sha256.New, key)
 	_, _ = h.Write(message)
 	return h.Sum(nil)
 }

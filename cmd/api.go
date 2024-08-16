@@ -3,9 +3,9 @@ package main
 import (
 	"context"
 
-	"github.com/lw396/WeComCopilot/api"
-	"github.com/lw396/WeComCopilot/internal/repository/gorm"
-	"github.com/lw396/WeComCopilot/service"
+	"github.com/lw396/ChatCopilot/api"
+	"github.com/lw396/ChatCopilot/internal/repository/gorm"
+	"github.com/lw396/ChatCopilot/service"
 	"github.com/urfave/cli/v3"
 )
 
@@ -32,20 +32,27 @@ var apiCmd = &cli.Command{
 		if err != nil {
 			return err
 		}
+		repository := gorm.New(db)
 
 		redis, err := ctx.buildRedis()
 		if err != nil {
 			return err
 		}
 
+		copilot, err := ctx.buildCopilot(repository)
+		if err != nil {
+			return err
+		}
+
 		service := service.New(
-			service.WithRepository(gorm.New(db)),
+			service.WithRepository(repository),
 			service.WithLogger(ctx.buildLogger("API")),
 			service.WithSQLite(ctx.buildSQLite()),
 			service.WithRedis(redis),
 			service.WithJWT(ctx.buildJWT()),
 			service.WithAdmin(ctx.buildAdmin()),
 			service.WithFilePath(ctx.buildFilePath()),
+			service.WithCopilot(copilot),
 		)
 
 		port := cmd.Int("port")

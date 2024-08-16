@@ -12,13 +12,13 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/lw396/WeComCopilot/internal/errors"
-	"github.com/lw396/WeComCopilot/internal/model"
-	mysql "github.com/lw396/WeComCopilot/internal/repository/gorm"
-	"github.com/lw396/WeComCopilot/internal/repository/sqlite"
-	"github.com/lw396/WeComCopilot/pkg/audio"
-	"github.com/lw396/WeComCopilot/pkg/db"
-	"github.com/lw396/WeComCopilot/pkg/util"
+	"github.com/lw396/ChatCopilot/internal/errors"
+	"github.com/lw396/ChatCopilot/internal/model"
+	mysql "github.com/lw396/ChatCopilot/internal/repository/gorm"
+	"github.com/lw396/ChatCopilot/internal/repository/sqlite"
+	"github.com/lw396/ChatCopilot/pkg/audio"
+	"github.com/lw396/ChatCopilot/pkg/db"
+	"github.com/lw396/ChatCopilot/pkg/util"
 	"gorm.io/gorm"
 )
 
@@ -72,7 +72,7 @@ type MessageContent struct {
 
 func (a *Service) GetMessageContent(ctx context.Context, usrName string, offset int) (result []*MessageContent, err error) {
 	msgName := "Chat_" + hex.EncodeToString(util.Md5([]byte(usrName)))
-	contact, err := a.rep.GetMessageContentList(ctx, msgName, offset)
+	contact, err := a.rep.GetMessageContentList(ctx, msgName, offset, 30)
 	if err != nil {
 		return
 	}

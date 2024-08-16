@@ -4,7 +4,7 @@ import (
 	"strconv"
 
 	"github.com/labstack/echo/v4"
-	"github.com/lw396/WeComCopilot/internal/errors"
+	"github.com/lw396/ChatCopilot/internal/errors"
 )
 
 func (a *Api) getContactPerson(c echo.Context) (err error) {
@@ -79,8 +79,9 @@ func (a *Api) getContactPersonList(c echo.Context) (err error) {
 		return errors.New(errors.CodeInvalidParam, "offset必须为数字")
 	}
 	nickname := c.QueryParam("nickname")
+	remark := c.QueryParam("remark")
 
-	result, totle, err := a.service.GetContactPersonList(c.Request().Context(), offset, nickname)
+	result, totle, err := a.service.GetContactPersonList(c.Request().Context(), offset, nickname, remark)
 	if err != nil {
 		return
 	}

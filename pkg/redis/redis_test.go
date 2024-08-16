@@ -3,6 +3,8 @@ package redis
 import (
 	"context"
 	"testing"
+
+	nooptracer "go.opentelemetry.io/otel/trace/noop"
 )
 
 func TestSAdd(t *testing.T) {
@@ -71,7 +73,7 @@ func TestSMembers(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	t.Log(found, data[0].Name)
+	t.Log(found, data)
 }
 
 func NewRedisClient() (RedisClient, error) {
@@ -79,5 +81,6 @@ func NewRedisClient() (RedisClient, error) {
 		WithAddress("127.0.0.1", 6379),
 		WithAuth("", "secret"),
 		WithDB(0),
+		WithTracerProvider(nooptracer.NewTracerProvider()),
 	)
 }

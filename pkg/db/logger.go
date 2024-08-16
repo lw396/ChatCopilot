@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/lw396/WeComCopilot/pkg/log"
+	"github.com/lw396/ChatCopilot/pkg/log"
 
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"

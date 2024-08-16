@@ -3,9 +3,10 @@ package repository
 import (
 	"context"
 
-	db "github.com/lw396/WeComCopilot/internal/repository/gorm"
-	"github.com/lw396/WeComCopilot/internal/repository/sqlite"
-	migrate "github.com/rubenv/sql-migrate"
+	"github.com/lw396/ChatCopilot/internal/model"
+	db "github.com/lw396/ChatCopilot/internal/repository/gorm"
+	"github.com/lw396/ChatCopilot/internal/repository/sqlite"
+	"github.com/rubenv/sql-migrate"
 	"gorm.io/gorm"
 )
 
@@ -44,9 +45,9 @@ type Repository interface {
 
 	// Contact
 	SaveContactPerson(ctx context.Context, contact *db.ContactPerson) error
-	GetContactPersons(ctx context.Context, nickname string, offset int) ([]*db.ContactPerson, int64, error)
+	GetContactPersons(ctx context.Context, nickname, remark string, offset int) ([]*db.ContactPerson, int64, error)
 	DelContactPersonByUsrName(ctx context.Context, usrname string) error
-	GetContactPersonByUsrName(ctx context.Context, usrName string) (*db.ContactPerson, error)
+	GetContactPersonByUsrName(ctx context.Context, usrname string) (*db.ContactPerson, error)
 
 	// Message
 	CreateMessageContentTable(ctx context.Context, msgName string) error
@@ -54,5 +55,20 @@ type Repository interface {
 	GetNewMessageContent(ctx context.Context, msgName string) (*db.MessageContent, error)
 	UpdateMessageContent(ctx context.Context, msgName string, content *db.MessageContent) error
 	DelMessageContentTable(ctx context.Context, msgName string) error
-	GetMessageContentList(ctx context.Context, msgName string, offset int) ([]*db.MessageContent, error)
+	GetMessageContentList(ctx context.Context, msgName string, offset, limit int) ([]*db.MessageContent, error)
+
+	// Copilot
+	AddChatCopilot(ctx context.Context, copilot *db.ChatCopilot) error
+	GetChatCopilotList(ctx context.Context) ([]*db.ChatCopilot, error)
+	GetChatCopilotByUsrName(ctx context.Context, usrname string) (*db.ChatCopilot, error)
+
+	// Copilot Config
+	GetCopilotConfigByStatus(ctx context.Context, status model.CopilotConfigStatus) (*db.CopilotConfig, error)
+
+	// Prompt
+	AddPromptCuration(ctx context.Context, req *db.PromptCuration) (err error)
+	DelPromptCuration(ctx context.Context, id uint64) (err error)
+	UpdatePromptCuration(ctx context.Context, req *db.PromptCuration) (err error)
+	GetPromptCurationList(ctx context.Context, offset, limit int) ([]*db.PromptCuration, int64, error)
+	GetPromptCuration(ctx context.Context, id int64) (*db.PromptCuration, error)
 }

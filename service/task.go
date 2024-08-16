@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"time"
 
-	mysql "github.com/lw396/WeComCopilot/internal/repository/gorm"
-	"github.com/lw396/WeComCopilot/pkg/db"
-	"github.com/lw396/WeComCopilot/pkg/util"
+	mysql "github.com/lw396/ChatCopilot/internal/repository/gorm"
+	"github.com/lw396/ChatCopilot/pkg/db"
+	"github.com/lw396/ChatCopilot/pkg/util"
 )
 
 const (
@@ -141,7 +141,7 @@ func (a *Service) InitSyncTask(ctx context.Context) (err error) {
 		})
 	}
 
-	contact, _, err := a.rep.GetContactPersons(ctx, "", -1)
+	contact, _, err := a.rep.GetContactPersons(ctx, "", "", -1)
 	if err != nil {
 		return
 	}
@@ -160,6 +160,7 @@ func (a *Service) InitSyncTask(ctx context.Context) (err error) {
 		data, err = a.rep.GetNewMessageContent(ctx, msgName)
 		if err != nil {
 			if db.IsRecordNotFound(err) {
+				err = nil
 				continue
 			}
 			return

@@ -20,3 +20,18 @@ const (
 	MsgTypeSys            MessageType = 10000 // 系统消息
 	MsgTypeRecalled       MessageType = 10002 // 消息撤回
 )
+
+type ChatType string
+
+const (
+	ChatTypePerson ChatType = "person" // 私聊
+	ChatTypeGroup  ChatType = "group"  // 群聊
+)
+
+type CopilotConfigStatus uint8
+
+const (
+	StatusUnused  CopilotConfigStatus = 0 // 未使用
+	StatusUse     CopilotConfigStatus = 1 // 使用
+	StatusDisable CopilotConfigStatus = 2 // 禁用
+)

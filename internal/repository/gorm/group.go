@@ -21,7 +21,9 @@ func (r *gormRepository) GetGroupContactByUsrName(ctx context.Context, usrName s
 	return
 }
 
-func (r *gormRepository) GetGroupContacts(ctx context.Context, nickname string, offset int) (result []*GroupContact, total int64, err error) {
+func (r *gormRepository) GetGroupContacts(ctx context.Context, nickname string, offset int) (
+	result []*GroupContact, total int64, err error) {
+
 	result = []*GroupContact{}
 	tx := r.db.WithContext(ctx).Model(&GroupContact{})
 	if nickname != "" {
@@ -40,5 +42,9 @@ func (r *gormRepository) GetGroupContacts(ctx context.Context, nickname string, 
 }
 
 func (r *gormRepository) DelGroupContactByUsrName(ctx context.Context, usrName string) (err error) {
-	return r.db.WithContext(ctx).Where("usr_name = ?", usrName).Unscoped().Delete(&GroupContact{}).Error
+	err = r.db.WithContext(ctx).Where("usr_name = ?", usrName).Unscoped().Delete(&GroupContact{}).Error
+	if err != nil {
+		return err
+	}
+	return
 }

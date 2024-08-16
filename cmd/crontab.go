@@ -6,9 +6,9 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/lw396/WeComCopilot/crontab"
-	"github.com/lw396/WeComCopilot/internal/repository/gorm"
-	"github.com/lw396/WeComCopilot/service"
+	"github.com/lw396/ChatCopilot/crontab"
+	"github.com/lw396/ChatCopilot/internal/repository/gorm"
+	"github.com/lw396/ChatCopilot/service"
 	"github.com/urfave/cli/v3"
 )
 

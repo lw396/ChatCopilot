@@ -1,19 +1,23 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
 
-	"github.com/lw396/WeComCopilot/internal/repository/sqlite"
-	"github.com/lw396/WeComCopilot/pkg/db"
-	"github.com/lw396/WeComCopilot/pkg/log"
-	"github.com/lw396/WeComCopilot/pkg/redis"
-	"github.com/lw396/WeComCopilot/pkg/snowflake"
-	"github.com/lw396/WeComCopilot/pkg/valuer"
-	"github.com/lw396/WeComCopilot/service"
+	"github.com/lw396/ChatCopilot/internal/model"
+	"github.com/lw396/ChatCopilot/internal/repository"
+	"github.com/lw396/ChatCopilot/internal/repository/sqlite"
+	"github.com/lw396/ChatCopilot/pkg/copilot"
+	"github.com/lw396/ChatCopilot/pkg/db"
+	"github.com/lw396/ChatCopilot/pkg/log"
+	"github.com/lw396/ChatCopilot/pkg/redis"
+	"github.com/lw396/ChatCopilot/pkg/snowflake"
+	"github.com/lw396/ChatCopilot/pkg/valuer"
+	"github.com/lw396/ChatCopilot/service"
 
 	"github.com/urfave/cli/v3"
 	"gopkg.in/ini.v1"
@@ -240,4 +244,13 @@ func (c *Context) buildFilePath() string {
 	return valuer.Value("").Try(
 		ctx.Section("wechat").Key("path").String(),
 	).String()
+}
+
+func (c *Context) buildCopilot(rep repository.Repository) (copilot.CopilotClient, error) {
+	ctx := context.Background()
+	config, err := rep.GetCopilotConfigByStatus(ctx, model.StatusUse)
+	if err != nil {
+		return nil, err
+	}
+	return copilot.NewClient(config)
 }

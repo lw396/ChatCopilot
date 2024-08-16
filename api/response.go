@@ -1,13 +1,13 @@
 package api
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 
-	"github.com/lw396/WeComCopilot/internal/errors"
-
 	"github.com/go-sql-driver/mysql"
 	"github.com/labstack/echo/v4"
+	"github.com/lw396/ChatCopilot/internal/errors"
 )
 
 func Success(c echo.Context, statusCode int, data interface{}, metaKVs ...interface{}) error {
@@ -29,6 +29,20 @@ func Paginate(c echo.Context, data interface{}, total int64, metaKVs ...interfac
 
 func NoContent(c echo.Context) error {
 	return Success(c, http.StatusNoContent, nil)
+}
+
+func StreamResponse(c echo.Context, ch chan interface{}) error {
+	c.Response().Header().Set(echo.HeaderContentType, "application/x-ndjson")
+	c.Response().WriteHeader(http.StatusOK)
+
+	enc := json.NewEncoder(c.Response())
+	for val := range ch {
+		if err := enc.Encode(val); err != nil {
+			return err
+		}
+		c.Response().Flush()
+	}
+	return nil
 }
 
 func success(data interface{}, metaKVs ...interface{}) Response {

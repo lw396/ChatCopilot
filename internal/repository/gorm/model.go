@@ -3,7 +3,7 @@ package gorm
 import (
 	"time"
 
-	"github.com/lw396/WeComCopilot/internal/model"
+	"github.com/lw396/ChatCopilot/internal/model"
 	"gorm.io/gorm"
 )
 
@@ -49,4 +49,30 @@ type MessageContent struct {
 	Source      string            `gorm:"column:source"`
 	VoiceText   string            `gorm:"column:vice_text"`
 	Seq         int64             `gorm:"column:seq"`
+}
+
+type ChatCopilot struct {
+	Model
+	UsrName  string         `gorm:"column:usr_name"`
+	Type     model.ChatType `gorm:"column:type"`
+	PromptID int64          `gorm:"column:prompt_id"`
+	Status   uint8          `gorm:"column:status"`
+	Prompt   PromptCuration `gorm:"foreignKey:PromptID"`
+}
+
+type PromptCuration struct {
+	Model
+	Title  string `gorm:"column:title"`
+	Prompt string `gorm:"column:prompt"`
+	Start  uint8  `gorm:"column:start"`
+}
+
+type CopilotConfig struct {
+	Model
+	ApiType     model.ApiType `gorm:"column:api_type"`
+	Url         string        `gorm:"column:url"`
+	Token       string        `gorm:"column:token"`
+	ModelName   string        `gorm:"column:model"`
+	Temperature float32       `gorm:"column:temperature"`
+	TopP        float32       `gorm:"column:top_k"`
 }

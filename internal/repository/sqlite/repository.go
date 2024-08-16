@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/lw396/WeComCopilot/pkg/sqlcipher"
+	"github.com/lw396/ChatCopilot/pkg/sqlcipher"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 )

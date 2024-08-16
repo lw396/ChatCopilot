@@ -5,10 +5,10 @@ import (
 	"encoding/hex"
 	"time"
 
-	"github.com/lw396/WeComCopilot/internal/errors"
-	mysql "github.com/lw396/WeComCopilot/internal/repository/gorm"
-	"github.com/lw396/WeComCopilot/internal/repository/sqlite"
-	"github.com/lw396/WeComCopilot/pkg/util"
+	"github.com/lw396/ChatCopilot/internal/errors"
+	mysql "github.com/lw396/ChatCopilot/internal/repository/gorm"
+	"github.com/lw396/ChatCopilot/internal/repository/sqlite"
+	"github.com/lw396/ChatCopilot/pkg/util"
 	"gorm.io/gorm"
 )
 
@@ -66,8 +66,10 @@ func (a *Service) GetContactPersonByUsrname(ctx context.Context, usrname string)
 	return
 }
 
-func (a *Service) GetContactPersonList(ctx context.Context, offset int, nickname string) (result []*ContactPerson, totle int64, err error) {
-	contact, totle, err := a.rep.GetContactPersons(ctx, nickname, offset)
+func (a *Service) GetContactPersonList(ctx context.Context, offset int, nickname, remark string) (
+	result []*ContactPerson, totle int64, err error) {
+
+	contact, totle, err := a.rep.GetContactPersons(ctx, nickname, remark, offset)
 	if err != nil {
 		return
 	}

@@ -1,7 +1,7 @@
 package api
 
 import (
-	"github.com/lw396/WeComCopilot/internal/errors"
+	"github.com/lw396/ChatCopilot/internal/errors"
 
 	"github.com/go-playground/locales/en"
 	"github.com/go-playground/locales/zh"
