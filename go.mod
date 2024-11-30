@@ -17,7 +17,7 @@ require (
 	github.com/redis/go-redis/v9 v9.6.1
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/rubenv/sql-migrate v1.7.0
-	github.com/sashabaranov/go-openai v1.28.1
+	github.com/sashabaranov/go-openai v1.36.0
 	github.com/urfave/cli/v3 v3.0.0-alpha9
 	go.opentelemetry.io/otel v1.28.0
 	go.opentelemetry.io/otel/trace v1.28.0
