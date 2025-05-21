@@ -19,8 +19,8 @@ require (
 	github.com/rubenv/sql-migrate v1.7.0
 	github.com/sashabaranov/go-openai v1.28.1
 	github.com/urfave/cli/v3 v3.0.0-alpha9
-	go.opentelemetry.io/otel v1.28.0
-	go.opentelemetry.io/otel/trace v1.28.0
+	go.opentelemetry.io/otel v1.36.0
+	go.opentelemetry.io/otel/trace v1.36.0
 	go.uber.org/zap v1.27.0
 	golang.org/x/crypto v0.26.0
 	golang.org/x/exp v0.0.0-20240808152545-0cdaa3abc0fa
@@ -52,7 +52,8 @@ require (
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.2 // indirect
 	github.com/xrash/smetrics v0.0.0-20240521201337-686a1a2994c1 // indirect
-	go.opentelemetry.io/otel/metric v1.28.0 // indirect
+	go.opentelemetry.io/auto/sdk v1.1.0 // indirect
+	go.opentelemetry.io/otel/metric v1.36.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/net v0.27.0 // indirect
 	golang.org/x/sys v0.23.0 // indirect
