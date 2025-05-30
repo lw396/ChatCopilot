@@ -13,7 +13,7 @@ RUN cd pkg/audio/silk && make
 
 RUN CGO_ENABLED=1 go build -o chat-copilot ./cmd/*.go
 
-FROM alpine:3.18
+FROM alpine:3.22
 
 WORKDIR /app
 
