@@ -131,6 +131,10 @@ export CGO_LDFLAGS="-L/opt/homebrew/lib"
 
 - 使用 macOS 微信提取自定义表情 [https://blog.jogle.top/2022/08/14/macos-wechat-sticker-dump/](https://blog.jogle.top/2022/08/14/macos-wechat-sticker-dump/)
 
+## 其他
+
+[![Powered by DartNode](https://dartnode.com/branding/DN-Open-Source-sm.png)](https://dartnode.com "Powered by DartNode - Free VPS for Open Source")
+
 - silk-v3-decoder [https://github.com/kn007/silk-v3-decoder](https://github.com/kn007/silk-v3-decoder)
 
 - WeChatMsg [https://github.com/LC044/WeChatMsg](https://github.com/LC044/WeChatMsg)
