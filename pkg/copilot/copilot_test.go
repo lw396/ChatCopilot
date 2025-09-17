@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/lw396/ChatCopilot/internal/repository/gorm"
-	ollama "github.com/ollama/ollama/api"
 )
 
 func TestChat(t *testing.T) {
@@ -19,12 +18,10 @@ func TestChat(t *testing.T) {
 		t.Error("erorr:", err)
 	}
 
-	messages := []ollama.Message{
-		{
-			Role:    "user",
-			Content: "你好",
-		},
-	}
+	messages := []Message{{
+		Role:    RoleUser,
+		Content: "你好",
+	}}
 	ch := make(chan interface{})
 	err = client.Chat(context.Background(), messages, ch)
 	if err != nil {

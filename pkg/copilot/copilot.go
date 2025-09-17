@@ -14,8 +14,8 @@ import (
 )
 
 type CopilotClient interface {
-	Type() (result model.ApiType)
-	Chat(ctx context.Context, msg interface{}, ch chan interface{}) (err error)
+	Type() model.ApiType
+	Chat(ctx context.Context, messages []Message, ch chan<- interface{}) error
 }
 
 func NewClient(config *gorm.CopilotConfig) (CopilotClient, error) {
