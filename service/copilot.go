@@ -7,9 +7,8 @@ import (
 	"github.com/lw396/ChatCopilot/internal/errors"
 	"github.com/lw396/ChatCopilot/internal/model"
 	"github.com/lw396/ChatCopilot/internal/repository/gorm"
+	copilotpkg "github.com/lw396/ChatCopilot/pkg/copilot"
 	"github.com/lw396/ChatCopilot/pkg/util"
-	ollama "github.com/ollama/ollama/api"
-	"github.com/sashabaranov/go-openai"
 )
 
 func (a *Service) AddChatCopilot(ctx context.Context, req *gorm.ChatCopilot) (err error) {
@@ -39,7 +38,7 @@ func (a *Service) AddChatCopilot(ctx context.Context, req *gorm.ChatCopilot) (er
 }
 
 func (a *Service) GetChatTips(ctx context.Context, usrname string, ch chan interface{}) (err error) {
-	copilot, err := a.rep.GetChatCopilotByUsrName(ctx, usrname)
+	cp, err := a.rep.GetChatCopilotByUsrName(ctx, usrname)
 	if err != nil {
 		return
 	}
@@ -49,37 +48,24 @@ func (a *Service) GetChatTips(ctx context.Context, usrname string, ch chan inter
 		return
 	}
 
-	message, err := a.HandleMessageFormat(ctx, messages, copilot)
+	formattedMessages, err := a.HandleMessageFormat(ctx, messages, cp)
 	if err != nil {
 		return
 	}
 
-	err = a.copilot.Chat(ctx, message, ch)
-	if err != nil {
-		return
-	}
-
-	return
+	return a.copilot.Chat(ctx, formattedMessages, ch)
 }
 
-func (a *Service) HandleMessageFormat(ctx context.Context, messages []*gorm.MessageContent, copilot *gorm.ChatCopilot) (
-	result interface{}, err error) {
-	switch a.copilot.Type() {
-	case model.Ollama:
-		result = a.HandleOllamaMessage(messages, copilot)
-	case model.Openai:
-		result = a.HandleOpanaiMessage(messages, copilot)
-	default:
-		err = errors.New(errors.CodeNotSupport, "not support")
+func (a *Service) HandleMessageFormat(_ context.Context, messages []*gorm.MessageContent, cp *gorm.ChatCopilot) (
+	[]copilotpkg.Message, error) {
+	if cp == nil {
+		return nil, errors.New(errors.CodeNotSupport, "not support")
 	}
-	return
-}
 
-func (a *Service) HandleOllamaMessage(messages []*gorm.MessageContent, copilot *gorm.ChatCopilot) (
-	result []ollama.Message) {
-	result = append(result, ollama.Message{
-		Role:    "system",
-		Content: copilot.Prompt.Prompt,
+	formatted := make([]copilotpkg.Message, 0, len(messages)+1)
+	formatted = append(formatted, copilotpkg.Message{
+		Role:    copilotpkg.RoleSystem,
+		Content: cp.Prompt.Prompt,
 	})
 
 	for _, msg := range messages {
@@ -87,38 +73,15 @@ func (a *Service) HandleOllamaMessage(messages []*gorm.MessageContent, copilot *
 			continue
 		}
 
-		role := "user"
+		role := copilotpkg.RoleUser
 		if !msg.Des {
-			role = "assistant"
+			role = copilotpkg.RoleAssistant
 		}
-		result = append(result, ollama.Message{
+		formatted = append(formatted, copilotpkg.Message{
 			Role:    role,
 			Content: msg.Content,
 		})
 	}
-	return
-}
 
-func (a *Service) HandleOpanaiMessage(messages []*gorm.MessageContent, copilot *gorm.ChatCopilot) (
-	result []openai.ChatCompletionMessage) {
-	result = append(result, openai.ChatCompletionMessage{
-		Role:    openai.ChatMessageRoleSystem,
-		Content: copilot.Prompt.Prompt,
-	})
-
-	for _, msg := range messages {
-		if msg.MessageType != model.MsgTypeText {
-			continue
-		}
-
-		role := openai.ChatMessageRoleUser
-		if !msg.Des {
-			role = openai.ChatMessageRoleAssistant
-		}
-		result = append(result, openai.ChatCompletionMessage{
-			Role:    role,
-			Content: msg.Content,
-		})
-	}
-	return
+	return formatted, nil
 }

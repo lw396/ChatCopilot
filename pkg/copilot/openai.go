@@ -17,43 +17,46 @@ type OpenaiClient struct {
 	topP        float32
 }
 
-func (c *OpenaiClient) Type() (result model.ApiType) {
+func (c *OpenaiClient) Type() model.ApiType {
 	return model.Openai
 }
 
-func (c *OpenaiClient) Chat(ctx context.Context, msg interface{}, ch chan interface{}) (err error) {
-	// messages := msg.([]openai.ChatCompletionMessage)
-	messages := []openai.ChatCompletionMessage{
-		{
-			Role:    openai.ChatMessageRoleUser,
-			Content: "Hello!",
-		},
+func (c *OpenaiClient) Chat(ctx context.Context, messages []Message, ch chan<- interface{}) error {
+	if len(messages) == 0 {
+		close(ch)
+		return nil
 	}
-	fmt.Println(messages)
+
+	reqMessages := make([]openai.ChatCompletionMessage, 0, len(messages))
+	for _, message := range messages {
+		reqMessages = append(reqMessages, openai.ChatCompletionMessage{
+			Role:    message.Role,
+			Content: message.Content,
+		})
+	}
+
 	stream, err := c.client.CreateChatCompletionStream(ctx, openai.ChatCompletionRequest{
 		Model:       c.model,
-		Messages:    messages,
+		Messages:    reqMessages,
 		Temperature: c.temperature,
 		TopP:        c.topP,
 		Stream:      true,
 	})
 	if err != nil {
-		return
+		return err
 	}
 	defer stream.Close()
+	defer close(ch)
 
 	for {
-		var response openai.ChatCompletionStreamResponse
-		response, err = stream.Recv()
+		response, err := stream.Recv()
 		if errors.Is(err, io.EOF) {
-			return
+			return nil
 		}
 		if err != nil {
-			err = errors.New("Stream error: " + err.Error())
-			return
+			return fmt.Errorf("stream error: %w", err)
 		}
 
-		fmt.Println(response.Choices[0].Delta.Content)
 		ch <- response
 	}
 }
